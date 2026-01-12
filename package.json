@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "preinstall": "cd server && npm install",
-    "install":"cd client && npm install",
+    "install": "cd client && npm install",
     "dev:client": "cd client && npm run dev",
     "dev:server": "cd server && npm run dev",
     "build": "cd client && npm run build",
@@ -20,5 +20,17 @@
   "bugs": {
     "url": "https://github.com/lillabbbbbb/owndrive/issues"
   },
-  "homepage": "https://github.com/lillabbbbbb/owndrive#readme"
+  "homepage": "https://github.com/lillabbbbbb/owndrive#readme",
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^25.0.6",
+    "@types/typescript": "^0.4.29"
+  },
+  "dependencies": {
+    "cors": "^2.8.5"
+  }
 }
