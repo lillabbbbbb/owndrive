@@ -1,0 +1,1 @@
+//routes on index page, login and registration
