@@ -13,10 +13,15 @@ const fileRouter: Router = Router()
 
 //GET fetch all files (and a lot of their data) of a user
 
+//POST create new file
+
+//DELETE delete file
 
 //GET fetch one file (and its data) of a user
 
 //POST / UPDATE change permisions of a file
+
+
 
 
 
