@@ -1,0 +1,1 @@
+{"version":3,"file":"Session.js","sourceRoot":"","sources":["../../src/models/Session.ts"],"names":[],"mappings":";AAAA,sBAAsB;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAEtB,qDAAoD;AAUpD,MAAM,aAAa,GAAG,IAAI,iBAAM,CAAC;IAC7B,MAAM,EAAE,EAAC,IAAI,EAAE,MAAM,EAAE,QAAQ,EAAE,IAAI,EAAC;CACzC,CAAC,CAAA;AAEF,MAAM,OAAO,GAA6B,kBAAQ,CAAC,KAAK,CAAW,SAAS,EAAE,aAAa,CAAC,CAAA;AAEpF,0BAAO"}

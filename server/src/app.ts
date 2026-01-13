@@ -1,13 +1,17 @@
 
+import dotenv from "dotenv"
+import 'dotenv/config'; //if this line is not HERE, the google oauth passport runs into an error
+import passport from "./middleware/google-passport-config"
 import express, {Express} from "express"
 import { Request, Response } from "express";
 import path from "path"
-import router from "./src/routes/index"
-import userRouter from "./src/routes/user"
+import router from "./routes/index"
+import userRouter from "./routes/user"
 import morgan from "morgan"
 import mongoose, { Connection } from 'mongoose'
-import dotenv from "dotenv"
 import cors, {CorsOptions} from 'cors'
+
+console.log("🔥 ENTRY FILE LOADED");
 
 
 //backbone of the backend
@@ -30,8 +34,8 @@ const db: Connection = mongoose.connection
 
 db.on("error", console.error.bind(console, "MongoDB connection error"))
 
-
-//Set up what Express should use
+//Set up what the app should use
+app.use(passport.initialize())
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
 app.use(morgan("dev"))
@@ -41,16 +45,20 @@ app.use(express.static(path.join(__dirname, "../public")))
 app.use("/", router)
 app.use("/user/", userRouter)
 
+
 //Server listens to port
 app.listen(port, () => {
     console.log(`Server running on port ${port}`)
 
 })
 
+
+
 //Enable cross-origin resource sharing
+/*
 if(process.env.NODE_ENV === "development") {
     const corsOptions: CorsOptions = {
-        origin: 'http://localhost:3000',
+        origin: "http://localhost:3000",
         optionsSuccessStatus: 200,
     }
 
@@ -61,3 +69,4 @@ if(process.env.NODE_ENV === "development") {
         res.sendFile(path.resolve("../..", "client", "build", "index.html"))
     })
 }
+*/
