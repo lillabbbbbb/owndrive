@@ -18,6 +18,8 @@ const userSchema = new Schema({
     googleId: {type: String, required: false, unique: true},
     email: {type: String, required: true, unique: true},
     password_hash: {type: String, required: true},
+    files: [{ type: Schema.Types.ObjectId, ref: 'File' }], // array of references
+    session_data: { type: Schema.Types.ObjectId, ref: 'Session' }, // session schema
     profile_pic_link: {type: String, required: false},
     language: {type: String, required: true},
     mode: {type: String, required: true},
