@@ -139,4 +139,36 @@ userRouter.patch("/profile_pic/change", upload.single("image"), async (req: Requ
    
 })
 
+//get profile picture of a user
+//params: username
+userRouter.patch("/:user/profile_picture", async (req: Request, res: Response) => {
+    try {
+
+        //check if username (:user) matches the user signed inside the jwt token
+
+        //fetch image record from user db:
+
+        //get the right user
+        const user = await User
+            .findOne({username: req.body.username})
+            .select("image")
+
+        //if user not found
+        if (!user) return res.status(404).json({message: 'User not found'})
+
+        //if there is no profile pic model in the user record
+        if(!user?.profile_pic) return res.status(404).json({message: 'Profile picture not found'})
+
+        console.log(user.profile_pic)
+        return res.status(201).json({message: user.profile_pic})
+    } catch(error: any) {
+        console.error(`Error while uploading file: ${error}`)
+        return res.status(500).json({message: 'Internal server error'})
+    }
+
+   
+})
+
+
+
 export default userRouter
