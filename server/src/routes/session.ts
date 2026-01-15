@@ -214,7 +214,67 @@ sessionRouter.get(":user/session/pagination",
 
         const page = userSession.pagination_current
         
-        return res.status(200).json({"message": `Current page value (${req.body.page_num}) saved successfully.`})
+        return res.status(200).json({"current_page": page})
+    } catch (error: any) {
+        console.log(error)
+        return res.status(500).json({"message": "Internal Server Error"})
+    }
+})
+
+//GET sorting
+//params: username: string
+sessionRouter.get(":user/session/sorting",
+    async (req: Request, res: Response) => {
+    try {
+
+        //check if username (:user) matches the user signed inside the jwt token
+        
+
+        //get the right user
+        const user = await User
+            .findOne({username: req.body.username})
+            .select("session")
+
+        //if user not found
+        if (!user) return res.status(404).json({message: 'User not found'})
+
+        const userSession: ISession | null = await Session.findOne({_id: user._id})
+
+        if (!userSession) return
+
+        const sorting = userSession.sorting
+        
+        return res.status(200).json({"sorting": sorting})
+    } catch (error: any) {
+        console.log(error)
+        return res.status(500).json({"message": "Internal Server Error"})
+    }
+})
+
+//GET filters
+//params: username: string
+sessionRouter.get(":user/session/filters",
+    async (req: Request, res: Response) => {
+    try {
+
+        //check if username (:user) matches the user signed inside the jwt token
+        
+
+        //get the right user
+        const user = await User
+            .findOne({username: req.body.username})
+            .select("session")
+
+        //if user not found
+        if (!user) return res.status(404).json({message: 'User not found'})
+
+        const userSession: ISession | null = await Session.findOne({_id: user._id})
+
+        if (!userSession) return
+
+        const filters = userSession.filters
+        
+        return res.status(200).json(filters)
     } catch (error: any) {
         console.log(error)
         return res.status(500).json({"message": "Internal Server Error"})
