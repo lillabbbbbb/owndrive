@@ -6,7 +6,7 @@ import { body, Result, ValidationError, validationResult } from "express-validat
 import bcrypt from "bcrypt"
 import jwt, { JwtPayload } from "jsonwebtoken"
 import { IUser, User } from "../models/User"
-import { Session } from "../models/Session"
+import { ISession, Session } from "../models/Session"
 import { validateEmail, validatePassword, validateUsername } from "../validators/inputValidation"
 
 
@@ -208,7 +208,11 @@ sessionRouter.get(":user/session/pagination",
         //if user not found
         if (!user) return res.status(404).json({message: 'User not found'})
 
-        const page = await Session.findOne({_id: user._id}).pagination_current
+        const userSession: ISession | null = await Session.findOne({_id: user._id})
+
+        if (!userSession) return
+
+        const page = userSession.pagination_current
         
         return res.status(200).json({"message": `Current page value (${req.body.page_num}) saved successfully.`})
     } catch (error: any) {

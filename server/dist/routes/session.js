@@ -143,7 +143,10 @@ sessionRouter.get(":user/session/pagination", async (req, res) => {
         //if user not found
         if (!user)
             return res.status(404).json({ message: 'User not found' });
-        const page = await Session_1.Session.findOne({ _id: user._id }).pagination_current;
+        const userSession = await Session_1.Session.findOne({ _id: user._id });
+        if (!userSession)
+            return;
+        const page = userSession.pagination_current;
         return res.status(200).json({ "message": `Current page value (${req.body.page_num}) saved successfully.` });
     }
     catch (error) {
