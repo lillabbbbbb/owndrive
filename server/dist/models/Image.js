@@ -1,5 +1,4 @@
 "use strict";
-//DB model for User
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -34,19 +33,14 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.User = void 0;
+exports.Image = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-const userSchema = new mongoose_1.Schema({
-    username: { type: String, required: false, unique: true },
-    googleId: { type: String, required: false, unique: true },
-    email: { type: String, required: true, unique: true },
-    password_hash: { type: String, required: true },
-    files: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'File' }], // array of references
-    session_data: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Session' }, // session schema
-    profile_pic: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Image', required: false },
-    language: { type: String, required: true },
-    mode: { type: String, required: true },
+const imageSchema = new mongoose_1.Schema({
+    filename: { type: String, required: true },
+    description: { type: String, required: true },
+    path: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now }
 });
-const User = mongoose_1.default.model("User", userSchema);
-exports.User = User;
-//# sourceMappingURL=User.js.map
+const Image = mongoose_1.default.model("Image", imageSchema);
+exports.Image = Image;
+//# sourceMappingURL=Image.js.map
