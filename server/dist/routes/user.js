@@ -69,7 +69,7 @@ userRouter.post("/profile_pic/upload", multer_config_1.default.single("image"), 
         return res.status(500).json({ message: 'Internal server error' });
     }
 });
-//change profile picture
+//UPDATE change profile picture
 userRouter.patch("/profile_pic/change", multer_config_1.default.single("image"), async (req, res) => {
     try {
         if (!req.file) {
@@ -100,6 +100,30 @@ userRouter.patch("/profile_pic/change", multer_config_1.default.single("image"),
             } }, { runValidators: true });
         console.log("File successfully changed and saved in the database");
         return res.status(201).json({ message: "File uploaded and saved in the database" });
+    }
+    catch (error) {
+        console.error(`Error while uploading file: ${error}`);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
+//GET get profile picture of a user
+//params: username
+userRouter.get("/:user/profile_picture", async (req, res) => {
+    try {
+        //check if username (:user) matches the user signed inside the jwt token
+        //fetch image record from user db:
+        //get the right user
+        const user = await User_1.User
+            .findOne({ username: req.body.username })
+            .select("image");
+        //if user not found
+        if (!user)
+            return res.status(404).json({ message: 'User not found' });
+        //if there is no profile pic model in the user record
+        if (!user?.profile_pic)
+            return res.status(404).json({ message: 'Profile picture not found' });
+        console.log(user.profile_pic);
+        return res.status(201).json({ message: user.profile_pic });
     }
     catch (error) {
         console.error(`Error while uploading file: ${error}`);

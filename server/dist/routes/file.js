@@ -2,6 +2,8 @@
 //this router file is for handling all backend communication related to modifying files (and their permissions)
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
+const User_1 = require("../models/User");
+const File_1 = require("../models/File");
 const fileRouter = (0, express_1.Router)();
 //NOTE: SORTING CAN BE HANDLED IN THE FRONTEND
 //GET fetch all files (and a lot of their data) of a user
@@ -11,10 +13,17 @@ fileRouter.get("/:user/home/files", async (req, res) => {
     try {
         //check if username (:user) matches the user signed inside the jwt token
         //NOTE: I COULD CREATE A MIDDLEWARE THAT DECONSTRUCTS THE TOKEN AND COMPARES IT TO THE USERNAME
-        //get the files array of the user (const ...: IFile[] = await db...)
+        //get the right user
+        const user = await User_1.User.findOne({ username: req.body.username });
+        //return if user not found
+        if (!user)
+            throw new Error("Parent not found");
+        //get the files of the user
+        const files = user.files;
+        //NOTE: HANDLE THE FILTERS (AND SORTING) IN THE FRONTEND
         //iterate the array and choose files which (1) name or (2) content or (3) author matches the filter
         //check the diff cases depending on what kind of filter it is
-        return res.status(200).json();
+        return res.status(200).json(files);
     }
     catch (error) {
         console.log(error);
@@ -29,9 +38,25 @@ fileRouter.post("/:user/home/create", async (req, res) => {
         //check if username (:user) matches the user signed inside the jwt token
         //NOTE: I COULD CREATE A MIDDLEWARE THAT DECONSTRUCTS THE TOKEN AND COMPARES IT TO THE USERNAME
         //check if there is already a file with this name in the db of the owner (schema within schema), return if so'
+        const existingFile = await File_1.File.findOne({ file_name: req.body.fileData.fileName });
+        if (existingFile)
+            return res.status(401).json({ "message": "A file with this name already exists" });
+        //get the right user
+        const user = await User_1.User
+            .findOne({ username: req.body.username })
+            .select("files");
+        //if user not found
+        if (!user)
+            return res.status(404).json({ message: 'User not found' });
         //pass the received fileData JSON to create the new db record
-        //create new record in db and save it
-        return res.status(200).json();
+        const newFile = await File_1.File.create(req.body.fileData);
+        //store new reference in the user record
+        await User_1.User.findByIdAndUpdate(user._id, {
+            $push: {
+                files: newFile._id
+            }
+        }, { new: true });
+        return res.status(200).json({ "message": "New file successfully saved" });
     }
     catch (error) {
         console.log(error);

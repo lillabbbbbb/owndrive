@@ -157,9 +157,43 @@ sessionRouter.patch(":user/session/filter/remove_all",
 })
 
 //UPDATE change page
-//params: page_num: number
+//params: username: string, page_num: number
 
-sessionRouter.patch(":user/session/filter/remove_all",
+sessionRouter.patch(":user/session/pagination/update",
+    async (req: Request, res: Response) => {
+    try {
+
+        //check if username (:user) matches the user signed inside the jwt token
+        
+
+        //get the right user
+        const user = await User
+            .findOne({username: req.body.username})
+            .select("session")
+
+        //if user not found
+        if (!user) return res.status(404).json({message: 'User not found'})
+
+        //otherwise save the new image in the image db
+        //Note: no need to update the parent (user) record since the Image was referenced, not embedded, in the model declaration
+        await Session.findByIdAndUpdate(
+            user._id,
+            {$set: {
+                pagination_current: req.body.page_num
+            } },
+            {new: true}
+        )
+        
+        return res.status(200).json({"message": `Current page value (${req.body.page_num}) saved successfully.`})
+    } catch (error: any) {
+        console.log(error)
+        return res.status(500).json({"message": "Internal Server Error"})
+    }
+})
+
+//GET page
+//params: username: string
+sessionRouter.get(":user/session/pagination/update",
     async (req: Request, res: Response) => {
     try {
 
