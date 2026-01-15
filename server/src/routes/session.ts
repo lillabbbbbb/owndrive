@@ -88,6 +88,39 @@ sessionRouter.patch(":user/session/filter/remove",
     }
 })
 
+//params: username
+sessionRouter.patch(":user/session/filter/remove_all",
+    async (req: Request, res: Response) => {
+    try {
+
+        //check if username (:user) matches the user signed inside the jwt token
+        
+
+        //get the right user
+        const user = await User
+            .findOne({username: req.body.username})
+            .select("session")
+
+        //if user not found
+        if (!user) return res.status(404).json({message: 'User not found'})
+
+        //otherwise save the new image in the image db
+        //Note: no need to update the parent (user) record since the Image was referenced, not embedded, in the model declaration
+        await Session.findByIdAndUpdate(
+            user._id,
+            {$set: {
+                filters: []
+            } },
+            {new: true}
+        )
+        
+        return res.status(200).json({"message": `All filters removed succesfully.`})
+    } catch (error: any) {
+        console.log(error)
+        return res.status(500).json({"message": "Internal Server Error"})
+    }
+})
+
 //UPDATE change sorting
 //params: sorting: string (e.g. "newest first")
 
