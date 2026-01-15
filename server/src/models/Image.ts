@@ -5,7 +5,6 @@ interface IImage extends Document {
     description: string
     path: string
     createdAt: Date
-    id?: string
 }
 
 const imageSchema = new Schema({
