@@ -8,6 +8,7 @@ interface IFile extends Document {
    last_edited_at: Date,
    file_type: string,
    file_name: string,
+   content: string,
    word_cound?: number,
    canView: string[], //list of usernames that can view the file
    canEdit: string[], //list of usernames that can edit the file
@@ -24,6 +25,7 @@ const fileSchema = new Schema({
    last_edited_at: {type: Date, required: true},
    file_type: {type: String, required: true},
    file_name: {type: String, required: true},
+   content: {type: String, required: true, default: ""},
    word_cound: {type: Number, required: false},
    canView: {type: Array<String>, required: true}, //list of usernames that can view the file
    canEdit: {type: Array<String>, required: true}, //list of usernames that can edit the file

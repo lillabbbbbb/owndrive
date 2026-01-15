@@ -72,7 +72,7 @@ fileRouter.post("/:user/home/create",
 
             //pass the received fileData JSON to create the new db record
             const newFile = await File.create(req.body.fileData);
-            
+
             //store new reference in the user record
             await User.findByIdAndUpdate(
                 user._id,
@@ -85,7 +85,7 @@ fileRouter.post("/:user/home/create",
             )
 
 
-            return res.status(200).json({"message": "New file successfully saved"})
+            return res.status(200).json({ "message": "New file successfully saved" })
         } catch (error: any) {
             console.log(error)
             return res.status(500).json({ "message": "Internal Server Error" })
@@ -102,11 +102,37 @@ fileRouter.delete("/:user/:file/delete",
             //check if username (:user) matches the user signed inside the jwt token
             //NOTE: I COULD CREATE A MIDDLEWARE THAT DECONSTRUCTS THE TOKEN AND COMPARES IT TO THE USERNAME
 
+            //check if there is already a file with this name in the db of the owner (schema within schema), return if not
+            const existingFile: IFile | null = await File.findOne({ file_name: req.body.fileData.fileName })
+            if (!existingFile) return res.status(404).json({ "message": "File not found with this name" })
+
+            //get the right user
+            const user = await User
+                .findOne({ username: req.body.username })
+                .select("files")
+
+            //if user not found
+            if (!user) return res.status(404).json({ message: 'User not found' })
+
+
+            //NOTE: I SHOULD IMPLEMENT THE ARCHIVED HERE
+            //const file = await Archive.create(req.body.fileData);
+
+
             //delete record
-            //NOTE: I SHOULD IMPLEMENT THE ARCHIVED
+            await User.findByIdAndUpdate(
+                user._id,
+                {
+                    $pull: {
+                        files: {filename: existingFile.file_name}
+                    }
+                },
+                { new: true }
+            )
 
 
-            return res.status(200).json()
+            return res.status(200).json({ "message": `File "${req.body.fileData.filename}" successfully deleted.` })
+
         } catch (error: any) {
             console.log(error)
             return res.status(500).json({ "message": "Internal Server Error" })
@@ -121,17 +147,68 @@ fileRouter.delete("/:user/:file/delete",
 fileRouter.get("/:user/:file",
     async (req: Request, res: Response) => {
         try {
+            //check if there is already a file with this name in the db of the owner (schema within schema), return if not
+            const existingFile: IFile | null = await File.findOne({ file_name: req.body.fileData.fileName })
+            if (!existingFile) return res.status(404).json({ "message": "File not found with this name" })
+
+            //find owner of file
+            const user = await User
+                .findOne({ username: req.params?.username as string}) //ATTENTION: if there's a space in the req params, record may not be found
+
+            //if user not found
+            if (!user) return res.status(404).json({ message: `${req.body.username} workspace not found` })
+
+            type TPermission = {
+                accessType: string,
+                private: boolean
+            }
+
+            const permissions: TPermission = {
+                accessType: "none",
+                private: true
+            }
+
+            //CHECK IF TOKEN BELONGS TO ...
+            //(1) if the token belongs to the author of the file
+            permissions.accessType = "owner"
+            //RETURN HERE
+            //return res.status(200).json(permissions)
+
+
+            //check if file is set to private
+            permissions.private = existingFile?.private
+
+            //(2) check if token is missing (=guest user) AND file not private
+            permissions.accessType = "guest"
+            //return res.status(200).json(permissions)
+
+            //find out the username of the "accessor"
+            const user2name = "some user"
+
+            //(3) check if otheruser AND haspermission (view or edit!)
+            if (existingFile?.canView.includes(user2name)) permissions.accessType = "viewer"
+            else if (existingFile?.canView.includes(user2name)) permissions.accessType = "editor"
+        
+            //return res.status(200).json(permissions)
+            
+        } catch (error: any) {
+            console.log(error)
+            return res.status(500).json({ "message": "Internal Server Error" })
+        }
+    })
+
+
+//UPDATE one file's content
+//params: username, file
+//NOTE: check if the user has the right permissions to post to this route
+fileRouter.patch("/:user/:file",
+    async (req: Request, res: Response) => {
+        try {
 
             //check if username (:user) matches the user signed inside the jwt token
             //NOTE: I COULD CREATE A MIDDLEWARE THAT DECONSTRUCTS THE TOKEN AND COMPARES IT TO THE USERNAME
 
-            //check if file exists
-
-            //check if token is missing (=guest user) AND file not private
-
-            //check if otheruser AND haspermission (view or edit!)
-
-            //return data JSON depending on permissions
+            ////?????????????
 
 
             return res.status(200).json()
@@ -142,9 +219,11 @@ fileRouter.get("/:user/:file",
     })
 
 
+
 //maybe leave this feature out now, even though it would be nice if permission update were handled upon pressing a "save changes" button, not immediately
 //POST / UPDATE change permisions of a file ????????????
 //params: username: string, token: string, filename: JSON, ??????????? 
+
 
 
 //UPDATE add a file permission to a user ..../permissions/add

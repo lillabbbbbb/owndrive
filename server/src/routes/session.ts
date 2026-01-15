@@ -193,7 +193,7 @@ sessionRouter.patch(":user/session/pagination/update",
 
 //GET page
 //params: username: string
-sessionRouter.get(":user/session/pagination/update",
+sessionRouter.get(":user/session/pagination",
     async (req: Request, res: Response) => {
     try {
 
@@ -208,15 +208,7 @@ sessionRouter.get(":user/session/pagination/update",
         //if user not found
         if (!user) return res.status(404).json({message: 'User not found'})
 
-        //otherwise save the new image in the image db
-        //Note: no need to update the parent (user) record since the Image was referenced, not embedded, in the model declaration
-        await Session.findByIdAndUpdate(
-            user._id,
-            {$set: {
-                pagination_current: req.body.page_num
-            } },
-            {new: true}
-        )
+        const page = await Session.findOne({_id: user._id}).pagination_current
         
         return res.status(200).json({"message": `Current page value (${req.body.page_num}) saved successfully.`})
     } catch (error: any) {
