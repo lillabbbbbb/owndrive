@@ -10,36 +10,10 @@ const User_1 = require("../models/User");
 const multer_config_1 = __importDefault(require("../middleware/multer-config"));
 const userRouter = (0, express_1.Router)();
 //route to anything else: handled in frontend
+//NOTE: Is this route really needed?
 //Home
 userRouter.get("/:user/home", async (req, res) => {
     try {
-        return res.status(200).json();
-    }
-    catch (error) {
-        console.log(error);
-        return res.status(500).json({ "message": "Internal Server Error" });
-    }
-});
-//Route to a file of a user
-//Return: JSON of the right File DB record
-userRouter.get("/:user/:file", async (req, res) => {
-    try {
-        //
-        return res.status(200).json();
-    }
-    catch (error) {
-        console.log(error);
-        return res.status(500).json({ "message": "Internal Server Error" });
-    }
-});
-//????????????
-userRouter.post("/:user/:file/:permissions", async (req, res) => {
-    try {
-        //check if token exists
-        //check if user is the owner
-        //if not, check what access this user has to the file (view or edit)
-        //check if user is logged in
-        //check 
         return res.status(200).json();
     }
     catch (error) {
@@ -108,6 +82,30 @@ userRouter.patch("/profile_pic/change", multer_config_1.default.single("image"),
 });
 //GET get profile picture of a user
 //params: username
+userRouter.get("/:user/profile_picture", async (req, res) => {
+    try {
+        //check if username (:user) matches the user signed inside the jwt token
+        //fetch image record from user db:
+        //get the right user
+        const user = await User_1.User
+            .findOne({ username: req.body.username })
+            .select("image");
+        //if user not found
+        if (!user)
+            return res.status(404).json({ message: 'User not found' });
+        //if there is no profile pic model in the user record
+        if (!user?.profile_pic)
+            return res.status(404).json({ message: 'Profile picture not found' });
+        console.log(user.profile_pic);
+        return res.status(201).json({ message: user.profile_pic });
+    }
+    catch (error) {
+        console.error(`Error while uploading file: ${error}`);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
+//UPDATE change light / dark mode
+//params: mode: string (e.g. "light")
 userRouter.get("/:user/profile_picture", async (req, res) => {
     try {
         //check if username (:user) matches the user signed inside the jwt token
