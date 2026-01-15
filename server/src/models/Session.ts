@@ -5,8 +5,7 @@ import mongoose, {Document, Schema} from "mongoose";
 interface ISession extends Document {
     user: string, //_id of user
    sorting: string,
-   filterType: string,
-   filterKeyWords: string[],
+   filters: [Schema.Types.Mixed] //JSON array
    pagination_current: number
 }
 

@@ -92,7 +92,7 @@ userRouter.post("/profile_pic/upload", upload.single("image"), async (req: Reque
     
 })
 
-//change profile picture
+//UPDATE change profile picture
 userRouter.patch("/profile_pic/change", upload.single("image"), async (req: Request, res: Response) => {
     try {
         if (!req.file) {
@@ -139,15 +139,14 @@ userRouter.patch("/profile_pic/change", upload.single("image"), async (req: Requ
    
 })
 
-//get profile picture of a user
+//GET get profile picture of a user
 //params: username
-userRouter.patch("/:user/profile_picture", async (req: Request, res: Response) => {
+userRouter.get("/:user/profile_picture", async (req: Request, res: Response) => {
     try {
 
         //check if username (:user) matches the user signed inside the jwt token
 
         //fetch image record from user db:
-
         //get the right user
         const user = await User
             .findOne({username: req.body.username})

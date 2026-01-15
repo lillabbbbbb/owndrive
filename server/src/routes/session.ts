@@ -1,8 +1,56 @@
 //this router is for handling all backend communication regarding session data such as sorting keyword, filter, current page of pagination
 
+import passport from "../middleware/google-passport-config"
+import { Request, Response, Router } from "express"
+import { body, Result, ValidationError, validationResult } from "express-validator"
+import bcrypt from "bcrypt"
+import jwt, { JwtPayload } from "jsonwebtoken"
+import { IUser, User } from "../models/User"
+import { Session } from "../models/Session"
+import { validateEmail, validatePassword, validateUsername } from "../validators/inputValidation"
 
-//UPDATE add filter
-//??
+
+const sessionRouter: Router = Router()
+
+//UPDATE add search filter
+//params: username JSON with type and value of filter
+sessionRouter.patch(":user/session/filter/add",
+    async (req: Request, res: Response) => {
+    try {
+
+        //check if username (:user) matches the user signed inside the jwt token
+        
+
+        //set up the filter
+        const filterType = req.body.type
+        const filterValue = req.body.value
+
+        //get the right user
+        const user = await User
+            .findOne({username: req.body.username})
+            .select("session")
+
+        //if user not found
+        if (!user) return res.status(404).json({message: 'User not found'})
+
+        //otherwise save the new image in the image db
+        //Note: no need to update the parent (user) record since the Image was referenced, not embedded, in the model declaration
+        await Session.findByIdAndUpdate(
+            user._id,
+            {$addToSet: {
+                filters: {filter_type: filterType, filter_value: filterValue}
+            } }
+
+        )
+
+
+        
+        return res.status(200).json()
+    } catch (error: any) {
+        console.log(error)
+        return res.status(500).json({"message": "Internal Server Error"})
+    }
+})
 
 //UPDATE remove filter
 //??
