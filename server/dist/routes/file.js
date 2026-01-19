@@ -4,6 +4,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const User_1 = require("../models/User");
 const File_1 = require("../models/File");
+const userValidation_1 = require("../middleware/userValidation");
 const fileRouter = (0, express_1.Router)();
 //NOTE: SORTING CAN BE HANDLED IN THE FRONTEND
 //GET fetch all files (and a lot of their data) of a user
@@ -114,7 +115,7 @@ fileRouter.delete("/:user/files/delete", async (req, res) => {
 //params: username: string, token: string, filename: JSON
 //NOTE: check if the user has the right permissions to post to this route
 //NOTE: check if the file is set to private by the owner (don't render to others if it is)!!!!
-fileRouter.get("/:user/:file", async (req, res) => {
+fileRouter.get("/:user/:file", userValidation_1.validateOwnerToken, async (req, res) => {
     try {
         //check if there is already a file with this name in the db of the owner (schema within schema), return if not
         const existingFile = await File_1.File.findOne({ file_name: req.body.fileName });
@@ -132,9 +133,11 @@ fileRouter.get("/:user/:file", async (req, res) => {
         };
         //CHECK IF TOKEN BELONGS TO ...
         //(1) if the token belongs to the author of the file
-        permissions.accessType = "owner";
-        //RETURN HERE
-        //return res.status(200).json(permissions)
+        if (req.body.email === req.user?.email) {
+            permissions.accessType = "owner";
+            //RETURN HERE
+            return res.status(200).json(permissions);
+        }
         //check if file is set to private
         permissions.private = existingFile?.private;
         //(2) check if token is missing (=guest user) AND file not private

@@ -49,3 +49,22 @@ export const validateAdminToken = (req: CustomRequest, res: Response, next: Next
         res.status(403).json({message: "Access denied."})
     }
 }
+
+export const validateOwnerToken = (req: CustomRequest, res: Response, next: NextFunction) => {
+    console.log("Authorization header:", req.header("authorization"));
+    const token: string | undefined = req.header("authorization")?.split(" ")[1]
+
+    if(!token) return res.status(403).json({message: "Token not found"})
+    console.log("token found")
+
+
+    try {
+        const verified: JwtPayload = jwt.verify(token, process.env.SECRET as string) as JwtPayload
+        req.user = verified
+        next()
+
+    }  catch (error: any) {
+        console.log(error)
+        res.status(403).json({message: "Access denied, not owner."})
+    }
+}

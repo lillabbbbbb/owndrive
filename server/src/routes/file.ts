@@ -8,6 +8,7 @@ import jwt, { JwtPayload } from "jsonwebtoken"
 import { IUser, User } from "../models/User"
 import { IFile, File } from "../models/File"
 import { validateEmail, validatePassword, validateUsername } from "../validators/inputValidation"
+import { CustomRequest, validateOwnerToken } from "../middleware/userValidation"
 
 
 const fileRouter: Router = Router()
@@ -160,7 +161,8 @@ fileRouter.delete("/:user/files/delete",
 //NOTE: check if the user has the right permissions to post to this route
 //NOTE: check if the file is set to private by the owner (don't render to others if it is)!!!!
 fileRouter.get("/:user/:file",
-    async (req: Request, res: Response) => {
+    validateOwnerToken,
+    async (req: CustomRequest, res: Response) => {
         try {
             //check if there is already a file with this name in the db of the owner (schema within schema), return if not
             const existingFile: IFile | null = await File.findOne({ file_name: req.body.fileName })
@@ -185,9 +187,11 @@ fileRouter.get("/:user/:file",
 
             //CHECK IF TOKEN BELONGS TO ...
             //(1) if the token belongs to the author of the file
-            permissions.accessType = "owner"
-            //RETURN HERE
-            //return res.status(200).json(permissions)
+            if(req.body.email === req.user?.email){
+                permissions.accessType = "owner"
+                //RETURN HERE
+                return res.status(200).json(permissions)
+            }
 
 
             //check if file is set to private

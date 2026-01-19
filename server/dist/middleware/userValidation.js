@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateAdminToken = exports.validateUserToken = void 0;
+exports.validateOwnerToken = exports.validateAdminToken = exports.validateUserToken = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
@@ -43,4 +43,21 @@ const validateAdminToken = (req, res, next) => {
     }
 };
 exports.validateAdminToken = validateAdminToken;
+const validateOwnerToken = (req, res, next) => {
+    console.log("Authorization header:", req.header("authorization"));
+    const token = req.header("authorization")?.split(" ")[1];
+    if (!token)
+        return res.status(403).json({ message: "Token not found" });
+    console.log("token found");
+    try {
+        const verified = jsonwebtoken_1.default.verify(token, process.env.SECRET);
+        req.user = verified;
+        next();
+    }
+    catch (error) {
+        console.log(error);
+        res.status(403).json({ message: "Access denied, not owner." });
+    }
+};
+exports.validateOwnerToken = validateOwnerToken;
 //# sourceMappingURL=userValidation.js.map
