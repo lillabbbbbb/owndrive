@@ -178,7 +178,7 @@ fileRouter.patch("/:user/:file", async (req, res) => {
 //UPDATE add a file permission to a user ..../permissions/add
 //params: username: string, token: string, filedata: JSON, user2name: string, permissionType: string (e.g. "view", "edit")
 //NOTE: check if the user has the right permissions to post to this route
-fileRouter.patch(":file/permissions/add", async (req, res) => {
+fileRouter.patch("/:user:file/permissions/add", async (req, res) => {
     try {
         //check if username (:user) matches the user signed inside the jwt token
         //NOTE: I COULD CREATE A MIDDLEWARE THAT DECONSTRUCTS THE TOKEN AND COMPARES IT TO THE USERNAME
@@ -194,7 +194,7 @@ fileRouter.patch(":file/permissions/add", async (req, res) => {
 });
 //UPDATE remove file permission from a user ..../permissions/remove
 //params: username: string, token: string, filedata: JSON, user2name
-fileRouter.patch(":file/permissions/remove", async (req, res) => {
+fileRouter.patch("/:user/:file/permissions/remove", async (req, res) => {
     try {
         //check if username (:user) matches the user signed inside the jwt token
         //NOTE: I COULD CREATE A MIDDLEWARE THAT DECONSTRUCTS THE TOKEN AND COMPARES IT TO THE USERNAME
@@ -208,10 +208,10 @@ fileRouter.patch(":file/permissions/remove", async (req, res) => {
         return res.status(500).json({ "message": "Internal Server Error" });
     }
 });
-//UPDATE change guest view mode /visibility/change
+//UPDATE change guest view mode /visibility
 //params: username: string, token: string, filedata: JSON, abledness: boolean (true or false)
 //if it is already set like that, print that to the screen (for testing purposes)
-fileRouter.patch(":file/visibility/change", async (req, res) => {
+fileRouter.patch("/:user/:file/visibility", async (req, res) => {
     try {
         //check if username (:user) matches the user signed inside the jwt token
         //NOTE: I COULD CREATE A MIDDLEWARE THAT DECONSTRUCTS THE TOKEN AND COMPARES IT TO THE USERNAME

@@ -125,8 +125,8 @@ userRouter.get("/:user/profile_picture", async (req: Request, res: Response) => 
 
 
 //UPDATE change light / dark mode
-//params: mode: string (e.g. "light")
-userRouter.get("/:user/profile_picture", async (req: Request, res: Response) => {
+//params: mode: string (e.g. "light"), username: from URL
+userRouter.post("/:user/mode", async (req: Request, res: Response) => {
     try {
 
         //check if username (:user) matches the user signed inside the jwt token
@@ -134,17 +134,17 @@ userRouter.get("/:user/profile_picture", async (req: Request, res: Response) => 
         //fetch image record from user db:
         //get the right user
         const user = await User
-            .findOne({username: req.body.username})
-            .select("image")
+            .findOneAndUpdate({username: req.body.username},
+                {mode: req.body.mode}
+            )
+
 
         //if user not found
         if (!user) return res.status(404).json({message: 'User not found'})
 
-        //if there is no profile pic model in the user record
-        if(!user?.profile_pic) return res.status(404).json({message: 'Profile picture not found'})
 
-        console.log(user.profile_pic)
-        return res.status(201).json({message: user.profile_pic})
+        console.log(user.mode)
+        return res.status(201).json({message: `User's mode set to: ${user.mode}`})
     } catch(error: any) {
         console.error(`Error while uploading file: ${error}`)
         return res.status(500).json({message: 'Internal server error'})

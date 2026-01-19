@@ -14,7 +14,7 @@ const sessionRouter: Router = Router()
 
 //UPDATE add search filter
 //params: username , filterType, filterValue
-sessionRouter.patch(":user/session/filter/add",
+sessionRouter.patch("/:user/session/filter/add",
     async (req: Request, res: Response) => {
     try {
 
@@ -52,7 +52,7 @@ sessionRouter.patch(":user/session/filter/add",
 
 //UPDATE remove filter
 //params: username JSON with type and value of filter
-sessionRouter.patch(":user/session/filter/remove",
+sessionRouter.patch("/:user/session/filter/remove",
     async (req: Request, res: Response) => {
     try {
 
@@ -90,7 +90,7 @@ sessionRouter.patch(":user/session/filter/remove",
 
 //UPDATE remove all filters
 //params: username
-sessionRouter.patch(":user/session/filter/remove_all",
+sessionRouter.patch("/:user/session/filter/remove_all",
     async (req: Request, res: Response) => {
     try {
 
@@ -124,7 +124,7 @@ sessionRouter.patch(":user/session/filter/remove_all",
 
 //UPDATE change sorting
 //params: sorting: string (e.g. "newest first")
-sessionRouter.patch(":user/session/filter/remove_all",
+sessionRouter.patch("/:user/session/sorting",
     async (req: Request, res: Response) => {
     try {
 
@@ -159,7 +159,7 @@ sessionRouter.patch(":user/session/filter/remove_all",
 //UPDATE change page
 //params: username: string, page_num: number
 
-sessionRouter.patch(":user/session/pagination/update",
+sessionRouter.patch("/:user/session/pagination/update",
     async (req: Request, res: Response) => {
     try {
 
@@ -193,7 +193,7 @@ sessionRouter.patch(":user/session/pagination/update",
 
 //GET page
 //params: username: string
-sessionRouter.get(":user/session/pagination",
+sessionRouter.get("/:user/session/pagination",
     async (req: Request, res: Response) => {
     try {
 
@@ -223,7 +223,7 @@ sessionRouter.get(":user/session/pagination",
 
 //GET sorting
 //params: username: string
-sessionRouter.get(":user/session/sorting",
+sessionRouter.get("/:user/session/sorting",
     async (req: Request, res: Response) => {
     try {
 
@@ -253,7 +253,7 @@ sessionRouter.get(":user/session/sorting",
 
 //GET filters
 //params: username: string
-sessionRouter.get(":user/session/filters",
+sessionRouter.get("/:user/session/filters",
     async (req: Request, res: Response) => {
     try {
 

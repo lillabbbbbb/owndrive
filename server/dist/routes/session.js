@@ -7,7 +7,7 @@ const Session_1 = require("../models/Session");
 const sessionRouter = (0, express_1.Router)();
 //UPDATE add search filter
 //params: username , filterType, filterValue
-sessionRouter.patch(":user/session/filter/add", async (req, res) => {
+sessionRouter.patch("/:user/session/filter/add", async (req, res) => {
     try {
         //check if username (:user) matches the user signed inside the jwt token
         //set up the filter
@@ -34,7 +34,7 @@ sessionRouter.patch(":user/session/filter/add", async (req, res) => {
 });
 //UPDATE remove filter
 //params: username JSON with type and value of filter
-sessionRouter.patch(":user/session/filter/remove", async (req, res) => {
+sessionRouter.patch("/:user/session/filter/remove", async (req, res) => {
     try {
         //check if username (:user) matches the user signed inside the jwt token
         //set up the filter
@@ -61,7 +61,7 @@ sessionRouter.patch(":user/session/filter/remove", async (req, res) => {
 });
 //UPDATE remove all filters
 //params: username
-sessionRouter.patch(":user/session/filter/remove_all", async (req, res) => {
+sessionRouter.patch("/:user/session/filter/remove_all", async (req, res) => {
     try {
         //check if username (:user) matches the user signed inside the jwt token
         //get the right user
@@ -85,7 +85,7 @@ sessionRouter.patch(":user/session/filter/remove_all", async (req, res) => {
 });
 //UPDATE change sorting
 //params: sorting: string (e.g. "newest first")
-sessionRouter.patch(":user/session/filter/remove_all", async (req, res) => {
+sessionRouter.patch("/:user/session/sorting", async (req, res) => {
     try {
         //check if username (:user) matches the user signed inside the jwt token
         //get the right user
@@ -109,7 +109,7 @@ sessionRouter.patch(":user/session/filter/remove_all", async (req, res) => {
 });
 //UPDATE change page
 //params: username: string, page_num: number
-sessionRouter.patch(":user/session/pagination/update", async (req, res) => {
+sessionRouter.patch("/:user/session/pagination/update", async (req, res) => {
     try {
         //check if username (:user) matches the user signed inside the jwt token
         //get the right user
@@ -133,7 +133,7 @@ sessionRouter.patch(":user/session/pagination/update", async (req, res) => {
 });
 //GET page
 //params: username: string
-sessionRouter.get(":user/session/pagination", async (req, res) => {
+sessionRouter.get("/:user/session/pagination", async (req, res) => {
     try {
         //check if username (:user) matches the user signed inside the jwt token
         //get the right user
@@ -156,7 +156,7 @@ sessionRouter.get(":user/session/pagination", async (req, res) => {
 });
 //GET sorting
 //params: username: string
-sessionRouter.get(":user/session/sorting", async (req, res) => {
+sessionRouter.get("/:user/session/sorting", async (req, res) => {
     try {
         //check if username (:user) matches the user signed inside the jwt token
         //get the right user
@@ -179,7 +179,7 @@ sessionRouter.get(":user/session/sorting", async (req, res) => {
 });
 //GET filters
 //params: username: string
-sessionRouter.get(":user/session/filters", async (req, res) => {
+sessionRouter.get("/:user/session/filters", async (req, res) => {
     try {
         //check if username (:user) matches the user signed inside the jwt token
         //get the right user

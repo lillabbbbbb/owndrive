@@ -248,7 +248,7 @@ fileRouter.patch("/:user/:file",
 //UPDATE add a file permission to a user ..../permissions/add
 //params: username: string, token: string, filedata: JSON, user2name: string, permissionType: string (e.g. "view", "edit")
 //NOTE: check if the user has the right permissions to post to this route
-fileRouter.patch(":file/permissions/add",
+fileRouter.patch("/:user:file/permissions/add",
     async (req: Request, res: Response) => {
         try {
 
@@ -271,7 +271,7 @@ fileRouter.patch(":file/permissions/add",
 
 //UPDATE remove file permission from a user ..../permissions/remove
 //params: username: string, token: string, filedata: JSON, user2name
-fileRouter.patch(":file/permissions/remove",
+fileRouter.patch("/:user/:file/permissions/remove",
     async (req: Request, res: Response) => {
         try {
 
@@ -293,10 +293,10 @@ fileRouter.patch(":file/permissions/remove",
     })
 
 
-//UPDATE change guest view mode /visibility/change
+//UPDATE change guest view mode /visibility
 //params: username: string, token: string, filedata: JSON, abledness: boolean (true or false)
 //if it is already set like that, print that to the screen (for testing purposes)
-fileRouter.patch(":file/visibility/change",
+fileRouter.patch("/:user/:file/visibility",
     async (req: Request, res: Response) => {
         try {
 

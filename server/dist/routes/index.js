@@ -94,7 +94,7 @@ router.get("/list", async (req, res) => {
     }
 });
 router.post("/login/google", google_passport_config_1.default.authenticate("google", { scope: ['profile'] }));
-router.get("auth/google/callback", google_passport_config_1.default.authenticate("google", {
+router.get("/auth/google/callback", google_passport_config_1.default.authenticate("google", {
     session: false,
     failureRedirect: "/login"
 }), async (req, res) => {

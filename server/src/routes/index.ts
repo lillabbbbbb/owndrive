@@ -118,7 +118,7 @@ router.get("/list", async (req: Request, res: Response) => {
     
 router.post("/login/google", passport.authenticate("google",  {scope: ['profile']}))
 
-router.get("auth/google/callback", passport.authenticate("google", {
+router.get("/auth/google/callback", passport.authenticate("google", {
     session:false,
     failureRedirect: "/login"
     }), async(req: Request, res: Response) => {
