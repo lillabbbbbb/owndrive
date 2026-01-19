@@ -31,7 +31,11 @@ const Login = () => {
             localStorage.setItem("token", data.token)
             localStorage.setItem("logged_in", "true")
 
+
             navigate("/home")
+
+            //display loading while localStorage.getItem("token") is not found
+
         }else{
             console.log("Login failed.")
         }
