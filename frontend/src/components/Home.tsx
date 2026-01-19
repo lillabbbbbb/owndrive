@@ -1,11 +1,20 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { TextField, Autocomplete } from "@mui/material";
 import SortingDropdown from './SortingDropdown';
 import FilesTable from './Table';
+import EditorButtons from './EditorButtons';
 
 const Home = () => {
 
     const fileNames = ["file1", "dummyfile2", "sth else", "Another one"]
+
+    const [isClicked, setClicked] = useState(true)
+
+    const handleCreateNewClick = () => {
+        console.log("Create new button clicked")
+
+        //should redirect to editor page
+    }
 
     const handleFilterClick = () => {
         console.log("Filter button clicked")
@@ -14,22 +23,30 @@ const Home = () => {
 
 
     }
+    const handleRowClick = () => {
+        setClicked(true) //file-scoped menu appears now
+    }
 
-  return (
-    <div>
+    return (
+        <div>
 
-        <Autocomplete
-      options={fileNames}
-      getOptionLabel={(option) => option}
-      renderInput={(params) => <TextField {...params} label="Search users" />}
-    />
+            <Autocomplete
+                options={fileNames}
+                getOptionLabel={(option) => option}
+                renderInput={(params) => <TextField {...params} label="Search users" />}
+            />
 
-    <button>Create new</button>
-    <SortingDropdown />
-    <button onClick={() => handleFilterClick()}>Filter</button>
+            <div>
+                <button onClick={() => handleCreateNewClick()}>Create new</button>
+                <SortingDropdown />
+                <button onClick={() => handleFilterClick()}>Filter</button>
+            </div>
 
-    <FilesTable />
-       {/* Home
+        {isClicked && <EditorButtons/>}
+
+
+            <FilesTable onClick={() => handleRowClick()}/>
+            {/* Home
 
       //search input
 
@@ -39,19 +56,13 @@ const Home = () => {
         //filter
             //from filter -- filter popup
 
-
-    //condtionally render: 
-        //share (button) -- popup window
-        //clone (button) -- clone popup window
-        //pdf (icon+text)
-        //delete (icon)
         
 
     //table
 
     //pagination*/}
-    </div>
-  )
+        </div>
+    )
 }
 
 export default Home
