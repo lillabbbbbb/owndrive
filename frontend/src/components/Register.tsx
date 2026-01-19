@@ -28,7 +28,7 @@ const Register = () => {
         if (response.ok) {
             const data = await response.json()
             localStorage.setItem("token", data.token)
-            localStorage.setItem("is_logged_in", "true")
+            localStorage.setItem("logged_in", "true")
         }
     };
 

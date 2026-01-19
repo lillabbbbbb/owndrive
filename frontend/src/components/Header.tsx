@@ -1,9 +1,17 @@
-import {Link} from "react-router-dom"
+import {Link, useNavigate} from "react-router-dom"
 
 const Header = () => {
 
+    const navigate = useNavigate()
+
     const handleLogout = () => {
         console.log("Logout clicked")
+
+        localStorage.removeItem("token")
+        localStorage.removeItem("logged_in")
+        console.log("User successfully logged out.")
+
+        navigate("/login")
     }
 
     return (
