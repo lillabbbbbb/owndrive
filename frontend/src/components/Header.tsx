@@ -15,10 +15,16 @@ const Header = () => {
         navigate("/login")
     }
 
+    const handleHomeClick = () => {
+        console.log("Home button clicked")
+        navigate("/home")
+    }
+
     return (
         <>
             <div className="fixed top-0 left-0 right-0 bg-gray-800 text-white shadow-md z-50">
                 Header
+                <button onClick={() => handleHomeClick()}>Home</button>
                 {!localStorage.getItem("token") &&
                     <button><Link to="/login">Login</Link></button>
                 }

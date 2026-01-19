@@ -4,6 +4,7 @@ import Login from './Login'
 import Header from "./Header"
 import Register from './Register'
 import Home from './Home'
+import Editor from './Editor'
 
 const Body = () => {
   return (
@@ -17,7 +18,8 @@ const Body = () => {
             <Route path="/login" element={<Login />} ></Route>
             <Route path="/register" element={<Register />} ></Route>
             <Route path="/home" element={<Home />} ></Route>
-             <Route path="*" element={<div>Not found!</div>} />
+            <Route path="/:user/:file" element={<Editor />} ></Route>
+            <Route path="*" element={<div>Not found!</div>} />
 
         </Routes>
     </div>

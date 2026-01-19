@@ -9,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "../components/ui/table";
+import { useNavigate } from "react-router-dom";
 
 interface User {
   filename: string;
@@ -33,6 +34,7 @@ const usersData: User[] = [
 ]
 
 export default function FilesTable({ onRowClick }: { onRowClick: (info: User) => void }) {
+    const navigate = useNavigate()
   const [columns, setColumns] = useState<string[]>(["id", "name", "email", "role"]);
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 5;
@@ -40,6 +42,7 @@ export default function FilesTable({ onRowClick }: { onRowClick: (info: User) =>
 
   const handleRowDoubleClick = (user: User) => {
     console.log(`${user.filename} double-clicked, file should be opened in editor...`)
+    navigate(`/${user.creator}/${user.filename}`)
   }
 
   const toggleColumn = (col: string) => {
