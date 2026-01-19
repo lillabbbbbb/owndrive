@@ -14,7 +14,7 @@ fileRouter.get("/:user/home/files", async (req, res) => {
         //check if username (:user) matches the user signed inside the jwt token
         //NOTE: I COULD CREATE A MIDDLEWARE THAT DECONSTRUCTS THE TOKEN AND COMPARES IT TO THE USERNAME
         //get the right user
-        const user = await User_1.User.findOne({ username: req.body.username });
+        const user = await User_1.User.findOne({ email: req.params.user });
         //return if user not found
         if (!user)
             throw new Error("Parent not found");
@@ -38,22 +38,37 @@ fileRouter.post("/:user/home/create", async (req, res) => {
         //check if username (:user) matches the user signed inside the jwt token
         //NOTE: I COULD CREATE A MIDDLEWARE THAT DECONSTRUCTS THE TOKEN AND COMPARES IT TO THE USERNAME
         //check if there is already a file with this name in the db of the owner (schema within schema), return if so'
-        const existingFile = await File_1.File.findOne({ file_name: req.body.fileData.fileName });
+        const existingFile = await File_1.File.findOne({ file_name: req.body.fileName });
         if (existingFile)
             return res.status(401).json({ "message": "A file with this name already exists" });
         //get the right user
         const user = await User_1.User
-            .findOne({ username: req.body.username })
+            .findOne({ email: req.body.email })
             .select("files");
         //if user not found
         if (!user)
             return res.status(404).json({ message: 'User not found' });
+        const content = req.body.content ? req.body.content : "";
+        const createdAt = new Date();
         //pass the received fileData JSON to create the new db record
-        const newFile = await File_1.File.create(req.body.fileData);
+        const newFile = await File_1.File.create({
+            created_at: createdAt,
+            created_by: req.body.email,
+            last_edited_at: createdAt,
+            file_type: ".docx",
+            file_name: req.body.fileName,
+            content: content,
+            canView: [],
+            canEdit: [],
+            visibleToGuests: false,
+            showsInHomeShared: true,
+            private: false,
+            inUse: false,
+        });
         //store new reference in the user record
         await User_1.User.findByIdAndUpdate(user._id, {
             $push: {
-                files: newFile._id
+                files: [newFile]
             }
         }, { new: true });
         return res.status(200).json({ "message": "New file successfully saved" });
@@ -65,12 +80,12 @@ fileRouter.post("/:user/home/create", async (req, res) => {
 });
 //DELETE delete file
 //params: username: string, token: string, filedata: JSON
-fileRouter.delete("/:user/:file/delete", async (req, res) => {
+fileRouter.delete("/:user/files/delete", async (req, res) => {
     try {
         //check if username (:user) matches the user signed inside the jwt token
         //NOTE: I COULD CREATE A MIDDLEWARE THAT DECONSTRUCTS THE TOKEN AND COMPARES IT TO THE USERNAME
         //check if there is already a file with this name in the db of the owner (schema within schema), return if not
-        const existingFile = await File_1.File.findOne({ file_name: req.body.fileData.fileName });
+        const existingFile = await File_1.File.findOne({ filename: req.body.fileName });
         if (!existingFile)
             return res.status(404).json({ "message": "File not found with this name" });
         //get the right user
@@ -88,7 +103,7 @@ fileRouter.delete("/:user/:file/delete", async (req, res) => {
                 files: { filename: existingFile.file_name }
             }
         }, { new: true });
-        return res.status(200).json({ "message": `File "${req.body.fileData.filename}" successfully deleted.` });
+        return res.status(200).json({ "message": `File "${req.body.filename}" successfully deleted.` });
     }
     catch (error) {
         console.log(error);
@@ -102,7 +117,7 @@ fileRouter.delete("/:user/:file/delete", async (req, res) => {
 fileRouter.get("/:user/:file", async (req, res) => {
     try {
         //check if there is already a file with this name in the db of the owner (schema within schema), return if not
-        const existingFile = await File_1.File.findOne({ file_name: req.body.fileData.fileName });
+        const existingFile = await File_1.File.findOne({ file_name: req.body.fileName });
         if (!existingFile)
             return res.status(404).json({ "message": "File not found with this name" });
         //find owner of file
@@ -205,6 +220,18 @@ fileRouter.patch(":file/visibility/change", async (req, res) => {
     catch (error) {
         console.log(error);
         return res.status(500).json({ "message": "Internal Server Error" });
+    }
+});
+//DELETE LATER, ONLY HERE FOR TESTING
+fileRouter.get("/list/files", async (req, res) => {
+    try {
+        const files = await File_1.File.find();
+        console.log(files);
+        return res.status(200).json(files);
+    }
+    catch (error) {
+        console.log(`Error while fecthing users ${error}`);
+        return res.status(500).json({ error: "Internal Server Error" });
     }
 });
 exports.default = fileRouter;

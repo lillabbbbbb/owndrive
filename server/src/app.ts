@@ -10,6 +10,8 @@ import userRouter from "./routes/user"
 import morgan from "morgan"
 import mongoose, { Connection } from 'mongoose'
 import cors, {CorsOptions} from 'cors'
+import fileRouter from "./routes/file";
+import sessionRouter from "./routes/session"
 
 console.log("🔥 ENTRY FILE LOADED");
 
@@ -44,6 +46,9 @@ app.use(morgan("dev"))
 app.use(express.static(path.join(__dirname, "../public")))
 app.use("/", router)
 app.use("/", userRouter)
+app.use("/", fileRouter)
+app.use("/", sessionRouter)
+
 
 
 //Server listens to port

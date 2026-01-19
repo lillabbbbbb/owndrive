@@ -280,3 +280,5 @@ sessionRouter.get(":user/session/filters",
         return res.status(500).json({"message": "Internal Server Error"})
     }
 })
+
+export default sessionRouter

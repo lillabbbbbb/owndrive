@@ -25,7 +25,7 @@ fileRouter.get("/:user/home/files",
 
 
             //get the right user
-            const user: IUser | null = await User.findOne({ username: req.body.username })
+            const user: IUser | null = await User.findOne({ email: req.params.user as string })
 
             //return if user not found
             if (!user) throw new Error("Parent not found");
@@ -58,27 +58,42 @@ fileRouter.post("/:user/home/create",
             //NOTE: I COULD CREATE A MIDDLEWARE THAT DECONSTRUCTS THE TOKEN AND COMPARES IT TO THE USERNAME
 
             //check if there is already a file with this name in the db of the owner (schema within schema), return if so'
-            const existingFile: IFile | null = await File.findOne({ file_name: req.body.fileData.fileName })
+            const existingFile: IFile | null = await File.findOne({ file_name: req.body.fileName })
             if (existingFile) return res.status(401).json({ "message": "A file with this name already exists" })
 
             //get the right user
             const user = await User
-                .findOne({ username: req.body.username })
+                .findOne({ email: req.body.email })
                 .select("files")
 
             //if user not found
             if (!user) return res.status(404).json({ message: 'User not found' })
 
-
+            const content = req.body.content ? req.body.content : ""
+            const createdAt = new Date()
+            
             //pass the received fileData JSON to create the new db record
-            const newFile = await File.create(req.body.fileData);
+            const newFile = await File.create({
+                created_at: createdAt,
+                created_by: req.body.email,
+                last_edited_at: createdAt,
+                file_type: ".docx",
+                file_name: req.body.fileName,
+                content: content,
+                canView: [],
+                canEdit: [],
+                visibleToGuests: false,
+                showsInHomeShared: true,
+                private: false,
+                inUse: false,
+            });
 
             //store new reference in the user record
             await User.findByIdAndUpdate(
                 user._id,
                 {
                     $push: {
-                        files: newFile._id
+                        files: [newFile]
                     }
                 },
                 { new: true }
@@ -95,7 +110,7 @@ fileRouter.post("/:user/home/create",
 
 //DELETE delete file
 //params: username: string, token: string, filedata: JSON
-fileRouter.delete("/:user/:file/delete",
+fileRouter.delete("/:user/files/delete",
     async (req: Request, res: Response) => {
         try {
 
@@ -103,7 +118,7 @@ fileRouter.delete("/:user/:file/delete",
             //NOTE: I COULD CREATE A MIDDLEWARE THAT DECONSTRUCTS THE TOKEN AND COMPARES IT TO THE USERNAME
 
             //check if there is already a file with this name in the db of the owner (schema within schema), return if not
-            const existingFile: IFile | null = await File.findOne({ file_name: req.body.fileData.fileName })
+            const existingFile: IFile | null = await File.findOne({ filename: req.body.fileName})
             if (!existingFile) return res.status(404).json({ "message": "File not found with this name" })
 
             //get the right user
@@ -131,7 +146,7 @@ fileRouter.delete("/:user/:file/delete",
             )
 
 
-            return res.status(200).json({ "message": `File "${req.body.fileData.filename}" successfully deleted.` })
+            return res.status(200).json({ "message": `File "${req.body.filename}" successfully deleted.` })
 
         } catch (error: any) {
             console.log(error)
@@ -148,7 +163,7 @@ fileRouter.get("/:user/:file",
     async (req: Request, res: Response) => {
         try {
             //check if there is already a file with this name in the db of the owner (schema within schema), return if not
-            const existingFile: IFile | null = await File.findOne({ file_name: req.body.fileData.fileName })
+            const existingFile: IFile | null = await File.findOne({ file_name: req.body.fileName })
             if (!existingFile) return res.status(404).json({ "message": "File not found with this name" })
 
             //find owner of file
@@ -298,6 +313,18 @@ fileRouter.patch(":file/visibility/change",
         }
     })
 
+    //DELETE LATER, ONLY HERE FOR TESTING
+    fileRouter.get("/list/files", async (req: Request, res: Response) => {
+        try {
+            const files: IFile[] = await File.find()
+            console.log(files)
+            return res.status(200).json(files)
+        } catch (error: any) {
+            console.log(`Error while fecthing users ${error}`)
+            return res.status(500).json({error: "Internal Server Error"})
+        }
+    
+    })
 
 
 export default fileRouter

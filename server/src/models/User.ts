@@ -7,7 +7,7 @@ interface IUser extends Document {
    username?: string, //only for Google users?
    googleId?: string, //google ID
    email: string,
-   password_hash: string,
+   password_hash?: string,
    profile_pic?: string, //!
    language: string,
    mode: string, //light or dark mode
@@ -16,9 +16,9 @@ interface IUser extends Document {
 
 const userSchema = new Schema({
     username: {type: String, required: false, unique: true},
-    googleId: {type: String, required: false, unique: true},
+    googleId: {type: String, required: false},
     email: {type: String, required: true, unique: true},
-    password_hash: {type: String, required: true},
+    password_hash: {type: String, required: false},
     files: [{ type: Schema.Types.ObjectId, ref: 'File' }], // array of references
     session: { type: Schema.Types.ObjectId, ref: 'Session' }, // session schema
     profile_pic: { type: Schema.Types.ObjectId, ref: 'Image', required: false },

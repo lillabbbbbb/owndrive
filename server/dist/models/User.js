@@ -38,9 +38,9 @@ exports.User = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const userSchema = new mongoose_1.Schema({
     username: { type: String, required: false, unique: true },
-    googleId: { type: String, required: false, unique: true },
+    googleId: { type: String, required: false },
     email: { type: String, required: true, unique: true },
-    password_hash: { type: String, required: true },
+    password_hash: { type: String, required: false },
     files: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'File' }], // array of references
     session: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Session' }, // session schema
     profile_pic: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Image', required: false },
