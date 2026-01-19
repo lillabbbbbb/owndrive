@@ -44,10 +44,10 @@ app.use(morgan("dev"))
 
 
 app.use(express.static(path.join(__dirname, "../public")))
-app.use("/", router)
-app.use("/", userRouter)
-app.use("/", fileRouter)
-app.use("/", sessionRouter)
+app.use("/api", router)
+app.use("/api", userRouter)
+app.use("/api", fileRouter)
+app.use("/api", sessionRouter)
 
 
 

@@ -5,7 +5,7 @@ import { IFile } from "./File";
 
 interface IUser extends Document {
    username?: string, //only for Google users?
-   googleId?: string, //google ID
+   //googleId?: string, //google ID
    email: string,
    password_hash?: string,
    profile_pic?: string, //!
@@ -16,7 +16,7 @@ interface IUser extends Document {
 
 const userSchema = new Schema({
     username: {type: String, required: false, unique: true},
-    googleId: {type: String, required: false},
+    //googleId: {type: String, required: false},
     email: {type: String, required: true, unique: true},
     password_hash: {type: String, required: false},
     files: [{ type: Schema.Types.ObjectId, ref: 'File' }], // array of references

@@ -94,42 +94,50 @@ router.get("/list", async (req, res) => {
     }
 });
 router.post("/login/google", google_passport_config_1.default.authenticate("google", { scope: ['profile'] }));
-router.get("/auth/google/callback", google_passport_config_1.default.authenticate("google", {
-    session: false,
+/*router.get("/auth/google/callback", passport.authenticate("google", {
+    session:false,
     failureRedirect: "/login"
-}), async (req, res) => {
-    try {
-        const user = await User_1.User.findOne({ googleId: req.user.id });
-        const jwtPayload = {};
-        //if user is not in the databse yet:
-        if (!user) {
-            //create other values (default):
-            const language = "en";
-            const mode = "light";
-            const newUser = await User_1.User.create({
-                username: req.user.displayName,
-                email: req.user.displayName, //THIS NEEDS TO BE REPLACED
-                googleId: req.user.id,
-                language: language,
-                mode: mode
-            });
-            jwtPayload.username = newUser.username;
-            jwtPayload.id = newUser.googleId;
-        }
-        //if user already exists:
-        else {
-            jwtPayload.username = user.username;
-            jwtPayload.id = user.googleId;
-        }
-        //tokenize and redirect
-        const token = jsonwebtoken_1.default.sign(jwtPayload, process.env.SECRET, { expiresIn: "5m" });
-        res.redirect("index.html?token=" + token);
+    }), async(req: Request, res: Response) => {
+
+        try{
+            //const user : IUser | null = await User.findOne({googleId: (req.user as {id:string}).id})
+            const jwtPayload: JwtPayload = {}
+
+            //if user is not in the databse yet:
+            if(!user){
+
+                //create other values (default):
+                const language: string = "en"
+                const mode: string = "light"
+
+                const newUser : IUser = await User.create({
+                    username: (req.user as {displayName : string}).displayName,
+                    email: (req.user as {displayName : string}).displayName, //THIS NEEDS TO BE REPLACED
+                    //googleId: (req.user as {id: string}).id,
+                    language: language,
+                    mode: mode
+                })
+
+                jwtPayload.username = newUser.username
+                //jwtPayload.id = newUser.googleId
+            }
+            //if user already exists:
+            else{
+                jwtPayload.username = user.username
+                //jwtPayload.id = user.googleId
+            }
+
+            //tokenize and redirect
+            const token: string = jwt.sign(jwtPayload, process.env.SECRET as string, {expiresIn: "5m"})
+            res.redirect("index.html?token=" + token)
+
         //catch all errors
-    }
-    catch (error) {
-        console.error(`Error during external login: ${error}`);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-});
+        }catch(error: any){
+            console.error(`Error during external login: ${error}`)
+            res.status(500).json({error: "Internal Server Error"})
+        }
+
+    
+})*/
 exports.default = router;
 //# sourceMappingURL=index.js.map

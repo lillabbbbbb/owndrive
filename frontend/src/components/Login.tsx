@@ -1,29 +1,48 @@
 import { useState, type FormEvent } from "react";
 import React from 'react'
-import {Link} from "react-router-dom"
+import {Link, useNavigate} from "react-router-dom"
 
 const Login = () => {
 
-    const [name, setName] = useState("");
+    const navigate = useNavigate()
+
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        console.log({ name, password });
+        console.log({ email, password });
 
-        await fetch("/login", {
+        const response = await fetch("/api/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
 
         })
-        // Add your API call here
+
+        if (response.ok) {
+            const data = await response.json()
+            localStorage.setItem("token", data.token)
+            localStorage.setItem("is_logged_in", "true")
+
+            navigate("/home")
+        }else{
+            console.log("Login failed.")
+        }
     };
 
     const handleGoogleClick = () => {
-
+        console.log("Google click")
     }
 
     const handleAppleClick = () => {
-        
+        console.log("Apple click")
     }
 
     return (
@@ -45,8 +64,8 @@ const Login = () => {
                         <input
                             type="text"
                             id="name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             required
                             placeholder=" "
                             className="peer block w-full rounded-md border border-gray-300 px-3 pt-5 pb-2 text-gray-900 placeholder-transparent focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
@@ -55,7 +74,7 @@ const Login = () => {
                             htmlFor="name"
                             className="absolute left-3 top-2.5 text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base peer-focus:top-2.5 peer-focus:text-sm peer-focus:text-blue-500"
                         >
-                            Name
+                            Email
                         </label>
                     </div>
 

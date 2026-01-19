@@ -8,10 +8,28 @@ const Register = () => {
     const [password, setPassword] = useState("");
 
 
-    const handleSubmit = (e: FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        console.log({ name, password });
-        // Add your API call here
+        console.log({ email, username, password });
+
+        const response = await fetch("/api/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                email: email,
+                username: username,
+                password: password
+            })
+
+        })
+
+        if (response.ok) {
+            const data = await response.json()
+            localStorage.setItem("token", data.token)
+            localStorage.setItem("is_logged_in", "true")
+        }
     };
 
     const handleGoogleClick = () => {

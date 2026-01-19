@@ -118,13 +118,13 @@ router.get("/list", async (req: Request, res: Response) => {
     
 router.post("/login/google", passport.authenticate("google",  {scope: ['profile']}))
 
-router.get("/auth/google/callback", passport.authenticate("google", {
+/*router.get("/auth/google/callback", passport.authenticate("google", {
     session:false,
     failureRedirect: "/login"
     }), async(req: Request, res: Response) => {
 
         try{
-            const user : IUser | null = await User.findOne({googleId: (req.user as {id:string}).id})
+            //const user : IUser | null = await User.findOne({googleId: (req.user as {id:string}).id})
             const jwtPayload: JwtPayload = {}
 
             //if user is not in the databse yet:
@@ -137,18 +137,18 @@ router.get("/auth/google/callback", passport.authenticate("google", {
                 const newUser : IUser = await User.create({
                     username: (req.user as {displayName : string}).displayName,
                     email: (req.user as {displayName : string}).displayName, //THIS NEEDS TO BE REPLACED
-                    googleId: (req.user as {id: string}).id,
+                    //googleId: (req.user as {id: string}).id,
                     language: language, 
                     mode: mode
                 })
 
                 jwtPayload.username = newUser.username
-                jwtPayload.id = newUser.googleId
+                //jwtPayload.id = newUser.googleId
             }
             //if user already exists:
             else{
                 jwtPayload.username = user.username
-                jwtPayload.id = user.googleId
+                //jwtPayload.id = user.googleId
             }
 
             //tokenize and redirect
@@ -162,6 +162,6 @@ router.get("/auth/google/callback", passport.authenticate("google", {
         }
 
     
-})
+})*/
 
 export default router
