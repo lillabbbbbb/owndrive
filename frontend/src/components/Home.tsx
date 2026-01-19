@@ -1,9 +1,36 @@
 import React from 'react'
+import { TextField, Autocomplete } from "@mui/material";
+import SortingDropdown from './SortingDropdown';
+import FilesTable from './Table';
 
 const Home = () => {
+
+    const fileNames = ["file1", "dummyfile2", "sth else", "Another one"]
+
+    const handleFilterClick = () => {
+        console.log("Filter button clicked")
+
+        //bring dialog popup window small
+
+
+    }
+
   return (
     <div>
+
+        <Autocomplete
+      options={fileNames}
+      getOptionLabel={(option) => option}
+      renderInput={(params) => <TextField {...params} label="Search users" />}
+    />
+
+    <button>Create new</button>
+    <SortingDropdown />
+    <button onClick={() => handleFilterClick()}>Filter</button>
+
+    <FilesTable />
        {/* Home
+
       //search input
 
       //buttons:
