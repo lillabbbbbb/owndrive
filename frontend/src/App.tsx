@@ -1,14 +1,19 @@
 import './App.css'
 import Header from "./components/Header"
-import Body from "./components/Header"
+import Body from "./components/Body"
+import { BrowserRouter } from 'react-router-dom'
 
 
 function App() {
 
+
   return (
     <>
-      <Header />
-      <Body />
+      <BrowserRouter>
+        <Header />
+        <Body />
+
+      </BrowserRouter>
     </>
   )
 }

@@ -60,7 +60,7 @@ app.listen(port, () => {
 
 
 //Enable cross-origin resource sharing
-/*
+
 if(process.env.NODE_ENV === "development") {
     const corsOptions: CorsOptions = {
         origin: "http://localhost:3000",
@@ -74,4 +74,4 @@ if(process.env.NODE_ENV === "development") {
         res.sendFile(path.resolve("../..", "client", "build", "index.html"))
     })
 }
-*/
+

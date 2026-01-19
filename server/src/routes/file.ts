@@ -248,7 +248,7 @@ fileRouter.patch("/:user/:file",
 //UPDATE add a file permission to a user ..../permissions/add
 //params: username: string, token: string, filedata: JSON, user2name: string, permissionType: string (e.g. "view", "edit")
 //NOTE: check if the user has the right permissions to post to this route
-fileRouter.patch("/:user:file/permissions/add",
+fileRouter.patch("/:user/:file/permissions/add",
     async (req: Request, res: Response) => {
         try {
 

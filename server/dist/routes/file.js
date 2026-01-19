@@ -178,7 +178,7 @@ fileRouter.patch("/:user/:file", async (req, res) => {
 //UPDATE add a file permission to a user ..../permissions/add
 //params: username: string, token: string, filedata: JSON, user2name: string, permissionType: string (e.g. "view", "edit")
 //NOTE: check if the user has the right permissions to post to this route
-fileRouter.patch("/:user:file/permissions/add", async (req, res) => {
+fileRouter.patch("/:user/:file/permissions/add", async (req, res) => {
     try {
         //check if username (:user) matches the user signed inside the jwt token
         //NOTE: I COULD CREATE A MIDDLEWARE THAT DECONSTRUCTS THE TOKEN AND COMPARES IT TO THE USERNAME

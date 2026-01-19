@@ -12,6 +12,7 @@ const index_1 = __importDefault(require("./routes/index"));
 const user_1 = __importDefault(require("./routes/user"));
 const morgan_1 = __importDefault(require("morgan"));
 const mongoose_1 = __importDefault(require("mongoose"));
+const cors_1 = __importDefault(require("cors"));
 const file_1 = __importDefault(require("./routes/file"));
 const session_1 = __importDefault(require("./routes/session"));
 console.log("🔥 ENTRY FILE LOADED");
@@ -42,19 +43,17 @@ app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
 //Enable cross-origin resource sharing
-/*
-if(process.env.NODE_ENV === "development") {
-    const corsOptions: CorsOptions = {
+if (process.env.NODE_ENV === "development") {
+    const corsOptions = {
         origin: "http://localhost:3000",
         optionsSuccessStatus: 200,
-    }
-
-    app.use(cors(corsOptions))
-} else if(process.env.NODE_ENV === "production") {
-    app.use(express.static(path.resolve("../..", "client", "build")))
-    app.get("*", (req: Request, res: Response) => {
-        res.sendFile(path.resolve("../..", "client", "build", "index.html"))
-    })
+    };
+    app.use((0, cors_1.default)(corsOptions));
 }
-*/
+else if (process.env.NODE_ENV === "production") {
+    app.use(express_1.default.static(path_1.default.resolve("../..", "client", "build")));
+    app.get("*", (req, res) => {
+        res.sendFile(path_1.default.resolve("../..", "client", "build", "index.html"));
+    });
+}
 //# sourceMappingURL=app.js.map
