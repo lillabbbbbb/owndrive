@@ -2,7 +2,11 @@ import { useState, type FormEvent } from "react";
 import React from 'react'
 import {Link, useNavigate} from "react-router-dom"
 
-const Login = () => {
+type LoginProps = {
+    onLogin: () => void
+}
+
+const Login = ({onLogin} : LoginProps) => {
 
     const navigate = useNavigate()
 
@@ -30,6 +34,7 @@ const Login = () => {
             const data = await response.json()
             localStorage.setItem("token", data.token)
             localStorage.setItem("logged_in", "true")
+            onLogin()
 
 
             navigate("/home")

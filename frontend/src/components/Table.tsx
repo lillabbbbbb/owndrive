@@ -22,7 +22,7 @@ export default function FilesTable({ onRowClick, sortedData }: TableProps) {
   const navigate = useNavigate()
   const [columns, setColumns] = useState<string[]>(["filename", "file_type", "creator", "last_modified"]);
   const [currentPage, setCurrentPage] = useState(1);
-  const ROWS_PER_PAGE = 5;
+  const ROWS_PER_PAGE = 12;
 
 
 

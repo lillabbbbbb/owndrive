@@ -21,7 +21,7 @@ export interface User {
 }
 
 const usersData: User[] = [
-  { filename: "report1.docx", file_type: "Document", creator: "Alice", last_modified: "2026-01-19 09:30" },
+  { filename: "report1", file_type: ".docx", creator: "Alice", last_modified: "2026-01-19 09:30" },
   { filename: "presentation1.pptx", file_type: "Presentation", creator: "Bob", last_modified: "2026-01-18 16:45" },
   { filename: "photo1.png", file_type: "Image", creator: "Charlie", last_modified: "2026-01-17 12:10" },
   { filename: "data1.csv", file_type: "Spreadsheet", creator: "Alice", last_modified: "2026-01-16 08:55" },
@@ -120,7 +120,7 @@ const Home = () => {
         <div>
 
             <Autocomplete
-                options={fileNames}
+                options={usersData.map(user => user.filename)}
                 getOptionLabel={(option) => option}
                 renderInput={(params) => <TextField {...params} label="Search files" />}
             />
