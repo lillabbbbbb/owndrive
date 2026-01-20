@@ -6,21 +6,27 @@ import {
   SelectTrigger,
   SelectValue
 } from "../components/ui/select";
+import { sortingTypes } from "./Home";
 
-export default function SortingDropdown() {
-  const [value, setValue] = useState("");
+type Props = {
+  value: string;
+  onChange: (value: string) => void;
+};
+
+export default function SortingDropdown({ value, onChange }: Props) {
+
 
   return (
-    <Select onValueChange={setValue} value={value}>
+    <Select onValueChange={onChange} value={value}>
       <SelectTrigger className="w-48">
         <SelectValue placeholder="Select an option" />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="last_modified">Last modified</SelectItem>
-        <SelectItem value="by_name_ascending">By Name (Z-A)</SelectItem>
-        <SelectItem value="by_name_descending">By Name (A-Z)</SelectItem>
-        <SelectItem value="by_user_descending">By User (A-Z)</SelectItem>
-        <SelectItem value="by_user_ascending">By User (Z-A)</SelectItem>
+        {Object.entries(sortingTypes).map(([key, value]) => (
+          <SelectItem key={key} value={value}>
+            {value}
+          </SelectItem>
+        ))}
       </SelectContent>
     </Select>
   );

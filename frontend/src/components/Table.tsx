@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { sortingTypes, type User } from "./Home"
 
 //whole doc from chatGPT
 import {
@@ -11,33 +12,18 @@ import {
 } from "../components/ui/table";
 import { useNavigate } from "react-router-dom";
 
-interface User {
-  filename: string;
-  file_type: string;
-  creator: string;
-  last_modified: string;
+
+type TableProps = {
+  onRowClick: (info: User) => void;
+  sortedData: User[];
 }
 
-const usersData: User[] = [
-  { filename: "report1.docx", file_type: "Document", creator: "Alice", last_modified: "2026-01-19 09:30" },
-  { filename: "presentation1.pptx", file_type: "Presentation", creator: "Bob", last_modified: "2026-01-18 16:45" },
-  { filename: "photo1.png", file_type: "Image", creator: "Charlie", last_modified: "2026-01-17 12:10" },
-  { filename: "data1.csv", file_type: "Spreadsheet", creator: "Alice", last_modified: "2026-01-16 08:55" },
-  { filename: "report2.docx", file_type: "Document", creator: "Bob", last_modified: "2026-01-15 14:20" },
-  { filename: "presentation2.pptx", file_type: "Presentation", creator: "Charlie", last_modified: "2026-01-14 11:05" },
-  { filename: "photo2.png", file_type: "Image", creator: "Alice", last_modified: "2026-01-13 18:40" },
-  { filename: "data2.csv", file_type: "Spreadsheet", creator: "Bob", last_modified: "2026-01-12 09:15" },
-  { filename: "report3.docx", file_type: "Document", creator: "Charlie", last_modified: "2026-01-11 17:30" },
-  { filename: "presentation3.pptx", file_type: "Presentation", creator: "Alice", last_modified: "2026-01-10 13:50" },
-  { filename: "photo3.png", file_type: "Image", creator: "Bob", last_modified: "2026-01-09 10:25" },
-  { filename: "data3.csv", file_type: "Spreadsheet", creator: "Charlie", last_modified: "2026-01-08 15:05" },
-]
-
-export default function FilesTable({ onRowClick }: { onRowClick: (info: User) => void }) {
-    const navigate = useNavigate()
-  const [columns, setColumns] = useState<string[]>(["id", "name", "email", "role"]);
+export default function FilesTable({ onRowClick, sortedData }: TableProps) {
+  const navigate = useNavigate()
+  const [columns, setColumns] = useState<string[]>(["filename", "file_type", "creator", "last_modified"]);
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 5;
+  const ROWS_PER_PAGE = 5;
+
 
 
   const handleRowDoubleClick = (user: User) => {
@@ -51,13 +37,13 @@ export default function FilesTable({ onRowClick }: { onRowClick: (info: User) =>
     );
   };
 
-  const totalPages = Math.ceil(usersData.length / rowsPerPage);
-  const currentRows = usersData.slice(
-    (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage
+  const totalPages = Math.ceil(sortedData.length / ROWS_PER_PAGE);
+  const currentRows = sortedData.slice(
+    (currentPage - 1) * ROWS_PER_PAGE,
+    currentPage * ROWS_PER_PAGE
   );
 
-   return (
+  return (
     <div className="space-y-4">
       {/* Column selectors */}
       <div className="flex gap-2 flex-wrap">
@@ -88,7 +74,7 @@ export default function FilesTable({ onRowClick }: { onRowClick: (info: User) =>
 
           <TableBody>
             {currentRows.map((user) => (
-              <TableRow key={user.filename} onClick={() => onRowClick(user)}  onDoubleClick={() => handleRowDoubleClick(user)}>
+              <TableRow key={user.filename} onClick={() => onRowClick(user)} onDoubleClick={() => handleRowDoubleClick(user)}>
                 {columns.includes("filename") && <TableCell>{user.filename}</TableCell>}
                 {columns.includes("file_type") && <TableCell>{user.file_type}</TableCell>}
                 {columns.includes("last_modified") && <TableCell>{user.last_modified}</TableCell>}
