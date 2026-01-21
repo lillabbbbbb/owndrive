@@ -1,13 +1,13 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import React from 'react'
 import {Link, useNavigate} from "react-router-dom"
 
 type LoginProps = {
     jwt: string | null,
-    onChangeToken: (c: string | null) => void;
+    setJwt: (c: string | null) => void;
 }
 
-const Login = ({jwt, onChangeToken} : LoginProps) => {
+const Login = ({jwt, setJwt} : LoginProps) => {
 
     const navigate = useNavigate()
 
@@ -34,8 +34,7 @@ const Login = ({jwt, onChangeToken} : LoginProps) => {
         if (response.ok) {
             const data = await response.json()
             localStorage.setItem("token", data.token)
-            jwt = localStorage.getItem("token")
-            //onLogin()
+            setJwt(localStorage.getItem("token"))
 
 
             navigate("/home")

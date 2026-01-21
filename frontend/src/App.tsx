@@ -19,8 +19,8 @@ function App() {
   return (
     <>
       <BrowserRouter>
-        <Header jwt={jwt} onChangeToken={(c) => setJwt(c)}/>
-        <Body jwt={jwt}/>
+        <Header jwt={jwt} setJwt={(c) => setJwt(c)}/>
+        <Body jwt={jwt} setJwt={(c) => setJwt(c)}/>
 
       </BrowserRouter>
     </>
