@@ -53,19 +53,22 @@ const Home = () => {
   const [selectedSorting, setSelectedSorting] = useState(sortingTypes.by_last_modified)
   const [sortedData, setSortedData] = useState(usersData)
   const [searchKeyword, setSearchKeyword] = useState("")
+  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const data = usersData
 
-  console.log(sortedData)
   console.log(selectedSorting)
 
   //apply sorting to the table data and set the sortedData's new state
-  const sortTable = () => {
+  const sortTable = (keyword?: string) => {
     console.log("sorting the data in progress..")
 
 
     //filter the results based on the search yet
-    const array = matchSearch([...data])
+    const array = matchSearch([...data], keyword)
+
+    console.log(array)
+
 
     let sortedArray: User[] = []
 
@@ -97,14 +100,25 @@ const Home = () => {
     setSortedData(sortedArray)
   }
 
-  const matchSearch = (data: User[]) => {
+  const matchSearch = (data: User[], keyword?: string) => {
 
     //show all results if no keyword is given
-    if (searchKeyword === "") return data
+    if (!keyword) return data
 
-    return data.filter((user) =>
-      user.filename.toLowerCase().includes(searchKeyword.toLowerCase())
-    );
+
+    return data.filter((user) => {
+      const filename = user.filename.toLowerCase();
+      const creator = user.creator.toLowerCase();
+
+      const matchesFilename = filename.includes(keyword);
+      const matchesCreator = creator.includes(keyword);
+
+       console.log(
+    `Checking user: filename="${filename}", creator="${creator}", keyword="${keyword}" => filenameMatch=${matchesFilename}, creatorMatch=${matchesCreator}`
+  );
+
+      return matchesFilename || matchesCreator;
+    });
 
   }
 
@@ -131,10 +145,20 @@ const Home = () => {
   }
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearchKeyword(e.target.value)
-    console.log("Keyword changed to " + e.target.value)
+    const value = e.target.value.trim()
+    setSearchKeyword(value)
+    console.log("Keyword changed to " + value)
 
-    sortTable()
+    // Clear previous timeout if user keeps typing
+    if (debounceTimeout) clearTimeout(debounceTimeout);
+
+
+    // Set a new timeout to call sortTable after 300ms
+    const timeout = setTimeout(() => {
+      sortTable(value); // pass the latest value
+    }, 300);
+
+    setDebounceTimeout(timeout);
   }
 
 
@@ -143,12 +167,12 @@ const Home = () => {
     <div>
 
       <Input
-  type="text"
-  placeholder="Search files..."
-  value={searchKeyword}
-  onChange={(e) => {handleSearchChange(e)}}
-  className="w-full"
-/>
+        type="text"
+        placeholder="Search files..."
+        value={searchKeyword}
+        onChange={(e) => { handleSearchChange(e) }}
+        className="w-full"
+      />
 
       <div>
         <button onClick={() => handleCreateNewClick()}>Create new</button>
