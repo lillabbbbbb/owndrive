@@ -1,18 +1,19 @@
-import { useState } from 'react'
+import { useState, type ChangeEvent } from 'react'
 import { TextField, Autocomplete } from "@mui/material";
 import SortingDropdown from './SortingDropdown';
 import FilesTable from './Table';
 import EditorButtons from './EditorButtons';
+import { Input } from "../components/ui/input";
 
 export const sortingTypes = {
-        by_last_modified: "Last modified", 
-        by_name_ascending: "By Name (Z-A)", 
-        by_name_descending: "By Name (A-Z)", 
-        by_user_descending: "By User (A-Z)", 
-        by_user_ascending: "By User (Z-A)"
-    }
+  by_last_modified: "Last modified",
+  by_name_ascending: "By Name (Z-A)",
+  by_name_descending: "By Name (A-Z)",
+  by_user_descending: "By User (A-Z)",
+  by_user_ascending: "By User (Z-A)"
+}
 
-    
+
 export interface User {
   filename: string;
   file_type: string;
@@ -45,113 +46,127 @@ const usersData: User[] = [
 
 const Home = () => {
 
-    const fileNames = ["file1", "dummyfile2", "sth else", "Another one"]
+  const fileNames = ["file1", "dummyfile2", "sth else", "Another one"]
 
 
-    const [isClicked, setClicked] = useState(true)
-    const [selectedSorting, setSelectedSorting] = useState(sortingTypes.by_last_modified)
-    const [sortedData, setSortedData] = useState(usersData)
+  const [isClicked, setClicked] = useState(true)
+  const [selectedSorting, setSelectedSorting] = useState(sortingTypes.by_last_modified)
+  const [sortedData, setSortedData] = useState(usersData)
+  const [searchKeyword, setSearchKeyword] = useState("")
 
-    const data = usersData
+  const data = usersData
 
-    console.log(sortedData)
-    console.log(selectedSorting)
+  console.log(sortedData)
+  console.log(selectedSorting)
 
-    //apply sorting to the table data and set the sortedData's new state
-    const sortTable = () => {
-        console.log("sorting the data in progress..")
-    
-        const array = [...data]
-        let sortedArray: User[] = []
-    
-        if (selectedSorting === sortingTypes.by_last_modified) {
-          sortedArray = array.sort(
-            (a, b) =>
-              new Date(b.last_modified).getTime() -
-              new Date(a.last_modified).getTime()
-          );
-        } else if (selectedSorting === sortingTypes.by_name_ascending) {
-          sortedArray = array.sort((a, b) =>
-            a.filename.localeCompare(b.filename)
-          );
-    
-        } else if (selectedSorting === sortingTypes.by_name_descending) {
-          sortedArray = array.sort((a, b) =>
-            b.filename.localeCompare(a.filename)
-          );
-        } else if (selectedSorting === sortingTypes.by_user_ascending) {
-          sortedArray = array.sort((a, b) =>
-            a.creator.localeCompare(b.creator)
-          );
-    
-        } else if (selectedSorting === sortingTypes.by_user_descending) {
-          sortedArray = array.sort((a, b) =>
-            b.creator.localeCompare(a.creator)
-          );
-        }
-        setSortedData(sortedArray)
-      }
+  //apply sorting to the table data and set the sortedData's new state
+  const sortTable = () => {
+    console.log("sorting the data in progress..")
 
-    const handleCreateNewClick = () => {
-        console.log("Create new button clicked")
 
-        //should redirect to editor page
+    //filter the results based on the search yet
+    const array = matchSearch([...data])
+
+    let sortedArray: User[] = []
+
+    if (selectedSorting === sortingTypes.by_last_modified) {
+      sortedArray = array.sort(
+        (a, b) =>
+          new Date(b.last_modified).getTime() -
+          new Date(a.last_modified).getTime()
+      );
+    } else if (selectedSorting === sortingTypes.by_name_ascending) {
+      sortedArray = array.sort((a, b) =>
+        a.filename.localeCompare(b.filename)
+      );
+
+    } else if (selectedSorting === sortingTypes.by_name_descending) {
+      sortedArray = array.sort((a, b) =>
+        b.filename.localeCompare(a.filename)
+      );
+    } else if (selectedSorting === sortingTypes.by_user_ascending) {
+      sortedArray = array.sort((a, b) =>
+        a.creator.localeCompare(b.creator)
+      );
+
+    } else if (selectedSorting === sortingTypes.by_user_descending) {
+      sortedArray = array.sort((a, b) =>
+        b.creator.localeCompare(a.creator)
+      );
     }
+    setSortedData(sortedArray)
+  }
 
-    const handleFilterClick = () => {
-        console.log("Filter button clicked")
+  const matchSearch = (data: User[]) => {
 
-        //bring dialog popup window small
+    //show all results if no keyword is given
+    if (searchKeyword === "") return data
 
+    return data.filter((user) =>
+      user.filename.toLowerCase().includes(searchKeyword.toLowerCase())
+    );
 
-    }
-    const handleRowClick = () => {
-        setClicked(true) //file-scoped menu appears now
-    }
+  }
 
-    const handleChangeSorting = (sorting: string) => {
-        setSelectedSorting(sorting)
-        sortTable()
-    }
+  const handleCreateNewClick = () => {
+    console.log("Create new button clicked")
 
-    
+    //should redirect to editor page
+  }
 
-    return (
-        <div>
+  const handleFilterClick = () => {
+    console.log("Filter button clicked")
 
-            <Autocomplete
-                options={usersData.map(user => user.filename)}
-                getOptionLabel={(option) => option}
-                renderInput={(params) => <TextField {...params} label="Search files" />}
-            />
-
-            <div>
-                <button onClick={() => handleCreateNewClick()}>Create new</button>
-                <SortingDropdown value={selectedSorting} onChange={(value) => handleChangeSorting(value)}/>
-                <button onClick={() => handleFilterClick()}>Filter</button>
-            </div>
-
-        {isClicked && <EditorButtons/>}
+    //bring dialog popup window small
 
 
-            <FilesTable onRowClick={() => handleRowClick()} sortedData={sortedData}/>
-            {/* Home
+  }
+  const handleRowClick = () => {
+    setClicked(true) //file-scoped menu appears now
+  }
 
-      //search input
+  const handleChangeSorting = (sorting: string) => {
+    setSelectedSorting(sorting)
+    sortTable()
+  }
 
-      //buttons:
-        //create new (button) -- open editor
-        //sort (dropdown menu)
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchKeyword(e.target.value)
+    console.log("Keyword changed to " + e.target.value)
+
+    sortTable()
+  }
+
+
+
+  return (
+    <div>
+
+      <Input
+  type="text"
+  placeholder="Search files..."
+  value={searchKeyword}
+  onChange={(e) => {handleSearchChange(e)}}
+  className="w-full"
+/>
+
+      <div>
+        <button onClick={() => handleCreateNewClick()}>Create new</button>
+        <SortingDropdown value={selectedSorting} onChange={(value) => handleChangeSorting(value)} />
+        <button onClick={() => handleFilterClick()}>Filter</button>
+      </div>
+
+      {isClicked && <EditorButtons />}
+
+
+      <FilesTable onRowClick={() => handleRowClick()} sortedData={sortedData} />
+      {/* 
+
         //filter
             //from filter -- filter popup
-
-        
-
-    //table
-
-    //pagination*/}
-        </div>
-    )
+          */}
+    </div>
+  )
 }
 
 export default Home

@@ -6,9 +6,11 @@ import Register from './Register'
 import Home from './Home'
 import Editor from './Editor'
 
-const Body = () => {
+type BodyProps = {
+    jwt: string | null
+}
 
-  const [isToken, setIsToken] = useState(false)
+const Body = ({jwt} : BodyProps) => {
 
   return (
     <div>
@@ -17,11 +19,11 @@ const Body = () => {
 
 
       <Routes>
-            <Route path="/" element={<Login onLogin={() => setIsToken(true)}/>} ></Route>
-            <Route path="/login" element={<Login onLogin={() => setIsToken(true)}/>} ></Route>
+            <Route path="/" element={<Login />} ></Route>
+            <Route path="/login" element={<Login />} ></Route>
             <Route path="/register" element={<Register />} ></Route>
-            {!isToken && <Route path="/home" element={<Login onLogin={() => setIsToken(true)}/>} ></Route>}
-            {isToken && <Route path="/home" element={<Home />} ></Route>}
+            {!jwt && <Route path="/home" element={<Login />} ></Route>}
+            {jwt && <Route path="/home" element={<Home />} ></Route>}
             <Route path="/:user/:file" element={<Editor />} ></Route>
             <Route path="*" element={<div>Not found!</div>} />
 

@@ -3,10 +3,11 @@ import React from 'react'
 import {Link, useNavigate} from "react-router-dom"
 
 type LoginProps = {
-    onLogin: () => void
+    jwt: string | null,
+    onChangeToken: (c: string | null) => void;
 }
 
-const Login = ({onLogin} : LoginProps) => {
+const Login = ({jwt, onChangeToken} : LoginProps) => {
 
     const navigate = useNavigate()
 
@@ -33,8 +34,8 @@ const Login = ({onLogin} : LoginProps) => {
         if (response.ok) {
             const data = await response.json()
             localStorage.setItem("token", data.token)
-            localStorage.setItem("logged_in", "true")
-            onLogin()
+            jwt = localStorage.getItem("token")
+            //onLogin()
 
 
             navigate("/home")
