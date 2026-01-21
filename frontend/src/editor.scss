@@ -4,6 +4,7 @@
     margin-top: 0;
   }
 
+
   /* List styles */
   ul,
   ol {
@@ -88,4 +89,48 @@
     border-top: 1px solid var(--gray-2);
     margin: 2rem 0;
   }
+}
+/* Bullet lists */
+.tiptap-editor ul li::marker {
+  color: #2563eb; /* blue bullets */
+  font-size: 1.2em;
+}
+
+/* Ordered lists */
+.tiptap-editor ol li::marker {
+  color: #dc2626; /* red numbers */
+  font-weight: bold;
+}
+
+/* Paragraphs */
+.tiptap-editor p {
+  color: #111;
+  line-height: 1.6;
+}
+
+/* Headings */
+.tiptap-editor h1 {
+  color: #ef4444; /* red */
+}
+.tiptap-editor h2 {
+  color: #f59e0b; /* orange */
+}
+.tiptap-editor h3 {
+  color: #10b981; /* green */
+}
+
+/* Code blocks */
+.tiptap-editor pre {
+  background: #1e293b; /* dark bg */
+  color: #f8fafc;
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+}
+
+/* Blockquotes */
+.tiptap-editor blockquote {
+  border-left: 3px solid #3b82f6;
+  padding-left: 1rem;
+  color: #475569;
+  font-style: italic;
 }

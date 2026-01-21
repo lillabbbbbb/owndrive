@@ -25,7 +25,7 @@ const Body = ({jwt, setJwt} : BodyProps) => {
             <Route path="/login" element={<Login jwt={jwt} setJwt={(c) => setJwt(c)}/>} ></Route>
             <Route path="/register" element={<Register />} ></Route>
             <Route path="/home" element={ <Home />} ></Route>
-            <Route path="/:user/:file" element={<Editor />} ></Route>
+            <Route path="/:user/:file" element={<Editor jwt={jwt}/>} ></Route>
             <Route path="*" element={<div>Not found!</div>} />
 
         </Routes>
