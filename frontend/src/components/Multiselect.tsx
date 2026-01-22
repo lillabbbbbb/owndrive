@@ -4,7 +4,7 @@ import * as React from "react"
 import { Check, ChevronsUpDown } from "lucide-react"
 import { cn } from "./components/ui/lib/utils"
 import { Button } from "./ui/button"
-import { Option } from "./FilterPopup"
+import { customOption } from "./FilterPopup"
 import {
   Command,
   CommandEmpty,
@@ -16,7 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
 
 
 interface MultiSelectProps {
-  options: Set<Option>,
+  options: customOption[],
   value: Set<string>,
   onChange: (value: Set<string>) => void
 }

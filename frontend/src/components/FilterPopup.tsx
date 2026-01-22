@@ -19,8 +19,10 @@ import {
 } from "../components/ui/select";
 import { Button } from "./ui/button"
 import { MultiSelect } from './Multiselect'
+import { Filter, Filters } from './Home';
+import { Text } from 'lucide-react';
 
-export type Option = {
+export type customOption = {
   label: string
   value: string
 }
@@ -36,40 +38,14 @@ enum dateOptions {
 
 
 type FilterDialogProps = {
-  files: User[]
+  filters: Filter<customOption>[],
+  onChange: (newFilters: Filters) => void   // callback to update parent
 }
 
-export function ControlledFilterDialog({ files }: FilterDialogProps) {
+export function ControlledFilterDialog({ filters, onChange }: FilterDialogProps) {
 
-  const usernames = [...new Set(files.map((user) => user.creator))]
-  const creatorOptions: Set<Option> = new Set(usernames.map(username => ({
-    label: username,
-    value: username,
-  })))
-
-  const fileTypes = [...new Set(files.map((user) => user.file_type))]
-
-  const fileTypeOptions: Set<Option> = new Set(fileTypes.map(fileType => ({
-    label: fileType,
-    value: fileType,
-  })))
 
   const [open, setOpen] = useState<boolean>(false)
-  const [creatorFilters, setCreatorFilters] = useState<Set<string>>(new Set())
-  const [dateFilter, setDateFilter] = useState(dateOptions.NONE)
-  const [fileTypeFilters, setFileTypeFilters] = useState<Set<string>>(new Set())
-
-
-  const handleDateFilterChange = (c: string) => {
-    console.log("Date filter is being changed")
-
-    Object.values(dateOptions).forEach((dateOption) => {
-      if (dateOption === c) {
-        setDateFilter(c)
-      }
-    })
-
-  }
 
   return (
     <>
@@ -77,36 +53,43 @@ export function ControlledFilterDialog({ files }: FilterDialogProps) {
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
-          <DialogHeader>
+          {/*<DialogHeader>
             <DialogTitle>Yes</DialogTitle>
-          </DialogHeader>
+          </DialogHeader>*/}
 
-          <div>
-            <p>Creator:</p>
-            {/*This creator dropdown is multiselect*/}
-            <MultiSelect onChange={setCreatorFilters} options={creatorOptions} value={creatorFilters} />
-
+          <div className="flex flex-col gap-4">
+            {filters.map((filter) => {
+              return (
+                <div key={filter.label} className="flex flex-col gap-2">
+                  <Text>{filter.label}</Text>
+                  {filter.type === "multi" ? (
+                    <MultiSelect
+                      options={filter.options}
+                      value={filter.selected as Set<string>}
+                      onChange={filter.onChange as (val: Set<string>) => void}
+                    />
+                  ) : (
+                    <Select
+                      value={filter.selected as string}
+                      onValueChange={filter.onChange as (val: string) => void}
+                    >
+                      <SelectTrigger className="w-48">
+                        <SelectValue placeholder={`Select ${filter.label}`} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {filter.options.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                </div>
+              )
+            })}
           </div>
 
-          <div>
-
-            <Select onValueChange={(c) => handleDateFilterChange(c)}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Select an option" />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(dateOptions).map(([key, value]) => (
-                  <SelectItem value={value}>
-                    {value}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <MultiSelect onChange={setFileTypeFilters} options={fileTypeOptions} value={fileTypeFilters} />
-          </div>
 
           {/*<Button onClick={() => setOpen(false)}>Close</Button>*/}
         </DialogContent>
@@ -114,22 +97,3 @@ export function ControlledFilterDialog({ files }: FilterDialogProps) {
     </>
   )
 }
-
-/*
-const FilterPopup = () => {
-
-
-  return (
-    <div>
-      <div>
-        <div>
-          <p>Creator:</p>
-          <FilterDropdown individualFilterOptions={dateOptions} />
-        </div>
-      </div>
-    </div>
-  )
-}
-
-export default FilterPopup
-*/

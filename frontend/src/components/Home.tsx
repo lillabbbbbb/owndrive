@@ -5,6 +5,7 @@ import FilesTable from './Table';
 import EditorButtons from './EditorButtons';
 import { Input } from "../components/ui/input";
 import { ControlledFilterDialog } from './FilterPopup';
+import { customOption } from './FilterPopup';
 
 export const sortingTypes = {
   by_last_modified: "Last modified",
@@ -13,7 +14,6 @@ export const sortingTypes = {
   by_user_descending: "By User (A-Z)",
   by_user_ascending: "By User (Z-A)"
 }
-
 
 export interface User {
   filename: string;
@@ -45,10 +45,23 @@ const usersData: User[] = [
   { filename: "data5.csv", file_type: "Spreadsheet", creator: "Bob", last_modified: "2025-12-31 19:15" },
 ];
 
+
+type FilterValue = string | Set<string>
+export interface Filter<customOption> {
+  label: string,                    // human-readable label
+  options: customOption[],                   // available choices
+  selected: FilterValue               // current selected value(s)
+  type: "single" | "multi"        // type of filter
+  onChange: (newValue: FilterValue) => void // update callback
+}
+
+export interface Filters {
+  fileTypes: Set<string>
+  owners: Set<string>
+  date: Set<string>
+}
+
 const Home = () => {
-
-  const fileNames = ["file1", "dummyfile2", "sth else", "Another one"]
-
 
   const [isClicked, setClicked] = useState(true)
   const [selectedSorting, setSelectedSorting] = useState(sortingTypes.by_last_modified)
@@ -56,7 +69,69 @@ const Home = () => {
   const [searchKeyword, setSearchKeyword] = useState("")
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
 
+
   const data = usersData
+
+  const fileTypes = [...new Set(data.map((user) => user.file_type))]
+  const ownerNames = [...new Set(data.map((user) => user.creator))]
+  enum datesEnum {
+  NONE = "None",
+  EDITED_TODAY = "Edited today",
+  EDITED_30_DAYS = "Edited this month",
+  EDITED_6_MONTHS = "Edited in 6 months",
+  EDITED_1_YEAR = "Edited in a year",
+  OLDER_THAN_1_YEAR = "Older than a year"
+}
+
+  const [filters, setFilters] = useState<Filters>({
+    fileTypes: new Set(),
+    owners: new Set(),
+    date: new Set(),
+  })
+
+  console.log(Array.from(filters.fileTypes))
+  console.log(filters.owners)
+  console.log(filters.date)
+
+
+  const fileTypeFilter: Filter<customOption> = {
+    label: "By file type:",
+    options: fileTypes.map(fileType => ({      // fileTypes = [...new Set(data.map(d => d.file_type))]
+      label: fileType,
+      value: fileType,
+    })),
+    type: "multi",
+    selected: filters.fileTypes,           // from parent state
+    onChange: (newSet) =>
+      setFilters(prev => ({ ...prev, fileTypes: newSet as Set<string> }))
+  }
+
+  const ownerFilter: Filter<customOption> = {
+    label: "By owner:",
+    options: ownerNames.map(owner => ({      // fileTypes = [...new Set(data.map(d => d.file_type))]
+      label: owner,
+      value: owner,
+    })),
+    type: "multi",
+    selected: filters.owners,
+    onChange: (newSet) =>
+      setFilters(prev => ({ ...prev, owners: newSet as Set<string> }))
+  }
+
+  const dateFilter: Filter<customOption> = {
+    label: "By date:",
+    options: Object.values(datesEnum).map(date => ({      // fileTypes = [...new Set(data.map(d => d.file_type))]
+      label: date,
+      value: date,
+    })),
+    type: "single",
+    selected: filters.date,
+    onChange: (newValue) =>
+      setFilters(prev => ({ ...prev, date: newValue as string })),
+  }
+
+  const filterConfigs = [fileTypeFilter, ownerFilter, dateFilter]
+
 
   console.log(selectedSorting)
 
@@ -114,9 +189,9 @@ const Home = () => {
       const matchesFilename = filename.includes(keyword);
       const matchesCreator = creator.includes(keyword);
 
-       console.log(
-    `Checking user: filename="${filename}", creator="${creator}", keyword="${keyword}" => filenameMatch=${matchesFilename}, creatorMatch=${matchesCreator}`
-  );
+      console.log(
+        `Checking user: filename="${filename}", creator="${creator}", keyword="${keyword}" => filenameMatch=${matchesFilename}, creatorMatch=${matchesCreator}`
+      );
 
       return matchesFilename || matchesCreator;
     });
@@ -178,9 +253,8 @@ const Home = () => {
       <div>
         <button onClick={() => handleCreateNewClick()}>Create new</button>
         <SortingDropdown value={selectedSorting} onChange={(value) => handleChangeSorting(value)} />
-        <button onClick={() => handleFilterClick()}>Filter</button>
-        
-        <ControlledFilterDialog files={data}/>
+
+        <ControlledFilterDialog filters={filterConfigs} onChange={(newFilters: Filters) => setFilters(newFilters)} />
       </div>
 
       {isClicked && <EditorButtons />}
