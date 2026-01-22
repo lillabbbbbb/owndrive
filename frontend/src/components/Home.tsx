@@ -4,6 +4,7 @@ import SortingDropdown from './SortingDropdown';
 import FilesTable from './Table';
 import EditorButtons from './EditorButtons';
 import { Input } from "../components/ui/input";
+import { ControlledFilterDialog } from './FilterPopup';
 
 export const sortingTypes = {
   by_last_modified: "Last modified",
@@ -178,6 +179,8 @@ const Home = () => {
         <button onClick={() => handleCreateNewClick()}>Create new</button>
         <SortingDropdown value={selectedSorting} onChange={(value) => handleChangeSorting(value)} />
         <button onClick={() => handleFilterClick()}>Filter</button>
+        
+        <ControlledFilterDialog files={data}/>
       </div>
 
       {isClicked && <EditorButtons />}
