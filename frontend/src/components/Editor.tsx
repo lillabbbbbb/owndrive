@@ -24,11 +24,25 @@ const Editor = ({jwt}: EditorProps) => {
   const [guestDialogOpen, setGuestDialogOpen] = useState<boolean>(true)
   const [beingUsed, setBeingUsed] = useState<boolean>(true)
 
+  const handleSave = () => {
+    //NOTE: create IFile instance, and push the changes to the existing/new record in DB
+
+    //if a file with this name doesnt exist in the user's drive
+        //create new file record and append it to the user
+
+    //if this file exists, but the content has been modified
+        //save new content
+
+
+  }
+
 
   return (
     <>
     {/* Render this if user is logged in */}
     {beingUsed && <ConcurrentEditingPopup />}
+
+    <Button onClick={() => handleSave()}>Save</Button>
     {<div>
       <EditorButtons />
       <div>
