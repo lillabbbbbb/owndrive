@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import React from 'react'
 import {Link, useNavigate} from "react-router-dom"
+import AppleNotAvailablePopup from "./popups/AppleNotAvailablePopup";
 
 type LoginProps = {
     jwt: string | null,
@@ -124,13 +125,8 @@ const Login = ({jwt, setJwt} : LoginProps) => {
                         >
                             Google
                         </button>
-                        <button
-                            type="button"
-                            className="flex-1 border border-gray-300 py-2 rounded-md hover:bg-gray-100 transition"
-                            onClick={() => handleAppleClick()}
-                        >
-                            Apple
-                        </button>
+                        <AppleNotAvailablePopup />
+                        
                         <p><Link to="/register">Or register here</Link>
                             
                         </p>

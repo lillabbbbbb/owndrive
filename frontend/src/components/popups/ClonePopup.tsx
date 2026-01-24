@@ -43,12 +43,22 @@ export function ClonePopup() {
 
 
     const [open, setOpen] = useState<boolean>(false)
-    const [changed, setChanged] = useState(false);
+    const [changed, setChanged] = useState<boolean>(false);
+    const [isInvalidName, setIsInvalidName] = useState<boolean>(false)
+    const [newName, setNewName] = useState("New document")
 
 
     const handleSave = async () => {
 
+        //
     };
+
+    const isValidFilename = () => {
+        //check if special characters are used like "/", etc.
+
+        //check if a file with this name in the user's drive already exists
+        setIsInvalidName(true)
+    }
 
     return (
         <>
@@ -69,6 +79,7 @@ export function ClonePopup() {
                                     </FieldDescription>
                                     <FieldLabel htmlFor="checkout-7j9-cvv">Name: </FieldLabel>
                                     <Input id="checkout-7j9-cvv" placeholder="123" required />
+                                    {isInvalidName && <FieldError>Invalid file name / File with this name already exists</FieldError>}
 
                                 </Field>
                             </FieldGroup>
