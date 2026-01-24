@@ -59,7 +59,7 @@ fileRouter.post("/:user/home/create",
             //NOTE: I COULD CREATE A MIDDLEWARE THAT DECONSTRUCTS THE TOKEN AND COMPARES IT TO THE USERNAME
 
             //check if there is already a file with this name in the db of the owner (schema within schema), return if so'
-            const existingFile: IFile | null = await File.findOne({ file_name: req.body.fileName })
+            const existingFile: IFile | null = await File.findOne({ filename: req.body.fileName })
             if (existingFile) return res.status(401).json({ "message": "A file with this name already exists" })
 
             //get the right user
@@ -79,7 +79,7 @@ fileRouter.post("/:user/home/create",
                 created_by: req.body.email,
                 last_edited_at: createdAt,
                 file_type: ".docx",
-                file_name: req.body.fileName,
+                filename: req.body.fileName,
                 content: content,
                 canView: [],
                 canEdit: [],
@@ -140,7 +140,7 @@ fileRouter.delete("/:user/files/delete",
                 user._id,
                 {
                     $pull: {
-                        files: {filename: existingFile.file_name}
+                        files: {filename: existingFile.filename}
                     }
                 },
                 { new: true }

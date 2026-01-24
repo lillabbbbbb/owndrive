@@ -41,9 +41,9 @@ const fileSchema = new mongoose_1.Schema({
     created_by: { type: String, required: true },
     last_edited_at: { type: Date, required: true },
     file_type: { type: String, required: true },
-    file_name: { type: String, required: true },
+    filename: { type: String, required: true },
     content: { type: String, required: true, default: "" },
-    word_cound: { type: Number, required: false },
+    word_count: { type: Number, required: false },
     canView: { type: (Array), required: true }, //list of usernames that can view the file
     canEdit: { type: (Array), required: true }, //list of usernames that can edit the file
     visibleToGuests: { type: Boolean, required: true },

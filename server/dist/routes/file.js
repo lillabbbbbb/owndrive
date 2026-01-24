@@ -39,7 +39,7 @@ fileRouter.post("/:user/home/create", async (req, res) => {
         //check if username (:user) matches the user signed inside the jwt token
         //NOTE: I COULD CREATE A MIDDLEWARE THAT DECONSTRUCTS THE TOKEN AND COMPARES IT TO THE USERNAME
         //check if there is already a file with this name in the db of the owner (schema within schema), return if so'
-        const existingFile = await File_1.File.findOne({ file_name: req.body.fileName });
+        const existingFile = await File_1.File.findOne({ filename: req.body.fileName });
         if (existingFile)
             return res.status(401).json({ "message": "A file with this name already exists" });
         //get the right user
@@ -57,7 +57,7 @@ fileRouter.post("/:user/home/create", async (req, res) => {
             created_by: req.body.email,
             last_edited_at: createdAt,
             file_type: ".docx",
-            file_name: req.body.fileName,
+            filename: req.body.fileName,
             content: content,
             canView: [],
             canEdit: [],
@@ -101,7 +101,7 @@ fileRouter.delete("/:user/files/delete", async (req, res) => {
         //delete record
         await User_1.User.findByIdAndUpdate(user._id, {
             $pull: {
-                files: { filename: existingFile.file_name }
+                files: { filename: existingFile.filename }
             }
         }, { new: true });
         return res.status(200).json({ "message": `File "${req.body.filename}" successfully deleted.` });

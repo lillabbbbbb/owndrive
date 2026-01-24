@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { sortingTypes, type User } from "./Home"
+import { sortingTypes } from "./Home"
+import {IFileTest} from "../App"
 
 //whole doc from chatGPT
 import {
@@ -14,21 +15,21 @@ import { useNavigate } from "react-router-dom";
 
 
 type TableProps = {
-  onRowClick: (info: User) => void;
-  sortedData: User[];
+  onRowClick: (info: IFileTest) => void;
+  sortedData: IFileTest[];
 }
 
 export default function FilesTable({ onRowClick, sortedData }: TableProps) {
   const navigate = useNavigate()
-  const [columns, setColumns] = useState<string[]>(["filename", "file_type", "creator", "last_modified"]);
+  const [columns, setColumns] = useState<string[]>(["filename", "file_type", "created_by", "last_edited_at"]);
   const [currentPage, setCurrentPage] = useState(1);
   const ROWS_PER_PAGE = 12;
 
 
 
-  const handleRowDoubleClick = (user: User) => {
+  const handleRowDoubleClick = (user: IFileTest) => {
     console.log(`${user.filename} double-clicked, file should be opened in editor...`)
-    navigate(`/${user.creator}/${user.filename}`)
+    navigate(`/${user.created_by}/${user.filename}`)
   }
 
   const toggleColumn = (col: string) => {
@@ -47,7 +48,7 @@ export default function FilesTable({ onRowClick, sortedData }: TableProps) {
     <div className="space-y-4">
       {/* Column selectors */}
       <div className="flex gap-2 flex-wrap">
-        {["filename", "file_type", "creator", "last_modified"].map((col) => (
+        {["filename", "file_type", "created_by", "last_edited_at"].map((col) => (
           <label key={col} className="flex items-center gap-1">
             <input
               type="checkbox"
@@ -67,8 +68,8 @@ export default function FilesTable({ onRowClick, sortedData }: TableProps) {
             <TableRow >
               {columns.includes("filename") && <TableHead>Name</TableHead>}
               {columns.includes("file_type") && <TableHead>Type</TableHead>}
-              {columns.includes("last_modified") && <TableHead>Last modified</TableHead>}
-              {columns.includes("creator") && <TableHead>Creator</TableHead>}
+              {columns.includes("last_edited_at") && <TableHead>Last modified</TableHead>}
+              {columns.includes("created_by") && <TableHead>Created By</TableHead>}
             </TableRow>
           </TableHeader>
 
@@ -77,8 +78,8 @@ export default function FilesTable({ onRowClick, sortedData }: TableProps) {
               <TableRow key={user.filename} onClick={() => onRowClick(user)} onDoubleClick={() => handleRowDoubleClick(user)}>
                 {columns.includes("filename") && <TableCell>{user.filename}</TableCell>}
                 {columns.includes("file_type") && <TableCell>{user.file_type}</TableCell>}
-                {columns.includes("last_modified") && <TableCell>{user.last_modified}</TableCell>}
-                {columns.includes("creator") && <TableCell>{user.creator}</TableCell>}
+                {columns.includes("last_edited_at") && <TableCell>{user.last_edited_at.toLocaleDateString()}</TableCell>}
+                {columns.includes("created_by") && <TableCell>{user.created_by}</TableCell>}
               </TableRow>
             ))}
           </TableBody>

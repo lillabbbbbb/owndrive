@@ -2,6 +2,7 @@
 
 import mongoose, {Document, Schema} from "mongoose";
 import { IFile } from "./File";
+import e from "express";
 
 export interface IUser extends Document {
    username?: string, //only for Google users?
@@ -12,10 +13,6 @@ export interface IUser extends Document {
    language: string,
    mode: string, //light or dark mode
    files: IFile[]
-}
-
-export interface IUserPopulated extends IUser {
-  files: IFile[]    // full objects
 }
 
 
@@ -31,6 +28,5 @@ const userSchema = new Schema({
     mode: {type: String, required: true},
 })
 
-const User: mongoose.Model<IUser> = mongoose.model<IUser>("User", userSchema)
+export const User: mongoose.Model<IUser> = mongoose.model<IUser>("User", userSchema)
 
-export {User, IUser}

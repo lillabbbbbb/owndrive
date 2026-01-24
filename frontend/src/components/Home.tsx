@@ -9,6 +9,7 @@ import { customOption } from './FilterPopup';
 import { IFile } from "../../../server/src/models/File"
 import { IUser, IUserPopulated } from "../../../server/src/models/User"
 import {IUserTest, IFileTest} from "../App"
+import { useNavigate } from "react-router-dom";
 
 
 export const sortingTypes = {
@@ -42,6 +43,8 @@ type HomeProps = {
 }
 
 const Home = ({ userData, setUserData }: HomeProps) => {
+
+  const navigate = useNavigate()
 
   const getUserFiles = () => {
     return userData.files || []
@@ -184,15 +187,9 @@ const Home = ({ userData, setUserData }: HomeProps) => {
     console.log("Create new button clicked")
 
     //should redirect to editor page
+    navigate(`/${userData.username}/"New file"`)
   }
 
-  const handleFilterClick = () => {
-    console.log("Filter button clicked")
-
-    //bring dialog popup window small
-
-
-  }
   const handleRowClick = () => {
     setClicked(true) //file-scoped menu appears now
   }

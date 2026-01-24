@@ -40,9 +40,9 @@ export interface IUserTest {
 }
 
 const testUserData: IUserTest = {
-  username: "alice_google",
+  username: "alice",
   email: "alice@example.com",
-  password_hash: "hash123",
+  password_hash: "vik12W///",
   profile_pic: "https://i.pravatar.cc/150?img=1",
   language: "en",
   mode: "light",
