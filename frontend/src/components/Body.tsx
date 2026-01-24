@@ -6,13 +6,15 @@ import { Navigate } from 'react-router-dom'
 import Register from './Register'
 import Home from './Home'
 import Editor from './Editor'
+import {IUser} from '../App'
 
 type BodyProps = {
+    userData: IUser[],
     jwt: string | null,
     setJwt: (c: string | null) => void;
 }
 
-const Body = ({jwt, setJwt} : BodyProps) => {
+const Body = ({userData, jwt, setJwt} : BodyProps) => {
 
   return (
     <div>
@@ -24,7 +26,7 @@ const Body = ({jwt, setJwt} : BodyProps) => {
             <Route path="/" element={<Login jwt={jwt} setJwt={(c) => setJwt(c)}/>} ></Route>
             <Route path="/login" element={<Login jwt={jwt} setJwt={(c) => setJwt(c)}/>} ></Route>
             <Route path="/register" element={<Register />} ></Route>
-            <Route path="/home" element={ <Home />} ></Route>
+            <Route path="/home" element={ <Home userData={userData}/>} ></Route>
             <Route path="/:user/:file" element={<Editor jwt={jwt}/>} ></Route>
             <Route path="*" element={<div>Not found!</div>} />
 
