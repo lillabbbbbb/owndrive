@@ -1,25 +1,22 @@
 import React from 'react'
-
-
 import { useState } from "react"
-import { User } from './Home'
 //https://ui.shadcn.com/docs/components/radix/dialog
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "./ui/dialog"
+} from "../ui/dialog"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
-} from "../components/ui/select";
-import { Button } from "./ui/button"
-import { MultiSelect } from './Multiselect'
-import { Filter, Filters } from './Home';
+} from "../ui/select";
+import { Button } from "../ui/button"
+import { MultiSelect } from '../Multiselect'
+import { Filter, Filters } from '../Home';
 import { Text } from 'lucide-react';
 
 export type customOption = {

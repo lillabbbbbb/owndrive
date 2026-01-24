@@ -1,7 +1,7 @@
 import React from 'react'
 import EditorButtons from './EditorButtons'
 import EditorField from "./EditorField"
-import { ControlledFilterDialog } from './FilterPopup';
+import { ControlledFilterDialog } from './popups/FilterPopup';
 
 
 type EditorProps = {

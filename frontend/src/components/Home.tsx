@@ -4,8 +4,8 @@ import SortingDropdown from './SortingDropdown';
 import FilesTable from './Table';
 import EditorButtons from './EditorButtons';
 import { Input } from "../components/ui/input";
-import { ControlledFilterDialog } from './FilterPopup';
-import { customOption } from './FilterPopup';
+import { ControlledFilterDialog } from './popups/FilterPopup';
+import { customOption } from './popups/FilterPopup';
 import { IFile } from "../../../server/src/models/File"
 import { IUser } from "../../../server/src/models/User"
 import {IUserTest, IFileTest} from "../App"
@@ -50,7 +50,7 @@ const Home = ({ userData, setUserData }: HomeProps) => {
     return userData.files || []
   }
 
-  const [isClicked, setClicked] = useState(true)
+  const [isClicked, setClicked] = useState(false)
   const [selectedSorting, setSelectedSorting] = useState(sortingTypes.by_last_modified)
   const [sortedData, setSortedData] = useState(getUserFiles())
   const [searchKeyword, setSearchKeyword] = useState("")
@@ -236,7 +236,7 @@ const Home = ({ userData, setUserData }: HomeProps) => {
         <ControlledFilterDialog filters={filterConfigs} onChange={(newFilters: Filters) => setFilters(newFilters)} />
       </div>
 
-      {isClicked && <EditorButtons />}
+      {/*{isClicked && <EditorButtons/>}*/}
 
 
       <FilesTable onRowClick={() => handleRowClick()} sortedData={sortedData} />

@@ -4,7 +4,7 @@ import * as React from "react"
 import { Check, ChevronsUpDown } from "lucide-react"
 import { cn } from "./components/ui/lib/utils"
 import { Button } from "./ui/button"
-import { customOption } from "./FilterPopup"
+import { customOption } from "./popups/FilterPopup"
 import {
   Command,
   CommandEmpty,

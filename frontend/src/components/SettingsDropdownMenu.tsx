@@ -31,10 +31,16 @@ const handleLogout = () => {
     const handleProfilePic = () => {
         console.log("Change profile pic button clicked")
 
+        //ProfilePicturePopup should open
+
     }
 
     const handleModeChange = () => {
         console.log("Mode button clicked")
+
+        //Mode should be changed:
+          //Dark -> Light
+          //Light -> Dark
 
     }
 
