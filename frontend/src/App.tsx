@@ -3,53 +3,257 @@ import Header from "./components/Header"
 import Body from "./components/Body"
 import { BrowserRouter } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import {IUser, IUserPopulated} from "../../server/src/models/User"
 
 
 
 //tailwind css class hardcoded variables can come here
 
 
-export interface IUser {
-  filename: string;
-  file_type: string;
-  creator: string;
-  last_modified: string;
+
+export interface IFileTest {
+  _id: string,
+   created_at: Date,
+   created_by: string,
+   last_edited_at: Date,
+   file_type: string,
+   filename: string,
+   content: string,
+   word_count?: number,
+   canView: string[], //list of usernames that can view the file
+   canEdit: string[], //list of usernames that can edit the file
+   visibleToGuests: boolean,
+   showsInHomeShared: boolean,
+   private: boolean,
+   inUse: boolean, //= is anyone viewing (with edit permission) /editing this document
+   usedBy?: string //the user _id, if any, that is "using" the file
+}
+export interface IUserTest {
+   username?: string, //only for Google users?
+   //googleId?: string, //google ID
+   email: string,
+   password_hash?: string,
+   profile_pic?: string, //!
+   language: string,
+   mode: string, //light or dark mode
+   files: IFileTest[]
 }
 
-const usersData: IUser[] = [
-  { filename: "report1", file_type: ".docx", creator: "Alice", last_modified: "2026-01-19 09:30" },
-  { filename: "presentation1.pptx", file_type: "Presentation", creator: "Bob", last_modified: "2026-01-18 16:45" },
-  { filename: "photo1.png", file_type: "Image", creator: "Charlie", last_modified: "2026-01-17 12:10" },
-  { filename: "data1.csv", file_type: "Spreadsheet", creator: "Alice", last_modified: "2026-01-16 08:55" },
-  { filename: "report2.docx", file_type: "Document", creator: "Bob", last_modified: "2026-01-15 14:20" },
-  { filename: "presentation2.pptx", file_type: "Presentation", creator: "Charlie", last_modified: "2026-01-14 11:05" },
-  { filename: "photo2.png", file_type: "Image", creator: "Alice", last_modified: "2026-01-13 18:40" },
-  { filename: "data2.csv", file_type: "Spreadsheet", creator: "Bob", last_modified: "2026-01-12 09:15" },
-  { filename: "report3.docx", file_type: "Document", creator: "Charlie", last_modified: "2026-01-11 17:30" },
-  { filename: "presentation3.pptx", file_type: "Presentation", creator: "Alice", last_modified: "2026-01-10 13:50" },
-  { filename: "photo3.png", file_type: "Image", creator: "Bob", last_modified: "2026-01-09 10:25" },
-  { filename: "data3.csv", file_type: "Spreadsheet", creator: "Charlie", last_modified: "2026-01-08 15:05" },
-  { filename: "report4.docx", file_type: "Document", creator: "Alice", last_modified: "2026-01-07 12:00" },
-  { filename: "presentation4.pptx", file_type: "Presentation", creator: "Bob", last_modified: "2026-01-06 16:45" },
-  { filename: "photo4.png", file_type: "Image", creator: "Charlie", last_modified: "2026-01-05 09:30" },
-  { filename: "data4.csv", file_type: "Spreadsheet", creator: "Alice", last_modified: "2026-01-04 14:10" },
-  { filename: "report5.docx", file_type: "Document", creator: "Bob", last_modified: "2026-01-03 11:20" },
-  { filename: "presentation5.pptx", file_type: "Presentation", creator: "Charlie", last_modified: "2026-01-02 17:35" },
-  { filename: "photo5.png", file_type: "Image", creator: "Alice", last_modified: "2026-01-01 08:50" },
-  { filename: "data5.csv", file_type: "Spreadsheet", creator: "Bob", last_modified: "2025-12-31 19:15" },
-];
+const testUserData: IUserTest = {
+  username: "alice_google",
+  email: "alice@example.com",
+  password_hash: "hash123",
+  profile_pic: "https://i.pravatar.cc/150?img=1",
+  language: "en",
+  mode: "light",
+  files: [
+    {
+      _id : "63f1a3b2c4d5e6f789012345",
+      created_at: new Date("2026-01-23T08:00:00Z"),
+      created_by: "alice_google",
+      last_edited_at: new Date("2026-01-23T12:00:00Z"),
+      file_type: "pdf",
+      filename: "report.pdf",
+      content: "This is the annual report content...",
+      word_count: 1200,
+      canView: ["bob_google", "charlie@example.com"],
+      canEdit: ["alice_google"],
+      visibleToGuests: false,
+      showsInHomeShared: true,
+      private: true,
+      inUse: false,
+    },
+    {
+      _id : "63f1a3b2c4d5e6f789012346",
+      created_at: new Date("2026-01-22T09:00:00Z"),
+      created_by: "alice_google",
+      last_edited_at: new Date("2026-01-22T09:15:00Z"),
+      file_type: "png",
+      filename: "photo.png",
+      content: "binary image data placeholder",
+      canView: ["bob_google"],
+      canEdit: ["alice_google"],
+      visibleToGuests: true,
+      showsInHomeShared: true,
+      private: false,
+      inUse: true,
+      usedBy: "bob_google",
+    },
+    {
+      
+      _id : "63f1a3b2c4d5e6f789012347",
+      created_at: new Date("2026-01-21T10:00:00Z"),
+      created_by: "alice_google",
+      last_edited_at: new Date("2026-01-21T11:00:00Z"),
+      file_type: "txt",
+      filename: "notes.txt",
+      content: "Meeting notes and ideas...",
+      word_count: 300,
+      canView: ["alice_google"],
+      canEdit: ["alice_google"],
+      visibleToGuests: false,
+      showsInHomeShared: false,
+      private: true,
+      inUse: false,
+    },
+    {
+      
+      _id : "63f1a3b2c4d5e6f789012348",
+      created_at: new Date("2026-01-20T08:00:00Z"),
+      created_by: "alice_google",
+      last_edited_at: new Date("2026-01-20T08:30:00Z"),
+      file_type: "pptx",
+      filename: "presentation.pptx",
+      content: "Slides for upcoming meeting...",
+      canView: ["bob_google"],
+      canEdit: ["alice_google"],
+      visibleToGuests: true,
+      showsInHomeShared: true,
+      private: false,
+      inUse: false,
+    },
+    {
+      
+      _id : "63f1a3b2c4d5e6f789012349",
+      created_at: new Date("2026-01-19T09:30:00Z"),
+      created_by: "alice_google",
+      last_edited_at: new Date("2026-01-19T12:00:00Z"),
+      file_type: "xlsx",
+      filename: "budget.xlsx",
+      content: "Spreadsheet of the budget...",
+      canView: ["alice_google", "bob_google"],
+      canEdit: ["alice_google"],
+      visibleToGuests: false,
+      showsInHomeShared: false,
+      private: true,
+      inUse: true,
+      usedBy: "alice_google",
+    },
+    {
+      
+      _id : "63f1a3b2c4d5e6f78901234a",
+      created_at: new Date("2026-01-18T07:15:00Z"),
+      created_by: "alice_google",
+      last_edited_at: new Date("2026-01-18T10:00:00Z"),
+      file_type: "svg",
+      filename: "logo.svg",
+      content: "<svg>...</svg>",
+      canView: ["alice_google", "charlie@example.com"],
+      canEdit: ["alice_google"],
+      visibleToGuests: true,
+      showsInHomeShared: true,
+      private: false,
+      inUse: false,
+    },
+    {
+      
+  _id : "63f1a3b2c4d5e6f78901234b",
+      created_at: new Date("2026-01-17T06:45:00Z"),
+      created_by: "alice_google",
+      last_edited_at: new Date("2026-01-17T07:50:00Z"),
+      file_type: "docx",
+      filename: "manual.docx",
+      content: "User manual content...",
+      word_count: 2500,
+      canView: ["alice_google", "bob_google"],
+      canEdit: ["alice_google"],
+      visibleToGuests: false,
+      showsInHomeShared: true,
+      private: true,
+      inUse: false,
+    },
+    {
+      
+  _id : "63f1a3b2c4d5e6f78901234c",
+      created_at: new Date("2026-01-16T05:30:00Z"),
+      created_by: "alice_google",
+      last_edited_at: new Date("2026-01-16T10:25:00Z"),
+      file_type: "vsdx",
+      filename: "diagram.vsdx",
+      content: "Flowchart diagram content...",
+      canView: ["bob_google"],
+      canEdit: ["alice_google"],
+      visibleToGuests: false,
+      showsInHomeShared: false,
+      private: true,
+      inUse: false,
+    },
+    {
+      
+  _id : "63f1a3b2c4d5e6f78901234d",
+      created_at: new Date("2026-01-15T12:00:00Z"),
+      created_by: "alice_google",
+      last_edited_at: new Date("2026-01-15T13:45:00Z"),
+      file_type: "zip",
+      filename: "archive.zip",
+      content: "Zipped project files...",
+      canView: ["alice_google", "bob_google", "charlie@example.com"],
+      canEdit: ["alice_google"],
+      visibleToGuests: true,
+      showsInHomeShared: true,
+      private: false,
+      inUse: false,
+    },
+    {
+      
+  _id :"63f1a3b2c4d5e6f78901234e",
+      created_at: new Date("2026-01-14T08:00:00Z"),
+      created_by: "alice_google",
+      last_edited_at: new Date("2026-01-14T09:05:00Z"),
+      file_type: "js",
+      filename: "script.js",
+      content: "console.log('Hello World');",
+      canView: ["alice_google"],
+      canEdit: ["alice_google"],
+      visibleToGuests: false,
+      showsInHomeShared: false,
+      private: true,
+      inUse: true,
+      usedBy: "alice_google",
+    },
+    {
+      
+  _id : "63f1a3b2c4d5e6f78901234f",
+      created_at: new Date("2026-01-13T07:20:00Z"),
+      created_by: "alice_google",
+      last_edited_at: new Date("2026-01-13T08:10:00Z"),
+      file_type: "html",
+      filename: "index.html",
+      content: "<!DOCTYPE html><html>...</html>",
+      canView: ["alice_google", "bob_google"],
+      canEdit: ["alice_google"],
+      visibleToGuests: true,
+      showsInHomeShared: true,
+      private: false,
+      inUse: false,
+    },
+    {
+      
+  _id : "63f1a3b2c4d5e6f789012350",
+      created_at: new Date("2026-01-12T06:15:00Z"),
+      created_by: "alice_google",
+      last_edited_at: new Date("2026-01-12T07:00:00Z"),
+      file_type: "css",
+      filename: "styles.css",
+      content: "body { background-color: #fff; }",
+      canView: ["alice_google", "charlie@example.com"],
+      canEdit: ["alice_google"],
+      visibleToGuests: true,
+      showsInHomeShared: true,
+      private: false,
+      inUse: false,
+    },
+  ],
+};
+
 
 
 function App() {
 
   const [jwt, setJwt] = useState<string | null>(null)
   //from server fetch: logged in user's personal data (User)
-  const [userData, setUserData] = useState([])
+  const [userData, setUserData] = useState(testUserData)
   //from server fetch: logged in user's files (File[])
-  const [userFiles, setUserFiles] = useState([]])
-
-  const [language, setLanguage] = useState("en")
-  const [mode, setMode] = useState("light")
 
 
   useEffect(() => {
@@ -63,7 +267,7 @@ function App() {
     <>
       <BrowserRouter>
         <Header jwt={jwt} setJwt={(c) => setJwt(c)}/>
-        <Body userData={userData} jwt={jwt} setJwt={(c) => setJwt(c)}/>
+        <Body userData={userData} setUserData={setUserData} jwt={jwt} setJwt={(c) => setJwt(c)}/>
 
       </BrowserRouter>
     </>

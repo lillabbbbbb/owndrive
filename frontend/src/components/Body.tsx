@@ -6,15 +6,19 @@ import { Navigate } from 'react-router-dom'
 import Register from './Register'
 import Home from './Home'
 import Editor from './Editor'
-import {IUser} from '../App'
+import {IFile} from "../../../server/src/models/File"
+import {IUser, IUserPopulated} from "../../../server/src/models/User"
+import {IUserTest, IFileTest} from "../App"
+
 
 type BodyProps = {
-    userData: IUser[],
+    userData: IUserTest,
+    setUserData: (modifiedUser : IUserTest) => void,
     jwt: string | null,
     setJwt: (c: string | null) => void;
 }
 
-const Body = ({userData, jwt, setJwt} : BodyProps) => {
+const Body = ({userData, setUserData, jwt, setJwt} : BodyProps) => {
 
   return (
     <div>
@@ -26,7 +30,7 @@ const Body = ({userData, jwt, setJwt} : BodyProps) => {
             <Route path="/" element={<Login jwt={jwt} setJwt={(c) => setJwt(c)}/>} ></Route>
             <Route path="/login" element={<Login jwt={jwt} setJwt={(c) => setJwt(c)}/>} ></Route>
             <Route path="/register" element={<Register />} ></Route>
-            <Route path="/home" element={ <Home userData={userData}/>} ></Route>
+            <Route path="/home" element={ <Home userData={userData} setUserData={setUserData}/>} ></Route>
             <Route path="/:user/:file" element={<Editor jwt={jwt}/>} ></Route>
             <Route path="*" element={<div>Not found!</div>} />
 

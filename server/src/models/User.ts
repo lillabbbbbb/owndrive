@@ -3,7 +3,7 @@
 import mongoose, {Document, Schema} from "mongoose";
 import { IFile } from "./File";
 
-interface IUser extends Document {
+export interface IUser extends Document {
    username?: string, //only for Google users?
    //googleId?: string, //google ID
    email: string,
@@ -13,6 +13,11 @@ interface IUser extends Document {
    mode: string, //light or dark mode
    files: IFile[]
 }
+
+export interface IUserPopulated extends IUser {
+  files: IFile[]    // full objects
+}
+
 
 const userSchema = new Schema({
     username: {type: String, required: false, unique: true},

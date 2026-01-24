@@ -6,7 +6,10 @@ import EditorButtons from './EditorButtons';
 import { Input } from "../components/ui/input";
 import { ControlledFilterDialog } from './FilterPopup';
 import { customOption } from './FilterPopup';
-import {IUser} from "../App"
+import { IFile } from "../../../server/src/models/File"
+import { IUser, IUserPopulated } from "../../../server/src/models/User"
+import {IUserTest, IFileTest} from "../App"
+
 
 export const sortingTypes = {
   by_last_modified: "Last modified",
@@ -34,28 +37,33 @@ export interface Filters {
 }
 
 type HomeProps = {
-  userData : IUser[]
+  userData: IUserTest,
+  setUserData: (modifiedUser : IUserTest) => void
 }
 
-const Home = ({userData} : HomeProps) => {
+const Home = ({ userData, setUserData }: HomeProps) => {
+
+  const getUserFiles = () => {
+    return userData.files || []
+  }
 
   const [isClicked, setClicked] = useState(true)
   const [selectedSorting, setSelectedSorting] = useState(sortingTypes.by_last_modified)
-  const [sortedData, setSortedData] = useState(userData)
+  const [sortedData, setSortedData] = useState(getUserFiles())
   const [searchKeyword, setSearchKeyword] = useState("")
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
 
 
-  const fileTypes = [...new Set(userData.map((user) => user.file_type))]
-  const ownerNames = [...new Set(userData.map((user) => user.creator))]
+  const fileTypes = [...new Set(getUserFiles().map((file) => file.file_type))]
+  const ownerNames = [...new Set(getUserFiles().map((file) => file.created_by))]
   enum datesEnum {
-  NONE = "None",
-  EDITED_TODAY = "Edited today",
-  EDITED_30_DAYS = "Edited this month",
-  EDITED_6_MONTHS = "Edited in 6 months",
-  EDITED_1_YEAR = "Edited in a year",
-  OLDER_THAN_1_YEAR = "Older than a year"
-}
+    NONE = "None",
+    EDITED_TODAY = "Edited today",
+    EDITED_30_DAYS = "Edited this month",
+    EDITED_6_MONTHS = "Edited in 6 months",
+    EDITED_1_YEAR = "Edited in a year",
+    OLDER_THAN_1_YEAR = "Older than a year"
+  }
 
   const [filters, setFilters] = useState<Filters>({
     fileTypes: new Set(),
@@ -115,18 +123,18 @@ const Home = ({userData} : HomeProps) => {
 
 
     //filter the results based on the search yet
-    const array = matchSearch([...userData], keyword)
+    const array = matchSearch([...getUserFiles()], keyword)
 
     console.log(array)
 
 
-    let sortedArray: IUser[] = []
+    let sortedArray: IFileTest[] = []
 
     if (selectedSorting === sortingTypes.by_last_modified) {
       sortedArray = array.sort(
         (a, b) =>
-          new Date(b.last_modified).getTime() -
-          new Date(a.last_modified).getTime()
+          new Date(b.last_edited_at).getTime() -
+          new Date(a.last_edited_at).getTime()
       );
     } else if (selectedSorting === sortingTypes.by_name_ascending) {
       sortedArray = array.sort((a, b) =>
@@ -139,26 +147,26 @@ const Home = ({userData} : HomeProps) => {
       );
     } else if (selectedSorting === sortingTypes.by_user_ascending) {
       sortedArray = array.sort((a, b) =>
-        a.creator.localeCompare(b.creator)
+        a.created_by.localeCompare(b.created_by)
       );
 
     } else if (selectedSorting === sortingTypes.by_user_descending) {
       sortedArray = array.sort((a, b) =>
-        b.creator.localeCompare(a.creator)
+        b.created_by.localeCompare(a.created_by)
       );
     }
     setSortedData(sortedArray)
   }
 
-  const matchSearch = (data: IUser[], keyword?: string) => {
+  const matchSearch = (data: IFileTest[], keyword?: string) => {
 
     //show all results if no keyword is given
     if (!keyword) return data
 
 
-    return data.filter((user) => {
-      const filename = user.filename.toLowerCase();
-      const creator = user.creator.toLowerCase();
+    return data.filter((file) => {
+      const filename = file.filename.toLowerCase();
+      const creator = file.created_by.toLowerCase();
 
       const matchesFilename = filename.includes(keyword);
       const matchesCreator = creator.includes(keyword);
