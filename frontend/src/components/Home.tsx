@@ -7,7 +7,7 @@ import { Input } from "../components/ui/input";
 import { ControlledFilterDialog } from './FilterPopup';
 import { customOption } from './FilterPopup';
 import { IFile } from "../../../server/src/models/File"
-import { IUser, IUserPopulated } from "../../../server/src/models/User"
+import { IUser } from "../../../server/src/models/User"
 import {IUserTest, IFileTest} from "../App"
 import { useNavigate } from "react-router-dom";
 
@@ -20,7 +20,7 @@ export const sortingTypes = {
   by_user_ascending: "By User (Z-A)"
 }
 
-
+const DEFAULT_FILE_NAME = "New file"
 
 type FilterValue = string | Set<string>
 export interface Filter<customOption> {
@@ -187,7 +187,7 @@ const Home = ({ userData, setUserData }: HomeProps) => {
     console.log("Create new button clicked")
 
     //should redirect to editor page
-    navigate(`/${userData.username}/"New file"`)
+    navigate(`/${userData.username}/${DEFAULT_FILE_NAME}`)
   }
 
   const handleRowClick = () => {

@@ -3,7 +3,7 @@ import Header from "./components/Header"
 import Body from "./components/Body"
 import { BrowserRouter } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import {IUser, IUserPopulated} from "../../server/src/models/User"
+import {IUser} from "../../server/src/models/User"
 
 
 
@@ -251,9 +251,8 @@ const testUserData: IUserTest = {
 function App() {
 
   const [jwt, setJwt] = useState<string | null>(null)
-  //from server fetch: logged in user's personal data (User)
-  const [userData, setUserData] = useState(testUserData)
-  //from server fetch: logged in user's files (File[])
+  //from server fetch: logged in user's personal data (IUser[])
+  const [userData, setUserData] = useState<IUserTest>(testUserData)
 
 
   useEffect(() => {
@@ -266,7 +265,7 @@ function App() {
   return (
     <>
       <BrowserRouter>
-        <Header jwt={jwt} setJwt={(c) => setJwt(c)}/>
+        <Header userData={userData} setUserData={setUserData} jwt={jwt} setJwt={(c) => setJwt(c)}/>
         <Body userData={userData} setUserData={setUserData} jwt={jwt} setJwt={(c) => setJwt(c)}/>
 
       </BrowserRouter>

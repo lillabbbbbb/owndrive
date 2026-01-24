@@ -7,7 +7,7 @@ import Register from './Register'
 import Home from './Home'
 import Editor from './Editor'
 import {IFile} from "../../../server/src/models/File"
-import {IUser, IUserPopulated} from "../../../server/src/models/User"
+import {IUser} from "../../../server/src/models/User"
 import {IUserTest, IFileTest} from "../App"
 
 
