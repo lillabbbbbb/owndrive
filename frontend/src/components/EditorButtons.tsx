@@ -1,9 +1,17 @@
-import React, { ReactElement } from 'react'
-import { Button } from '@mui/material'
+import React, { ReactElement, useState } from 'react'
 import { Tooltip, TooltipTrigger, TooltipContent } from "../components/ui/tooltip"
 import { HiShare } from "react-icons/hi2";
 import SharePopup from './popups/SharePopup';
 import { ClonePopup } from './popups/ClonePopup';
+import {
+    Dialog,
+    DialogContent,
+    DialogClose,
+    DialogHeader,
+    DialogTitle,
+} from "./ui/dialog"
+import { Label } from "./ui/label"
+import { Button } from "./ui/button"
 
 interface EditorButtonsProps {
   tooltip: string         // Tooltip text
@@ -13,6 +21,8 @@ interface EditorButtonsProps {
 }
 
 const EditorButtons = () => {
+
+  const [PDFDialogOpen, setPDFDialogOpen] = useState<boolean>(false)
 
   const handleShareButtonClick = () => {
     console.log("Share button clicked, small window should pop up")
@@ -27,6 +37,8 @@ const EditorButtons = () => {
   }
   const handlePDFButtonClick = () => {
     console.log("PDF button clicked, cool sonner banner should appear after successful download")
+
+    setPDFDialogOpen(true)
 
     //Handle PDF download logic
 
@@ -68,7 +80,7 @@ const EditorButtons = () => {
       <Tooltip>
         <TooltipTrigger asChild>
           <button
-            onClick={() => handleCloneButtonClick}
+            onClick={() => setPDFDialogOpen(true)}
             className={
               "rounded bg-sky-600 px-4 py-2 text-sm text-white data-active:bg-sky-700 data-hover:bg-sky-500"}
           >
@@ -79,6 +91,27 @@ const EditorButtons = () => {
           Download PDF
         </TooltipContent>
       </Tooltip>
+
+      <Dialog open={PDFDialogOpen} onOpenChange={setPDFDialogOpen}>
+                <DialogContent>
+                    {/*<DialogHeader>
+            <DialogTitle>Yes</DialogTitle>
+          </DialogHeader>*/}
+
+                    <div className="flex flex-col gap-4">
+
+                        <Label>This feature is not available yet.</Label>
+
+                        <Label>
+                            ...</Label>
+
+                    </div>
+                    <DialogClose asChild>
+                        <Button variant="outline">OK</Button>
+                    </DialogClose>
+
+                </DialogContent>
+            </Dialog>
 
       <Tooltip>
         <TooltipTrigger asChild>

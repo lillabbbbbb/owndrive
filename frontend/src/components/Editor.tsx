@@ -11,6 +11,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "./ui/dialog"
+import ConcurrentEditingPopup from './popups/ConcurrentEditingPopup';
 
 
 type EditorProps = {
@@ -21,13 +22,17 @@ type EditorProps = {
 const Editor = ({jwt}: EditorProps) => {
 
   const [guestDialogOpen, setGuestDialogOpen] = useState<boolean>(true)
+  const [beingUsed, setBeingUsed] = useState<boolean>(true)
+
+
   return (
     <>
     {/* Render this if user is logged in */}
-    {jwt && <div>
+    {beingUsed && <ConcurrentEditingPopup />}
+    {<div>
       <EditorButtons />
       <div>
-        <EditorField />
+        <EditorField jwt={jwt}/>
         <div>Word count</div>
       </div>
 

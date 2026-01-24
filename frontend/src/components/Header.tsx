@@ -49,7 +49,8 @@ const Header = ({ userData, setUserData, jwt, setJwt }: HeaderProps) => {
             </div>
 
             {/* Right: User avatar + dropdown */}
-            <SettingsDropdownMenu userData={userData} setUserData={setUserData} jwt={jwt} setJwt={(c) => setJwt(c)} />
+            {jwt && <SettingsDropdownMenu userData={userData} setUserData={setUserData} jwt={jwt} setJwt={(c) => setJwt(c)} />}
+            
         </header>
     )
 }

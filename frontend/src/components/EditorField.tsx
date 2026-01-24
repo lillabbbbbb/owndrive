@@ -13,12 +13,15 @@ const BRIGHT_BUTTON_CLASS = "rounded bg-sky-600 px-4 py-2 text-sm text-white dat
 
 const extensions = [TextStyleKit, StarterKit]
 
-function EditorMenu({ editor }: { editor: Editor }) {
-  // Read the current editor's state, and re-render the component when it changes
+function EditorMenu({ editor, jwt }: { editor: Editor, jwt: string | null }) {
+
+
+
   const editorState = useEditorState({
     editor,
     selector: ctx => {
       return {
+        editable: (jwt ? true : false),
         isBold: ctx.editor.isActive('bold') ?? false,
         canBold: ctx.editor.can().chain().toggleBold().run() ?? false,
         isItalic: ctx.editor.isActive('italic') ?? false,
@@ -206,7 +209,11 @@ function EditorMenu({ editor }: { editor: Editor }) {
   )
 }
 
-export default () => {
+type EditorFieldProps = {
+  jwt: string | null
+}
+
+const EditorField =  ({jwt} : EditorFieldProps) => {
   const editor = useEditor({
     extensions,
     content: `
@@ -225,8 +232,10 @@ export default () => {
   })
   return (
     <div>
-      <EditorMenu editor={editor} />
+      <EditorMenu editor={editor} jwt={jwt}/>
       <EditorContent editor={editor} className="tiptap-editor prose prose-slate dark:prose-invert"/>
     </div>
   )
 }
+
+export default EditorField
