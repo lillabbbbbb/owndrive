@@ -3,6 +3,7 @@ import { Button } from '@mui/material'
 import { Tooltip, TooltipTrigger, TooltipContent } from "../components/ui/tooltip"
 import { HiShare } from "react-icons/hi2";
 import SharePopup from './popups/SharePopup';
+import { ClonePopup } from './popups/ClonePopup';
 
 interface EditorButtonsProps {
   tooltip: string         // Tooltip text
@@ -57,13 +58,7 @@ const EditorButtons = () => {
 
       <Tooltip>
         <TooltipTrigger asChild>
-          <button
-            onClick={() => handleCloneButtonClick}
-            className={
-              "rounded bg-sky-600 px-4 py-2 text-sm text-white data-active:bg-sky-700 data-hover:bg-sky-500"}
-          >
-            C
-          </button>
+          <ClonePopup />
         </TooltipTrigger>
         <TooltipContent side="top">
           Clone
