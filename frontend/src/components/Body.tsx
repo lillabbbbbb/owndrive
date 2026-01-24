@@ -21,7 +21,7 @@ type BodyProps = {
 const Body = ({userData, setUserData, jwt, setJwt} : BodyProps) => {
 
   return (
-    <div>
+    <div className='mt-20'>
        {/* Body
       //route: login, register, home */}
 

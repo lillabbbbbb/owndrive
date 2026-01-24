@@ -219,7 +219,7 @@ const Home = ({ userData, setUserData }: HomeProps) => {
 
 
   return (
-    <div>
+    <div >
 
       <Input
         type="text"
