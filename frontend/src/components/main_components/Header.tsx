@@ -26,6 +26,12 @@ const Header = ({ userData, setUserData, jwt, setJwt }: HeaderProps) => {
         navigate("/home")
     }
 
+    const handleLanguageChange = () => {
+        console.log("... language chosen")
+        
+        //here comes i18n logic
+    }
+
     return (
         <header className="flex items-center justify-between fixed top-0 left-0 w-full z-50 p-4 bg-gradient-to-r from-indigo-600 to-black-600 shadow-lg text-white">
             {/* Left: Logo / Menu */}
@@ -48,9 +54,12 @@ const Header = ({ userData, setUserData, jwt, setJwt }: HeaderProps) => {
                 </nav>
             </div>
 
-            {/* Right: User avatar + dropdown */}
+            {/* Right */}
+            <div className="flex items-center justify-between gap-6">
+                <Button onClick={() => handleLanguageChange()}>EN</Button>
             {jwt && <SettingsDropdownMenu userData={userData} setUserData={setUserData} jwt={jwt} setJwt={(c) => setJwt(c)} />}
             
+            </div>
         </header>
     )
 }
