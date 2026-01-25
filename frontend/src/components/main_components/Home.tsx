@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent } from 'react'
+import { useMemo, useState, type ChangeEvent } from 'react'
 import { TextField, Autocomplete } from "@mui/material";
 import SortingDropdown from '../SortingDropdown';
 import FilesTable from '../Table';
@@ -10,8 +10,9 @@ import { customOption } from '../popups/FilterPopup';
 import UploadFileDialog from "../popups/UploadFileDialog"
 //import { IFile } from "../../../../server/src/models/File"
 //import { IUser } from "../../../../server/src/models/User"
-import {IUserTest, IFileTest} from "../../App"
+import { IUserTest, IFileTest } from "../../App"
 import { useNavigate } from "react-router-dom";
+import { config } from 'process';
 
 
 export const sortingTypes = {
@@ -36,12 +37,26 @@ export interface Filter<customOption> {
 export interface Filters {
   fileTypes: Set<string>
   owners: Set<string>
-  date: string
+  date: string,
+  status: string
+}
+
+export enum statusEnum {
+  ACTIVE = "Active",
+  ARCHIVED = "Archived"
+}
+enum datesEnum {
+  NONE = "None",
+  EDITED_TODAY = "Edited today",
+  EDITED_30_DAYS = "Edited this month",
+  EDITED_6_MONTHS = "Edited in 6 months",
+  EDITED_1_YEAR = "Edited in a year",
+  OLDER_THAN_1_YEAR = "Older than a year"
 }
 
 type HomeProps = {
   userData: IUserTest,
-  setUserData: (modifiedUser : IUserTest) => void
+  setUserData: (modifiedUser: IUserTest) => void
   canView: string[],
   canEdit: string[],
   visibleToGuest: boolean,
@@ -52,7 +67,8 @@ type HomeProps = {
   setIsPrivate: (b: boolean) => void,
 }
 
-const Home = ({ userData, setUserData, canView, canEdit, isPrivate, visibleToGuest, setCanView, setCanEdit, setIsPrivate, setVisibleToGuest}: HomeProps) => {
+
+const Home = ({ userData, setUserData, canView, canEdit, isPrivate, visibleToGuest, setCanView, setCanEdit, setIsPrivate, setVisibleToGuest }: HomeProps) => {
 
   const navigate = useNavigate()
 
@@ -62,31 +78,27 @@ const Home = ({ userData, setUserData, canView, canEdit, isPrivate, visibleToGue
 
   const [isClicked, setClicked] = useState(false)
   const [selectedSorting, setSelectedSorting] = useState(sortingTypes.by_last_modified)
-  const [sortedData, setSortedData] = useState(getUserFiles())
+  const [sortedFilteredData, setSortedFilteredData] = useState(getUserFiles())
   const [searchKeyword, setSearchKeyword] = useState("")
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [showingArchives, setShowingArchives] = useState<boolean>(false)
 
 
   const fileTypes = [...new Set(getUserFiles().map((file) => file.file_type))]
   const ownerNames = [...new Set(getUserFiles().map((file) => file.created_by))]
-  enum datesEnum {
-    NONE = "None",
-    EDITED_TODAY = "Edited today",
-    EDITED_30_DAYS = "Edited this month",
-    EDITED_6_MONTHS = "Edited in 6 months",
-    EDITED_1_YEAR = "Edited in a year",
-    OLDER_THAN_1_YEAR = "Older than a year"
-  }
 
   const [filters, setFilters] = useState<Filters>({
     fileTypes: new Set(),
     owners: new Set(),
-    date: "",
+    date: datesEnum.NONE,
+    status: statusEnum.ACTIVE
   })
 
   console.log(Array.from(filters.fileTypes))
   console.log(filters.owners)
   console.log(filters.date)
+  console.log(filters.status)
+
 
 
   const fileTypeFilter: Filter<customOption> = {
@@ -97,9 +109,11 @@ const Home = ({ userData, setUserData, canView, canEdit, isPrivate, visibleToGue
     })),
     type: "multi",
     selected: filters.fileTypes,           // from parent state
-    onChange: (newSet) =>
-      setFilters(prev => ({ ...prev, fileTypes: newSet as Set<string> }))
-  }
+    onChange: (newSet) => {
+      const newFilters: Filters = { ...filters, fileTypes: newSet as Set<string> }
+      setFilters(newFilters)
+      sortTable(searchKeyword, selectedSorting, newFilters)
+  }}
 
   const ownerFilter: Filter<customOption> = {
     label: "By owner:",
@@ -109,9 +123,11 @@ const Home = ({ userData, setUserData, canView, canEdit, isPrivate, visibleToGue
     })),
     type: "multi",
     selected: filters.owners,
-    onChange: (newSet) =>
-      setFilters(prev => ({ ...prev, owners: newSet as Set<string> }))
-  }
+    onChange: (newSet) => {
+      const newFilters: Filters = { ...filters, owners: newSet as Set<string> }
+      setFilters(newFilters)
+      sortTable(searchKeyword, selectedSorting, newFilters)
+  }}
 
   const dateFilter: Filter<customOption> = {
     label: "By date:",
@@ -121,27 +137,49 @@ const Home = ({ userData, setUserData, canView, canEdit, isPrivate, visibleToGue
     })),
     type: "single",
     selected: filters.date,
-    onChange: (newValue) =>
-      setFilters(prev => ({ ...prev, date: newValue as string })),
-  }
+    onChange: (newValue) => {
+      const newFilters: Filters = { ...filters, date: newValue as string }
+      setFilters(newFilters)
+      sortTable(searchKeyword, selectedSorting, newFilters)
+  }}
 
-  const filterConfigs = [fileTypeFilter, ownerFilter, dateFilter]
+  const statusFilter: Filter<customOption> = {
+    label: "By status:",
+    options: Object.values(statusEnum).map(status => ({      // fileTypes = [...new Set(data.map(d => d.file_type))]
+      label: status,
+      value: status,
+    })),
+    type: "single",
+    selected: filters.status,
+    onChange: (newValue) => {
+      const newFilters: Filters = { ...filters, status: newValue as string }
+      setFilters(newFilters)
+      sortTable(searchKeyword, selectedSorting, newFilters)
+  }}
+
+  const filterConfigs = [fileTypeFilter, ownerFilter, dateFilter, statusFilter]
 
 
   console.log(selectedSorting)
 
   //apply sorting to the table data and set the sortedData's new state
-  const sortTable = (keyword?: string) => {
+  const sortTable = (keyword?: string, sorting?: string, filters?: Filters) => {
     console.log("sorting the data in progress..")
 
 
+    const filteredFiles = applyFilters(getUserFiles(), filters)
+    console.log(filteredFiles)
+
+
     //filter the results based on the search yet
-    const array = matchSearch([...getUserFiles()], keyword)
+    const array = matchSearch([...filteredFiles], keyword)
 
     console.log(array)
 
 
     let sortedArray: IFileTest[] = []
+
+    const selectedSorting = sorting ? sorting: sortingTypes.by_last_modified //if no sorting is selected, defaults to sort by last modified
 
     if (selectedSorting === sortingTypes.by_last_modified) {
       sortedArray = array.sort(
@@ -150,25 +188,25 @@ const Home = ({ userData, setUserData, canView, canEdit, isPrivate, visibleToGue
           new Date(a.last_edited_at).getTime()
       );
     } else if (selectedSorting === sortingTypes.by_name_ascending) {
-      sortedArray = array.sort((a, b) =>
+      sortedArray = [...array].sort((a, b) =>
         a.filename.localeCompare(b.filename)
       );
 
     } else if (selectedSorting === sortingTypes.by_name_descending) {
-      sortedArray = array.sort((a, b) =>
+      sortedArray = [...array].sort((a, b) =>
         b.filename.localeCompare(a.filename)
       );
     } else if (selectedSorting === sortingTypes.by_user_ascending) {
-      sortedArray = array.sort((a, b) =>
+      sortedArray = [...array].sort((a, b) =>
         a.created_by.localeCompare(b.created_by)
       );
 
     } else if (selectedSorting === sortingTypes.by_user_descending) {
-      sortedArray = array.sort((a, b) =>
+      sortedArray = [...array].sort((a, b) =>
         b.created_by.localeCompare(a.created_by)
       );
     }
-    setSortedData(sortedArray)
+    setSortedFilteredData(sortedArray)
   }
 
   const matchSearch = (data: IFileTest[], keyword?: string) => {
@@ -193,6 +231,78 @@ const Home = ({ userData, setUserData, canView, canEdit, isPrivate, visibleToGue
 
   }
 
+  function isEditedToday(file: IFileTest) {
+    const edited = new Date(file.last_edited_at)
+    const today = new Date()
+    return (
+      edited.getDate() === today.getDate() &&
+      edited.getMonth() === today.getMonth() &&
+      edited.getFullYear() === today.getFullYear()
+    )
+  }
+  function isEditedWithin(file: IFileTest, days: number) {
+    const edited = new Date(file.last_edited_at)
+    const cutoff = new Date()
+    cutoff.setDate(cutoff.getDate() - days)
+    return edited >= cutoff
+  }
+  function isOlderThan(file: IFileTest, days: number) {
+    const edited = new Date(file.last_edited_at)
+    const cutoff = new Date()
+    cutoff.setDate(cutoff.getDate() - days)
+    return edited < cutoff
+  }
+
+  const applyFilters = (files: IFileTest[], passedFilters: Filters = filters) => {
+
+
+    const filteredFiles =  files.filter(file => {
+      const fileTypeMatch =
+        passedFilters.fileTypes.size === 0 || passedFilters.fileTypes.has(file.file_type)
+
+      const creatorMatch =
+        passedFilters.owners.size === 0 || passedFilters.owners.has(file.created_by)
+
+      // Single-select date
+      let dateMatch = true
+      switch (passedFilters.date) {
+        case "":
+          dateMatch = true
+          break
+        case datesEnum.EDITED_TODAY:
+          dateMatch = isEditedToday(file)
+          break
+        case datesEnum.EDITED_30_DAYS:
+          dateMatch = isEditedWithin(file, 30)
+          break
+        case datesEnum.EDITED_6_MONTHS:
+          dateMatch = isEditedWithin(file, 180)
+          break
+        case datesEnum.EDITED_1_YEAR:
+          dateMatch = isEditedWithin(file, 365)
+          break
+        case datesEnum.OLDER_THAN_1_YEAR:
+          dateMatch = isOlderThan(file, 365)
+          break
+        default:
+          dateMatch = true
+      }
+
+      const statusMatch =
+        passedFilters.status === file.status
+
+      console.log(file.filename)
+      console.log(file.status)
+
+      setShowingArchives(passedFilters.status === statusEnum.ARCHIVED)
+
+      return fileTypeMatch && creatorMatch && dateMatch && statusMatch
+    })
+
+    console.log(filteredFiles)
+    return filteredFiles
+  }
+
   const handleCreateNewClick = () => {
     console.log("Create new button clicked")
 
@@ -206,7 +316,23 @@ const Home = ({ userData, setUserData, canView, canEdit, isPrivate, visibleToGue
 
   const handleChangeSorting = (sorting: string) => {
     setSelectedSorting(sorting)
-    sortTable()
+    sortTable(sorting=sorting)
+  }
+
+  const handleFilterChange = (filters: Filters) => {
+    setFilters(filters)
+
+    // Clear previous timeout if user keeps typing
+    if (debounceTimeout) clearTimeout(debounceTimeout);
+
+
+    // Set a new timeout to call sortTable after 300ms
+    const timeout = setTimeout(() => {
+      sortTable(searchKeyword, selectedSorting, filters)
+    }, 300);
+
+    setDebounceTimeout(timeout);
+
   }
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -240,16 +366,22 @@ const Home = ({ userData, setUserData, canView, canEdit, isPrivate, visibleToGue
       />
 
       <div>
-        <Button onClick={() => handleCreateNewClick()}>Create new</Button>
+        {!showingArchives && <Button onClick={() => handleCreateNewClick()}>Create new</Button>}
         <UploadFileDialog />
         <SortingDropdown value={selectedSorting} onChange={(value) => handleChangeSorting(value)} />
 
-        <ControlledFilterDialog filters={filterConfigs} onChange={(newFilters: Filters) => setFilters(newFilters)} />
+        <ControlledFilterDialog filters={filterConfigs} 
+        onChange={
+          (newFilters: Filters) => {setFilters(newFilters)
+          sortTable()
+          console.log("sorttable called in filtering")
+        }}
+        />
       </div>
 
-      {isClicked && <EditorButtons canView={canView} setCanView={setCanView} canEdit={canEdit} setCanEdit={setCanEdit} visibleToGuest={visibleToGuest} setVisibleToGuest={setVisibleToGuest} isPrivate={isPrivate} setIsPrivate={setIsPrivate}/>}
+      {!showingArchives && isClicked && <EditorButtons canView={canView} setCanView={setCanView} canEdit={canEdit} setCanEdit={setCanEdit} visibleToGuest={visibleToGuest} setVisibleToGuest={setVisibleToGuest} isPrivate={isPrivate} setIsPrivate={setIsPrivate} />}
 
-      <FilesTable onRowClick={() => handleRowClick()} sortedData={sortedData} />
+      <FilesTable onRowClick={() => handleRowClick()} sortedFilteredData={sortedFilteredData} />
     </div>
   )
 }

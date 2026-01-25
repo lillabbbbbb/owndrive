@@ -16,10 +16,10 @@ import { useNavigate } from "react-router-dom";
 
 type TableProps = {
   onRowClick: (info: IFileTest) => void;
-  sortedData: IFileTest[];
+  sortedFilteredData: IFileTest[];
 }
 
-export default function FilesTable({ onRowClick, sortedData }: TableProps) {
+export default function FilesTable({ onRowClick, sortedFilteredData }: TableProps) {
   const navigate = useNavigate()
   const [columns, setColumns] = useState<string[]>(["filename", "file_type", "created_by", "last_edited_at"]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -38,8 +38,8 @@ export default function FilesTable({ onRowClick, sortedData }: TableProps) {
     );
   };
 
-  const totalPages = Math.ceil(sortedData.length / ROWS_PER_PAGE);
-  const currentRows = sortedData.slice(
+  const totalPages = Math.ceil(sortedFilteredData.length / ROWS_PER_PAGE);
+  const currentRows = sortedFilteredData.slice(
     (currentPage - 1) * ROWS_PER_PAGE,
     currentPage * ROWS_PER_PAGE
   );

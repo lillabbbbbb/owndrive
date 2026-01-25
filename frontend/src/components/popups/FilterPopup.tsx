@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue
 } from "../ui/select";
+import { Label } from "../ui/label"
 import { Button } from "../ui/button"
 import { MultiSelect } from '../Multiselect'
 import { Filter, Filters } from '../main_components/Home';
@@ -58,7 +59,7 @@ export function ControlledFilterDialog({ filters, onChange }: FilterDialogProps)
             {filters.map((filter) => {
               return (
                 <div key={filter.label} className="flex flex-col gap-2">
-                  <Text>{filter.label}</Text>
+                  <Label>{filter.label}</Label>
                   {filter.type === "multi" ? (
                     <MultiSelect
                       options={filter.options}
