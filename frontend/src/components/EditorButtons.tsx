@@ -16,13 +16,15 @@ import { Button } from "./ui/button"
 interface EditorButtonsProps {
   canView: string[],
   canEdit: string[],
+  visibleToGuest: boolean,
   isPrivate: boolean,
   setCanView: (users: string[]) => void,
   setCanEdit: (users: string[]) => void,
+  setVisibleToGuest: (b: boolean) => void,
   setIsPrivate: (b: boolean) => void,
 }
 
-const EditorButtons = ({canView, canEdit, isPrivate, setCanView, setCanEdit, setIsPrivate} : EditorButtonsProps) => {
+const EditorButtons = ({canView, canEdit, isPrivate, visibleToGuest, setCanView, setCanEdit, setIsPrivate, setVisibleToGuest} : EditorButtonsProps) => {
 
   const [PDFDialogOpen, setPDFDialogOpen] = useState<boolean>(false)
 
@@ -57,7 +59,7 @@ const EditorButtons = ({canView, canEdit, isPrivate, setCanView, setCanEdit, set
 
       <Tooltip>
         <TooltipTrigger asChild>
-          <SharePopup canView={canView} setCanView={setCanView} canEdit={canEdit} setCanEdit={setCanEdit} isPrivate={isPrivate} setIsPrivate={setIsPrivate}/>
+          <SharePopup canView={canView} setCanView={setCanView} canEdit={canEdit} setCanEdit={setCanEdit} visibleToGuest={visibleToGuest} setVisibleToGuest={setVisibleToGuest} isPrivate={isPrivate} setIsPrivate={setIsPrivate}/>
           
         </TooltipTrigger>
         <TooltipContent side="top">

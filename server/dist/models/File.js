@@ -37,13 +37,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.File = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const fileSchema = new mongoose_1.Schema({
-    created_at: { type: Date, required: true },
-    created_by: { type: String, required: true },
+    created_at: { type: Date, required: true }, //permanent
+    created_by: { type: String, required: true }, //permanent
     last_edited_at: { type: Date, required: true },
-    file_type: { type: String, required: true },
+    file_type: { type: String, required: true }, //permanent
     filename: { type: String, required: true },
     content: { type: String, required: true, default: "" },
-    word_count: { type: Number, required: false },
+    word_count: { type: Number, required: false }, //NOTE: maybe not needed to be stored in DB...
     canView: { type: (Array), required: true }, //list of usernames that can view the file
     canEdit: { type: (Array), required: true }, //list of usernames that can edit the file
     visibleToGuests: { type: Boolean, required: true },

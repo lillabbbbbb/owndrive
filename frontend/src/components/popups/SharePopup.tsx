@@ -9,6 +9,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog"
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+} from "../ui/field"
 import { Label } from "../ui/label"
 import { Switch } from "../ui/switch"
 import { Button } from "../ui/button"
@@ -27,9 +34,11 @@ export type customOption = {
 type SharePopupProps = {
   canView: string[],
   canEdit: string[],
+  visibleToGuest: boolean,
   isPrivate: boolean,
   setCanView: (users: string[]) => void,
   setCanEdit: (users: string[]) => void,
+  setVisibleToGuest: (b: boolean) => void,
   setIsPrivate: (b: boolean) => void,
 }
 
@@ -41,7 +50,7 @@ const allUsers = usernames.map((u) => ({
 }))
 
 
-export function SharePopup({ canView, canEdit, isPrivate, setCanView, setCanEdit, setIsPrivate }: SharePopupProps) {
+export function SharePopup({ canView, canEdit, isPrivate, visibleToGuest, setCanView, setCanEdit, setIsPrivate, setVisibleToGuest }: SharePopupProps) {
 
 
   const [open, setOpen] = useState<boolean>(false)
@@ -49,7 +58,8 @@ export function SharePopup({ canView, canEdit, isPrivate, setCanView, setCanEdit
   const [shortUrl, setShortUrl] = useState(`http://localhost:3000/user/file`);
   const [addUsersMenuOpen, setAddUsersMenuOpen] = useState<boolean>(false)
 
- console.log("This file is " + (!isPrivate ? "not " : "") + "private.");
+  console.log("This file is " + (!isPrivate ? "not " : "") + "private.");
+  console.log("This file is " + (!visibleToGuest ? "not " : "") + "visible to guests.");
 
 
   console.log("Selected options:", canEdit);
@@ -60,6 +70,7 @@ export function SharePopup({ canView, canEdit, isPrivate, setCanView, setCanEdit
       await navigator.clipboard.writeText(shortUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+      console.log("Link copied to clipboard.")
     } catch (err) {
       console.error('Failed to copy text: ', err);
     }
@@ -77,12 +88,23 @@ export function SharePopup({ canView, canEdit, isPrivate, setCanView, setCanEdit
 
           <div className="flex flex-col gap-4">
 
-            <Label>{shortUrl}</Label>
-
+            <Field orientation="horizontal" className='mt-5'>
+            <FieldContent>
+              <FieldLabel htmlFor="copy-link-text">{shortUrl}</FieldLabel>
+            </FieldContent>
             <Button onClick={() => handleCopy()}>Copy link</Button>
+          </Field>
 
-            <Label htmlFor="airplane-mode">Allow guests to see file</Label>
-            <Switch id="airplane-mode" onCheckedChange={(c) => setIsPrivate(!c)} />
+            <Field orientation="horizontal">
+            <FieldContent>
+              <FieldLabel htmlFor="visible-to-guests">Allow guests to see file</FieldLabel>
+              <FieldDescription>
+                ...
+              </FieldDescription>
+            </FieldContent>
+            
+            <Switch id="visible-to-guest" onCheckedChange={(c) => setVisibleToGuest(!c)} />
+          </Field>
 
 
             <Select<customOption, true>
@@ -107,6 +129,20 @@ export function SharePopup({ canView, canEdit, isPrivate, setCanView, setCanEdit
               menuIsOpen={addUsersMenuOpen}
             />
           </div>
+
+          <Field orientation="horizontal">
+            <FieldContent>
+              <FieldLabel htmlFor="is-private">Make private</FieldLabel>
+              <FieldDescription>
+                Hide file from guests and all shared users.
+              </FieldDescription>
+            </FieldContent>
+            <Switch
+              id="is-private"
+              checked={isPrivate}
+              onCheckedChange={(c) => setIsPrivate(c)}
+            />
+          </Field>
 
 
         </DialogContent>

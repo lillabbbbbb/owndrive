@@ -42,9 +42,17 @@ export interface Filters {
 type HomeProps = {
   userData: IUserTest,
   setUserData: (modifiedUser : IUserTest) => void
+  canView: string[],
+  canEdit: string[],
+  visibleToGuest: boolean,
+  isPrivate: boolean,
+  setCanView: (users: string[]) => void,
+  setCanEdit: (users: string[]) => void,
+  setVisibleToGuest: (b: boolean) => void,
+  setIsPrivate: (b: boolean) => void,
 }
 
-const Home = ({ userData, setUserData }: HomeProps) => {
+const Home = ({ userData, setUserData, canView, canEdit, isPrivate, visibleToGuest, setCanView, setCanEdit, setIsPrivate, setVisibleToGuest}: HomeProps) => {
 
   const navigate = useNavigate()
 
@@ -239,7 +247,7 @@ const Home = ({ userData, setUserData }: HomeProps) => {
         <ControlledFilterDialog filters={filterConfigs} onChange={(newFilters: Filters) => setFilters(newFilters)} />
       </div>
 
-      {isClicked && <EditorButtons/>}
+      {isClicked && <EditorButtons canView={canView} setCanView={setCanView} canEdit={canEdit} setCanEdit={setCanEdit} visibleToGuest={visibleToGuest} setVisibleToGuest={setVisibleToGuest} isPrivate={isPrivate} setIsPrivate={setIsPrivate}/>}
 
       <FilesTable onRowClick={() => handleRowClick()} sortedData={sortedData} />
     </div>

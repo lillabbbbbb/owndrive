@@ -31,7 +31,9 @@ const Editor = ({ jwt, userData, setUserData }: EditorProps) => {
     const [lastEditedAt, setLastEditedAt] = useState<string>("")
     const [canView, setCanView] = useState<string[]>([])
     const [canEdit, setCanEdit] = useState<string[]>([])
+    const [visibleToGuest, setVisibleToGuest] = useState<boolean>(false)
     const [isPrivate, setIsPrivate] = useState<boolean>(false)
+
 
     console.log(`File content is now:`)
     console.log(content)
@@ -59,7 +61,7 @@ const Editor = ({ jwt, userData, setUserData }: EditorProps) => {
 
             <Button onClick={() => handleSave()}>Save</Button>
             {<div>
-                <EditorButtons canView={canView} setCanView={setCanView} canEdit={canEdit} setCanEdit={setCanEdit} isPrivate={isPrivate} setIsPrivate={setIsPrivate}/>
+                <EditorButtons canView={canView} setCanView={setCanView} canEdit={canEdit} setCanEdit={setCanEdit} visibleToGuest={visibleToGuest} setVisibleToGuest={setVisibleToGuest} isPrivate={isPrivate} setIsPrivate={setIsPrivate}/>
                 <div>
                     <EditorField jwt={jwt} content={content} setContent={setContent}/>
                     <div>Word count</div>
