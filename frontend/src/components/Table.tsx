@@ -21,7 +21,7 @@ type TableProps = {
 
 export default function FilesTable({ onRowClick, sortedFilteredData }: TableProps) {
   const navigate = useNavigate()
-  const [columns, setColumns] = useState<string[]>(["filename", "file_type", "created_by", "last_edited_at"]);
+  const [columns, setColumns] = useState<string[]>(["filename", "file_type", "created_by", "last_edited_at", "created_at"]);
   const [currentPage, setCurrentPage] = useState(1);
   const ROWS_PER_PAGE = 12;
 
@@ -48,7 +48,7 @@ export default function FilesTable({ onRowClick, sortedFilteredData }: TableProp
     <div className="space-y-4">
       {/* Column selectors */}
       <div className="flex gap-2 flex-wrap">
-        {["filename", "file_type", "created_by", "last_edited_at"].map((col) => (
+        {["filename", "file_type", "created_by", "last_edited_at", "created_at"].map((col) => (
           <label key={col} className="flex items-center gap-1">
             <input
               type="checkbox"
@@ -62,24 +62,26 @@ export default function FilesTable({ onRowClick, sortedFilteredData }: TableProp
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto border rounded-md">
+      <div className="inline-block overflow-x-auto border rounded-md">
         <Table>
           <TableHeader>
             <TableRow >
               {columns.includes("filename") && <TableHead>Name</TableHead>}
               {columns.includes("file_type") && <TableHead>Type</TableHead>}
-              {columns.includes("last_edited_at") && <TableHead>Last modified</TableHead>}
               {columns.includes("created_by") && <TableHead>Created By</TableHead>}
+              {columns.includes("last_edited_at") && <TableHead>Last modified</TableHead>}
+              {columns.includes("created_at") && <TableHead className="text-right">Created At</TableHead>}
             </TableRow>
           </TableHeader>
 
           <TableBody>
             {currentRows.map((user) => (
-              <TableRow key={user.filename} onClick={() => onRowClick(user)} onDoubleClick={() => handleRowDoubleClick(user)}>
-                {columns.includes("filename") && <TableCell>{user.filename}</TableCell>}
-                {columns.includes("file_type") && <TableCell>{user.file_type}</TableCell>}
-                {columns.includes("last_edited_at") && <TableCell>{user.last_edited_at.toLocaleDateString()}</TableCell>}
-                {columns.includes("created_by") && <TableCell>{user.created_by}</TableCell>}
+              <TableRow className="text-left w-auto whitespace-nowrap px-4 py-2" key={user.filename} onClick={() => onRowClick(user)} onDoubleClick={() => handleRowDoubleClick(user)}>
+                {columns.includes("filename") && <TableCell className="whitespace-nowrap pr-16 py-2">{user.filename}</TableCell>}
+                {columns.includes("file_type") && <TableCell className="whitespace-nowrap pr-16 py-2">{user.file_type}</TableCell>}
+                {columns.includes("last_edited_at") && <TableCell className="whitespace-nowrap pr-16 py-2">{user.last_edited_at.toLocaleDateString()}</TableCell>}
+                {columns.includes("created_by") && <TableCell className="whitespace-nowrap pr-16 py-2">{user.created_by}</TableCell>}
+                {columns.includes("created_at") && <TableCell className="whitespace-nowrap pl-16 py-2">{user.created_at.toLocaleDateString()}</TableCell>}
               </TableRow>
             ))}
           </TableBody>

@@ -113,7 +113,8 @@ const Home = ({ userData, setUserData, canView, canEdit, isPrivate, visibleToGue
       const newFilters: Filters = { ...filters, fileTypes: newSet as Set<string> }
       setFilters(newFilters)
       sortTable(searchKeyword, selectedSorting, newFilters)
-  }}
+    }
+  }
 
   const ownerFilter: Filter<customOption> = {
     label: "By owner:",
@@ -127,7 +128,8 @@ const Home = ({ userData, setUserData, canView, canEdit, isPrivate, visibleToGue
       const newFilters: Filters = { ...filters, owners: newSet as Set<string> }
       setFilters(newFilters)
       sortTable(searchKeyword, selectedSorting, newFilters)
-  }}
+    }
+  }
 
   const dateFilter: Filter<customOption> = {
     label: "By date:",
@@ -141,7 +143,8 @@ const Home = ({ userData, setUserData, canView, canEdit, isPrivate, visibleToGue
       const newFilters: Filters = { ...filters, date: newValue as string }
       setFilters(newFilters)
       sortTable(searchKeyword, selectedSorting, newFilters)
-  }}
+    }
+  }
 
   const statusFilter: Filter<customOption> = {
     label: "By status:",
@@ -155,7 +158,8 @@ const Home = ({ userData, setUserData, canView, canEdit, isPrivate, visibleToGue
       const newFilters: Filters = { ...filters, status: newValue as string }
       setFilters(newFilters)
       sortTable(searchKeyword, selectedSorting, newFilters)
-  }}
+    }
+  }
 
   const filterConfigs = [fileTypeFilter, ownerFilter, dateFilter, statusFilter]
 
@@ -179,7 +183,7 @@ const Home = ({ userData, setUserData, canView, canEdit, isPrivate, visibleToGue
 
     let sortedArray: IFileTest[] = []
 
-    const selectedSorting = sorting ? sorting: sortingTypes.by_last_modified //if no sorting is selected, defaults to sort by last modified
+    const selectedSorting = sorting ? sorting : sortingTypes.by_last_modified //if no sorting is selected, defaults to sort by last modified
 
     if (selectedSorting === sortingTypes.by_last_modified) {
       sortedArray = array.sort(
@@ -256,7 +260,7 @@ const Home = ({ userData, setUserData, canView, canEdit, isPrivate, visibleToGue
   const applyFilters = (files: IFileTest[], passedFilters: Filters = filters) => {
 
 
-    const filteredFiles =  files.filter(file => {
+    const filteredFiles = files.filter(file => {
       const fileTypeMatch =
         passedFilters.fileTypes.size === 0 || passedFilters.fileTypes.has(file.file_type)
 
@@ -316,23 +320,7 @@ const Home = ({ userData, setUserData, canView, canEdit, isPrivate, visibleToGue
 
   const handleChangeSorting = (sorting: string) => {
     setSelectedSorting(sorting)
-    sortTable(sorting=sorting)
-  }
-
-  const handleFilterChange = (filters: Filters) => {
-    setFilters(filters)
-
-    // Clear previous timeout if user keeps typing
-    if (debounceTimeout) clearTimeout(debounceTimeout);
-
-
-    // Set a new timeout to call sortTable after 300ms
-    const timeout = setTimeout(() => {
-      sortTable(searchKeyword, selectedSorting, filters)
-    }, 300);
-
-    setDebounceTimeout(timeout);
-
+    sortTable(searchKeyword, sorting, filters)
   }
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -366,20 +354,27 @@ const Home = ({ userData, setUserData, canView, canEdit, isPrivate, visibleToGue
       />
 
       <div>
-        {!showingArchives && <Button onClick={() => handleCreateNewClick()}>Create new</Button>}
-        <UploadFileDialog />
+        {!showingArchives &&
+          <>
+            <Button onClick={() => handleCreateNewClick()}>Create new</Button>
+            <UploadFileDialog />
+          </>
+        }
         <SortingDropdown value={selectedSorting} onChange={(value) => handleChangeSorting(value)} />
 
-        <ControlledFilterDialog filters={filterConfigs} 
-        onChange={
-          (newFilters: Filters) => {setFilters(newFilters)
-          sortTable()
-          console.log("sorttable called in filtering")
-        }}
+        <ControlledFilterDialog filters={filterConfigs}
+          onChange={
+            (newFilters: Filters) => {
+              setFilters(newFilters)
+              sortTable()
+              console.log("sorttable called in filtering")
+            }}
         />
       </div>
 
+      {/*
       {!showingArchives && isClicked && <EditorButtons canView={canView} setCanView={setCanView} canEdit={canEdit} setCanEdit={setCanEdit} visibleToGuest={visibleToGuest} setVisibleToGuest={setVisibleToGuest} isPrivate={isPrivate} setIsPrivate={setIsPrivate} />}
+      */}
 
       <FilesTable onRowClick={() => handleRowClick()} sortedFilteredData={sortedFilteredData} />
     </div>
