@@ -27,7 +27,7 @@ const Editor = ({ jwt, userData, setUserData }: EditorProps) => {
     const [guestDialogOpen, setGuestDialogOpen] = useState<boolean>(true)
     const [beingUsed, setBeingUsed] = useState<boolean>(true)
     const [fileName, setFileName] = useState<string>("")
-    const [fileContent, setFileContent] = useState<string>("")
+    const [content, setContent] = useState<string>("")
     const [lastEditedAt, setLastEditedAt] = useState<string>("")
     const [canView, setCanView] = useState<string[]>([])
     const [canEdit, setCanEdit] = useState<string[]>([])
@@ -58,7 +58,7 @@ const Editor = ({ jwt, userData, setUserData }: EditorProps) => {
             {<div>
                 <EditorButtons />
                 <div>
-                    <EditorField jwt={jwt} />
+                    <EditorField jwt={jwt} content={content} setContent={setContent}/>
                     <div>Word count</div>
                 </div>
 

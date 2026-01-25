@@ -210,26 +210,24 @@ function EditorMenu({ editor, jwt }: { editor: Editor, jwt: string | null }) {
 }
 
 type EditorFieldProps = {
-  jwt: string | null
+  jwt: string | null,
+  content: string,
+  setContent: (content: string) => void
 }
 
-const EditorField =  ({jwt} : EditorFieldProps) => {
+const EditorField =  ({jwt, content, setContent} : EditorFieldProps) => {
+
+  
+
   const editor = useEditor({
     extensions,
-    content: `
-<h2>
-  Hi there,
-</h2>
-<p>
-  this is a <em>basic</em> example of <strong>Tiptap</strong>. Sure, there are all kind of basic text styles you’d probably expect from a text editor. But wait until you see the lists:
-</p>
-<blockquote>
-  Wow, that’s amazing. Good work, boy! 👏
-  <br />
-  — Mom
-</blockquote>
-`,
+    content: content,
+onUpdate: ({ editor }) => {
+      setContent(editor.getHTML()); // save the current content as HTML
+    },
   })
+
+
   return (
     <div>
       <EditorMenu editor={editor} jwt={jwt}/>

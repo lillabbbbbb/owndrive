@@ -28,7 +28,7 @@ const Header = ({ userData, setUserData, jwt, setJwt }: HeaderProps) => {
 
     const handleLanguageChange = () => {
         console.log("... language chosen")
-        
+
         //here comes i18n logic
     }
 
@@ -56,7 +56,7 @@ const Header = ({ userData, setUserData, jwt, setJwt }: HeaderProps) => {
 
             {/* Right */}
             <div className="flex items-center justify-between gap-6">
-                <Button onClick={() => handleLanguageChange()}>EN</Button>
+                <Button onClick={() => handleLanguageChange()}>EN</Button> //this should be a dropdown menu
             {jwt && <SettingsDropdownMenu userData={userData} setUserData={setUserData} jwt={jwt} setJwt={(c) => setJwt(c)} />}
             
             </div>
