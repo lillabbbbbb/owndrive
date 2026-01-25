@@ -12,7 +12,7 @@ import { Label } from "../ui/label"
 import { Switch } from "../ui/switch"
 import { Button } from "../ui/button"
 import { MultiSelect } from '../Multiselect'
-import { Filter, Filters } from '../Home';
+import { Filter, Filters } from '../main_components/Home';
 import { Text } from 'lucide-react';
 import { HiShare } from "react-icons/hi2";
 

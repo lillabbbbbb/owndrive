@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { sortingTypes } from "./Home"
+import { sortingTypes } from "./main_components/Home"
 import {IFileTest} from "../App"
 
 //whole doc from chatGPT

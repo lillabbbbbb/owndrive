@@ -16,7 +16,7 @@ import {
 } from "../ui/select";
 import { Button } from "../ui/button"
 import { MultiSelect } from '../Multiselect'
-import { Filter, Filters } from '../Home';
+import { Filter, Filters } from '../main_components/Home';
 import { Text } from 'lucide-react';
 
 export type customOption = {

@@ -1,13 +1,13 @@
 import { Link, useNavigate } from "react-router-dom"
 
-import { Button } from "../components/ui/button"
+import { Button } from "../ui/button"
 import { LucideMenu, LucideLogOut, LucideSettings, LucideUser } from "lucide-react"
 
-import { Input } from "../components/ui/input"
-import { IFile } from "../../../server/src/models/File"
-import { IUser } from "../../../server/src/models/User"
-import { IUserTest, IFileTest } from "../App"
-import SettingsDropdownMenu from "./SettingsDropdownMenu"
+import { Input } from "../ui/input"
+import { IFile } from "../../../../server/src/models/File"
+import { IUser } from "../../../../server/src/models/User"
+import { IUserTest, IFileTest } from "../../App"
+import SettingsDropdownMenu from "../SettingsDropdownMenu"
 
 type HeaderProps = {
     userData: IUserTest,

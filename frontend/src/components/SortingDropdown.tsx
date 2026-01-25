@@ -6,7 +6,7 @@ import {
   SelectTrigger,
   SelectValue
 } from "../components/ui/select";
-import { sortingTypes } from "./Home";
+import { sortingTypes } from "./main_components/Home";
 
 type Props = {
   value: string;

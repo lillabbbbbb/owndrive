@@ -1,6 +1,6 @@
 import './App.css'
-import Header from "./components/Header"
-import Body from "./components/Body"
+import Header from "./components/main_components/Header"
+import Body from "./components/main_components/Body"
 import { BrowserRouter } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import {IUser} from "../../server/src/models/User"

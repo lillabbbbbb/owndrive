@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import React from 'react'
 import {Link, useNavigate} from "react-router-dom"
-import AppleNotAvailablePopup from "./popups/AppleNotAvailablePopup";
+import AppleNotAvailablePopup from "../popups/AppleNotAvailablePopup";
 
 type LoginProps = {
     jwt: string | null,
