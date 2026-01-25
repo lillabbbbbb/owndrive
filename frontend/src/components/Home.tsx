@@ -3,9 +3,11 @@ import { TextField, Autocomplete } from "@mui/material";
 import SortingDropdown from './SortingDropdown';
 import FilesTable from './Table';
 import EditorButtons from './EditorButtons';
-import { Input } from "../components/ui/input";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button"
 import { ControlledFilterDialog } from './popups/FilterPopup';
 import { customOption } from './popups/FilterPopup';
+import UploadFileDialog from "./popups/UploadFileDialog"
 import { IFile } from "../../../server/src/models/File"
 import { IUser } from "../../../server/src/models/User"
 import {IUserTest, IFileTest} from "../App"
@@ -230,7 +232,8 @@ const Home = ({ userData, setUserData }: HomeProps) => {
       />
 
       <div>
-        <button onClick={() => handleCreateNewClick()}>Create new</button>
+        <Button onClick={() => handleCreateNewClick()}>Create new</Button>
+        <UploadFileDialog />
         <SortingDropdown value={selectedSorting} onChange={(value) => handleChangeSorting(value)} />
 
         <ControlledFilterDialog filters={filterConfigs} onChange={(newFilters: Filters) => setFilters(newFilters)} />

@@ -50,6 +50,7 @@ const Editor = ({jwt}: EditorProps) => {
         <div>Word count</div>
       </div>
 
+
     </div>}
 
 {/* Render this if user is NOT logged in */}

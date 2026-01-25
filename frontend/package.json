@@ -15,6 +15,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@headlessui/react": "^2.2.9",
+    "@mantine/dropzone": "^8.3.13",
     "@mui/material": "^7.3.7",
     "@mui/styled-engine": "^7.3.7",
     "@radix-ui/react-avatar": "^1.1.11",
@@ -49,6 +50,7 @@
     "slate": "^0.123.0",
     "slate-history": "^0.113.1",
     "slate-react": "^0.123.0",
+    "tabler": "^1.0.0",
     "tailwind": "^2.3.1",
     "tailwind-merge": "^3.4.0"
   },
