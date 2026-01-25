@@ -14,21 +14,18 @@ import { Label } from "./ui/label"
 import { Button } from "./ui/button"
 
 interface EditorButtonsProps {
-  tooltip: string         // Tooltip text
-  visibleElement: Element        // tsx component
-  onClick: () => void   // click handler
-  file: string
+  canView: string[],
+  canEdit: string[],
+  isPrivate: boolean,
+  setCanView: (users: string[]) => void,
+  setCanEdit: (users: string[]) => void,
+  setIsPrivate: (b: boolean) => void,
 }
 
-const EditorButtons = () => {
+const EditorButtons = ({canView, canEdit, isPrivate, setCanView, setCanEdit, setIsPrivate} : EditorButtonsProps) => {
 
   const [PDFDialogOpen, setPDFDialogOpen] = useState<boolean>(false)
 
-  const handleShareButtonClick = () => {
-    console.log("Share button clicked, small window should pop up")
-
-    //Sharepopup
-  }
 
   const handleCloneButtonClick = () => {
     console.log("Clone button clicked, clone window should pop up")
@@ -60,7 +57,7 @@ const EditorButtons = () => {
 
       <Tooltip>
         <TooltipTrigger asChild>
-          <SharePopup />
+          <SharePopup canView={canView} setCanView={setCanView} canEdit={canEdit} setCanEdit={setCanEdit} isPrivate={isPrivate} setIsPrivate={setIsPrivate}/>
           
         </TooltipTrigger>
         <TooltipContent side="top">

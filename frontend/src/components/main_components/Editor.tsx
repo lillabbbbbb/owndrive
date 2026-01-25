@@ -33,6 +33,9 @@ const Editor = ({ jwt, userData, setUserData }: EditorProps) => {
     const [canEdit, setCanEdit] = useState<string[]>([])
     const [isPrivate, setIsPrivate] = useState<boolean>(false)
 
+    console.log(`File content is now:`)
+    console.log(content)
+
     const handleSave = () => {
         //NOTE: create IFile instance, and push the changes to the existing/new record in DB
 
@@ -56,7 +59,7 @@ const Editor = ({ jwt, userData, setUserData }: EditorProps) => {
 
             <Button onClick={() => handleSave()}>Save</Button>
             {<div>
-                <EditorButtons />
+                <EditorButtons canView={canView} setCanView={setCanView} canEdit={canEdit} setCanEdit={setCanEdit} isPrivate={isPrivate} setIsPrivate={setIsPrivate}/>
                 <div>
                     <EditorField jwt={jwt} content={content} setContent={setContent}/>
                     <div>Word count</div>

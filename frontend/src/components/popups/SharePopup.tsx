@@ -1,6 +1,7 @@
 import React from 'react'
 import { useState } from "react"
 import Select, { components } from 'react-select';
+import type { MultiValue, ActionMeta } from "react-select";
 //https://ui.shadcn.com/docs/components/radix/dialog
 import {
   Dialog,
@@ -24,8 +25,12 @@ export type customOption = {
 
 
 type SharePopupProps = {
-  fileData?: Filter<customOption>[],
-  onChange: (newFilters: Filters) => void   // callback to update parent
+  canView: string[],
+  canEdit: string[],
+  isPrivate: boolean,
+  setCanView: (users: string[]) => void,
+  setCanEdit: (users: string[]) => void,
+  setIsPrivate: (b: boolean) => void,
 }
 
 const usernames: string[] = ["elisbet29", "9dbaskj2", "lillabbbbbbb"]
@@ -36,7 +41,7 @@ const allUsers = usernames.map((u) => ({
 }))
 
 
-export function SharePopup() {
+export function SharePopup({ canView, canEdit, isPrivate, setCanView, setCanEdit, setIsPrivate }: SharePopupProps) {
 
 
   const [open, setOpen] = useState<boolean>(false)
@@ -44,6 +49,10 @@ export function SharePopup() {
   const [shortUrl, setShortUrl] = useState(`http://localhost:3000/user/file`);
   const [addUsersMenuOpen, setAddUsersMenuOpen] = useState<boolean>(false)
 
+ console.log("This file is " + (!isPrivate ? "not " : "") + "private.");
+
+
+  console.log("Selected options:", canEdit);
 
   //https://medium.com/@plsreeparvathy/copy-to-clipboard-feature-with-react-and-mui-065afa55f866
   const handleCopy = async () => {
@@ -73,10 +82,10 @@ export function SharePopup() {
             <Button onClick={() => handleCopy()}>Copy link</Button>
 
             <Label htmlFor="airplane-mode">Allow guests to see file</Label>
-            <Switch id="airplane-mode" />
+            <Switch id="airplane-mode" onCheckedChange={(c) => setIsPrivate(!c)} />
 
 
-            <Select
+            <Select<customOption, true>
               isMulti
               options={allUsers}
               onInputChange={(value) => {
@@ -89,6 +98,13 @@ export function SharePopup() {
                   setAddUsersMenuOpen(true);
                 }
               }}
+              value={canEdit.map(user => ({ value: user, label: user }))} // controlled component
+              onChange={(newValue: MultiValue<customOption>, actionMeta: ActionMeta<customOption>) => {
+                setCanEdit(newValue.map((v: customOption) => v.value)); // back to string[]
+                console.log(canEdit)
+              }}
+
+              menuIsOpen={addUsersMenuOpen}
             />
           </div>
 

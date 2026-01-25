@@ -73,7 +73,7 @@ export function ControlledFilterDialog({ filters, onChange }: FilterDialogProps)
                       <SelectTrigger className="w-48">
                         <SelectValue placeholder={`Select ${filter.label}`} />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent position='popper'>
                         {filter.options.map((option) => (
                           <SelectItem key={option.value} value={option.value}>
                             {option.label}
