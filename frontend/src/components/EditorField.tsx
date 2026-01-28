@@ -4,11 +4,12 @@ import { TextStyleKit } from '@tiptap/extension-text-style'
 import type { Editor } from '@tiptap/react'
 import { EditorContent, useEditor, useEditorState } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button } from '@headlessui/react'
 import clsx from 'clsx';
 
 const BRIGHT_BUTTON_CLASS = "rounded bg-sky-600 px-4 py-2 text-sm text-white data-active:bg-sky-700 data-hover:bg-sky-500"
+const DISABLED_BUTTON = "opacity-50 cursor-not-allowed"
 
 
 const extensions = [TextStyleKit, StarterKit]
@@ -55,18 +56,20 @@ function EditorMenu({ editor, jwt }: { editor: Editor, jwt: string | null }) {
       <div className="button-group">
         <Button className={clsx(
     BRIGHT_BUTTON_CLASS,
+    !editor?.isEditable && DISABLED_BUTTON,
     editorState.isBold && 'is-active'
   )}
           onClick={() => editor.chain().focus().toggleBold().run()}
-          disabled={!editorState.canBold}
+          disabled={!editor?.isEditable}
         >
           Bold
         </Button>
         <Button
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          disabled={!editorState.canItalic}
+          disabled={!editor?.isEditable}
           className={clsx(
     BRIGHT_BUTTON_CLASS,
+    !editor?.isEditable && DISABLED_BUTTON,
     editorState.isItalic && 'is-active'
   )}
         >
@@ -74,9 +77,10 @@ function EditorMenu({ editor, jwt }: { editor: Editor, jwt: string | null }) {
         </Button>
         <Button
           onClick={() => editor.chain().focus().toggleStrike().run()}
-          disabled={!editorState.canStrike}
+          disabled={!editor?.isEditable}
           className={clsx(
     BRIGHT_BUTTON_CLASS,
+    !editor?.isEditable && DISABLED_BUTTON,
     editorState.isStrike && 'is-active'
   )}
           
@@ -86,9 +90,10 @@ function EditorMenu({ editor, jwt }: { editor: Editor, jwt: string | null }) {
         </Button>
         <Button
           onClick={() => editor.chain().focus().toggleCode().run()}
-          disabled={!editorState.canCode}
+          disabled={!editor?.isEditable}
           className={clsx(
     BRIGHT_BUTTON_CLASS,
+    !editor?.isEditable && DISABLED_BUTTON,
     editorState.isCode && 'is-active'
   )}
           
@@ -99,8 +104,10 @@ function EditorMenu({ editor, jwt }: { editor: Editor, jwt: string | null }) {
         <button onClick={() => editor.chain().focus().clearNodes().run()}>Clear nodes</button>
         <button
           onClick={() => editor.chain().focus().setParagraph().run()}
+          disabled={!editor?.isEditable}
           className={clsx(
     BRIGHT_BUTTON_CLASS,
+    !editor?.isEditable && DISABLED_BUTTON,
     editorState.isParagraph && 'is-active'
   )}
         >
@@ -108,8 +115,10 @@ function EditorMenu({ editor, jwt }: { editor: Editor, jwt: string | null }) {
         </button>
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+          disabled={!editor?.isEditable}
           className={clsx(
     BRIGHT_BUTTON_CLASS,
+    !editor?.isEditable && DISABLED_BUTTON,
     editorState.isHeading1 && 'is-active'
   )}
         >
@@ -117,8 +126,10 @@ function EditorMenu({ editor, jwt }: { editor: Editor, jwt: string | null }) {
         </button>
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+          disabled={!editor?.isEditable}
           className={clsx(
     BRIGHT_BUTTON_CLASS,
+    !editor?.isEditable && DISABLED_BUTTON,
     editorState.isHeading2 && 'is-active'
   )}
         >
@@ -126,8 +137,10 @@ function EditorMenu({ editor, jwt }: { editor: Editor, jwt: string | null }) {
         </button>
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+          disabled={!editor?.isEditable}
           className={clsx(
     BRIGHT_BUTTON_CLASS,
+    !editor?.isEditable && DISABLED_BUTTON,
     editorState.isHeading3 && 'is-active'
   )}
         >
@@ -135,8 +148,10 @@ function EditorMenu({ editor, jwt }: { editor: Editor, jwt: string | null }) {
         </button>
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
+          disabled={!editor?.isEditable}
           className={clsx(
     BRIGHT_BUTTON_CLASS,
+    !editor?.isEditable && DISABLED_BUTTON,
     editorState.isHeading4 && 'is-active'
   )}
         >
@@ -144,8 +159,10 @@ function EditorMenu({ editor, jwt }: { editor: Editor, jwt: string | null }) {
         </button>
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()}
+          disabled={!editor?.isEditable}
           className={clsx(
     BRIGHT_BUTTON_CLASS,
+    !editor?.isEditable && DISABLED_BUTTON,
     editorState.isHeading5 && 'is-active'
   )}
         >
@@ -153,8 +170,10 @@ function EditorMenu({ editor, jwt }: { editor: Editor, jwt: string | null }) {
         </button>
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 6 }).run()}
+          disabled={!editor?.isEditable}
           className={clsx(
     BRIGHT_BUTTON_CLASS,
+    !editor?.isEditable && DISABLED_BUTTON,
     editorState.isHeading6 && 'is-active'
   )}
         >
@@ -162,8 +181,10 @@ function EditorMenu({ editor, jwt }: { editor: Editor, jwt: string | null }) {
         </button>
         <button
           onClick={() => editor.chain().focus().toggleBulletList().run()}
+          disabled={!editor?.isEditable}
           className={clsx(
     BRIGHT_BUTTON_CLASS,
+    !editor?.isEditable && DISABLED_BUTTON,
     editorState.isBulletList && 'is-active'
   )}
         >
@@ -171,8 +192,10 @@ function EditorMenu({ editor, jwt }: { editor: Editor, jwt: string | null }) {
         </button>
         <button
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          disabled={!editor?.isEditable}
           className={clsx(
     BRIGHT_BUTTON_CLASS,
+    !editor?.isEditable && DISABLED_BUTTON,
     editorState.isOrderedList && 'is-active'
   )}
         >
@@ -180,8 +203,10 @@ function EditorMenu({ editor, jwt }: { editor: Editor, jwt: string | null }) {
         </button>
         <button
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+          disabled={!editor?.isEditable}
           className={clsx(
     BRIGHT_BUTTON_CLASS,
+    !editor?.isEditable && DISABLED_BUTTON,
     editorState.isCodeBlock && 'is-active'
   )}
         >
@@ -189,19 +214,21 @@ function EditorMenu({ editor, jwt }: { editor: Editor, jwt: string | null }) {
         </button>
         <button
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
+          disabled={!editor?.isEditable}
           className={clsx(
     BRIGHT_BUTTON_CLASS,
+    !editor?.isEditable && DISABLED_BUTTON,
     editorState.isBlockquote && 'is-active'
   )}
         >
           Blockquote
         </button>
-        <button onClick={() => editor.chain().focus().setHorizontalRule().run()}>Horizontal rule</button>
-        <button onClick={() => editor.chain().focus().setHardBreak().run()}>Hard break</button>
-        <button onClick={() => editor.chain().focus().undo().run()} disabled={!editorState.canUndo}>
+        <button onClick={() => editor.chain().focus().setHorizontalRule().run()} disabled={!editor?.isEditable}>Horizontal rule</button>
+        <button onClick={() => editor.chain().focus().setHardBreak().run()} disabled={!editor?.isEditable}>Hard break</button>
+        <button onClick={() => editor.chain().focus().undo().run()} disabled={!editor?.isEditable}>
           Undo
         </button>
-        <button onClick={() => editor.chain().focus().redo().run()} disabled={!editorState.canRedo}>
+        <button onClick={() => editor.chain().focus().redo().run()} disabled={!editor?.isEditable}>
           Redo
         </button>
       </div>
@@ -212,20 +239,33 @@ function EditorMenu({ editor, jwt }: { editor: Editor, jwt: string | null }) {
 type EditorFieldProps = {
   jwt: string | null,
   content: string,
-  setContent: (content: string) => void
+  setContent: (content: string) => void,
+  editable: boolean
 }
 
-const EditorField =  ({jwt, content, setContent} : EditorFieldProps) => {
+const EditorField =  ({jwt, content, setContent, editable} : EditorFieldProps) => {
 
-  
 
   const editor = useEditor({
     extensions,
+    editable,
     content: content,
 onUpdate: ({ editor }) => {
       setContent(editor.getHTML()); // save the current content as HTML
     },
   })
+
+  useEffect(() => {
+    if (!editor) {
+      return undefined
+    }
+
+    editor.setEditable(editable)
+  }, [editor, editable])
+
+  if (!editor) {
+    return null
+  }
 
 
   return (

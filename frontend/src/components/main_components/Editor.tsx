@@ -36,6 +36,7 @@ const Editor = ({ jwt, userData, setUserData, fileName, setFileName }: EditorPro
     const [canEdit, setCanEdit] = useState<string[]>([])
     const [visibleToGuest, setVisibleToGuest] = useState<boolean>(false)
     const [isPrivate, setIsPrivate] = useState<boolean>(false)
+    const [editable, setEditable] = useState<boolean>(false) //turn this into useEffect
 
     const navigate = useNavigate()
 
@@ -46,6 +47,7 @@ const Editor = ({ jwt, userData, setUserData, fileName, setFileName }: EditorPro
     console.log(content)
 
     const handleSave = () => {
+        console.log("Save button is clicked")
         //NOTE: create IFile instance, and push the changes to the existing/new record in DB
 
         //if a file with this name doesnt exist in the user's drive (go through userData.files array in search of a match)
@@ -87,7 +89,7 @@ const Editor = ({ jwt, userData, setUserData, fileName, setFileName }: EditorPro
                 <EditorButtons canView={canView} setCanView={setCanView} canEdit={canEdit} setCanEdit={setCanEdit} visibleToGuest={visibleToGuest} setVisibleToGuest={setVisibleToGuest} isPrivate={isPrivate} setIsPrivate={setIsPrivate}/>
                 <EditableText value={fileName} onSave={handleSaveFileName}/>
                 <div>
-                    <EditorField jwt={jwt} content={content} setContent={setContent}/>
+                    <EditorField jwt={jwt} content={content} setContent={setContent} editable={editable}/>
                     <div>Word count</div>
                 </div>
 
