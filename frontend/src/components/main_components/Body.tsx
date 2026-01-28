@@ -19,6 +19,8 @@ type BodyProps = {
 }
 
 const Body = ({userData, setUserData, jwt, setJwt} : BodyProps) => {
+  
+  const [fileName, setFileName] = useState<string>("")
 
   return (
     <div className='mt-20'>
@@ -30,8 +32,8 @@ const Body = ({userData, setUserData, jwt, setJwt} : BodyProps) => {
             <Route path="/" element={<Login jwt={jwt} setJwt={(c) => setJwt(c)}/>} ></Route>
             <Route path="/login" element={<Login jwt={jwt} setJwt={(c) => setJwt(c)}/>} ></Route>
             <Route path="/register" element={<Register />} ></Route>
-            <Route path="/home" element={ <Home userData={userData} setUserData={setUserData}/>} ></Route>
-            <Route path="/:user/:file" element={<Editor jwt={jwt} userData={userData} setUserData={setUserData}/>} ></Route>
+            <Route path="/home" element={ <Home setFileName={setFileName} userData={userData} setUserData={setUserData} />} ></Route>
+            <Route path="/:user/:file" element={<Editor jwt={jwt} userData={userData} setUserData={setUserData} fileName={fileName} setFileName={setFileName}/>} ></Route>
             <Route path="*" element={<div>Not found!</div>} />
 
         </Routes>

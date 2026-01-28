@@ -13,26 +13,33 @@ import {
 } from "../ui/dialog"
 import ConcurrentEditingPopup from '../popups/ConcurrentEditingPopup';
 import { IUserTest } from '../../App';
+import { EditableText } from '../EditableText';
+import { useNavigate } from 'react-router-dom';
 
 
 type EditorProps = {
     jwt: string | null,
     setJwt?: (c: string | null) => void;
     userData: IUserTest,
-    setUserData: (modifiedUser: IUserTest) => void
+    setUserData: (modifiedUser: IUserTest) => void,
+    fileName: string,
+    setFileName: (newValue: string) => void
 }
 
-const Editor = ({ jwt, userData, setUserData }: EditorProps) => {
+const Editor = ({ jwt, userData, setUserData, fileName, setFileName }: EditorProps) => {
 
     const [guestDialogOpen, setGuestDialogOpen] = useState<boolean>(true)
     const [beingUsed, setBeingUsed] = useState<boolean>(true)
-    const [fileName, setFileName] = useState<string>("")
     const [content, setContent] = useState<string>("")
     const [lastEditedAt, setLastEditedAt] = useState<string>("")
     const [canView, setCanView] = useState<string[]>([])
     const [canEdit, setCanEdit] = useState<string[]>([])
     const [visibleToGuest, setVisibleToGuest] = useState<boolean>(false)
     const [isPrivate, setIsPrivate] = useState<boolean>(false)
+
+    const navigate = useNavigate()
+
+    const username = userData.username || userData.email
 
 
     console.log(`File content is now:`)
@@ -53,6 +60,22 @@ const Editor = ({ jwt, userData, setUserData }: EditorProps) => {
 
     }
 
+    const handleSaveFileName = (newFileName: string) => {
+
+        //check if filename is valid and unique,
+
+        //if so, save the new name of the file in the DB (PATCH call)
+
+
+        //and display the new one
+        setFileName(newFileName)
+        //refresh URL with correct new filename
+        navigate(`/${username}/${newFileName}`, { replace: true })
+        //if not, set the value to be the previous file name
+
+
+    }
+
 
     return (
         <>
@@ -62,6 +85,7 @@ const Editor = ({ jwt, userData, setUserData }: EditorProps) => {
             <Button onClick={() => handleSave()}>Save</Button>
             {<div>
                 <EditorButtons canView={canView} setCanView={setCanView} canEdit={canEdit} setCanEdit={setCanEdit} visibleToGuest={visibleToGuest} setVisibleToGuest={setVisibleToGuest} isPrivate={isPrivate} setIsPrivate={setIsPrivate}/>
+                <EditableText value={fileName} onSave={handleSaveFileName}/>
                 <div>
                     <EditorField jwt={jwt} content={content} setContent={setContent}/>
                     <div>Word count</div>

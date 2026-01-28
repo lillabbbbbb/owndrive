@@ -57,18 +57,12 @@ enum datesEnum {
 type HomeProps = {
   userData: IUserTest,
   setUserData: (modifiedUser: IUserTest) => void
-  canView: string[],
-  canEdit: string[],
-  visibleToGuest: boolean,
-  isPrivate: boolean,
-  setCanView: (users: string[]) => void,
-  setCanEdit: (users: string[]) => void,
-  setVisibleToGuest: (b: boolean) => void,
-  setIsPrivate: (b: boolean) => void,
+  fileName?: string,
+  setFileName: (newFileName: string) => void;
 }
 
 
-const Home = ({ userData, setUserData, canView, canEdit, isPrivate, visibleToGuest, setCanView, setCanEdit, setIsPrivate, setVisibleToGuest }: HomeProps) => {
+const Home = ({ userData, setUserData, fileName, setFileName }: HomeProps) => {
 
   const navigate = useNavigate()
 
@@ -115,7 +109,6 @@ const Home = ({ userData, setUserData, canView, canEdit, isPrivate, visibleToGue
       sortTable(searchKeyword, selectedSorting, newFilters)
     }
   }
-
   const ownerFilter: Filter<customOption> = {
     label: "By owner:",
     options: ownerNames.map(owner => ({      // fileTypes = [...new Set(data.map(d => d.file_type))]
@@ -130,7 +123,6 @@ const Home = ({ userData, setUserData, canView, canEdit, isPrivate, visibleToGue
       sortTable(searchKeyword, selectedSorting, newFilters)
     }
   }
-
   const dateFilter: Filter<customOption> = {
     label: "By date:",
     options: Object.values(datesEnum).map(date => ({      // fileTypes = [...new Set(data.map(d => d.file_type))]
@@ -145,7 +137,6 @@ const Home = ({ userData, setUserData, canView, canEdit, isPrivate, visibleToGue
       sortTable(searchKeyword, selectedSorting, newFilters)
     }
   }
-
   const statusFilter: Filter<customOption> = {
     label: "By status:",
     options: Object.values(statusEnum).map(status => ({      // fileTypes = [...new Set(data.map(d => d.file_type))]
@@ -160,12 +151,9 @@ const Home = ({ userData, setUserData, canView, canEdit, isPrivate, visibleToGue
       sortTable(searchKeyword, selectedSorting, newFilters)
     }
   }
-
   const filterConfigs = [fileTypeFilter, ownerFilter, dateFilter, statusFilter]
 
-
   console.log(selectedSorting)
-
   //apply sorting to the table data and set the sortedData's new state
   const sortTable = (keyword?: string, sorting?: string, filters?: Filters) => {
     console.log("sorting the data in progress..")
@@ -311,6 +299,7 @@ const Home = ({ userData, setUserData, canView, canEdit, isPrivate, visibleToGue
     console.log("Create new button clicked")
 
     //should redirect to editor page
+    setFileName(DEFAULT_FILE_NAME)
     navigate(`/${userData.username}/${DEFAULT_FILE_NAME}`)
   }
 
@@ -376,7 +365,7 @@ const Home = ({ userData, setUserData, canView, canEdit, isPrivate, visibleToGue
       {!showingArchives && isClicked && <EditorButtons canView={canView} setCanView={setCanView} canEdit={canEdit} setCanEdit={setCanEdit} visibleToGuest={visibleToGuest} setVisibleToGuest={setVisibleToGuest} isPrivate={isPrivate} setIsPrivate={setIsPrivate} />}
       */}
 
-      <FilesTable onRowClick={() => handleRowClick()} sortedFilteredData={sortedFilteredData} />
+      <FilesTable setFileName={setFileName} onRowClick={() => handleRowClick()} sortedFilteredData={sortedFilteredData} />
     </div>
   )
 }

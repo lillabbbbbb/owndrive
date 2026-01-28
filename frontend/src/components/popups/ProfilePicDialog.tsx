@@ -1,0 +1,79 @@
+import { useState } from "react"
+import React from 'react'
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "../ui/dialog"
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "../ui/avatar"
+
+import { Button } from "../ui/button"
+
+type ProfilePicDialogProps = {
+    open: boolean,
+    setOpen: (value: boolean) => void
+}
+
+const ProfilePicDialog = ({ open, setOpen }: ProfilePicDialogProps) => {
+
+    const [preview, setPreview] = useState<string | null>(null)
+
+    //AI-generated code snippet
+    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const file = e.target.files?.[0]
+        if (!file) return
+        setPreview(URL.createObjectURL(file))
+    }
+
+    const handleSave = () => {
+        console.log("Save button clicked... image should be updated in DB...")
+
+        //UPDATE PATCH call goes here 
+    }
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Change profile picture</DialogTitle>
+                </DialogHeader>
+                <div className="flex flex-col items-center gap-4">
+                    <Avatar className="h-28 w-28">
+                        <AvatarImage src={preview ?? undefined} />
+                        <AvatarFallback>JD</AvatarFallback>
+                    </Avatar>
+
+                    <Button asChild variant="outline">
+                        <label>
+                            Upload image
+                            <input
+                                type="file"
+                                accept="image/*"
+                                hidden
+                                onChange={handleChange}
+                            />
+                        </label>
+                    </Button>
+                </div>
+
+                <Button asChild>
+                        <label>
+                            Save
+                            <input
+                                hidden
+                                onChange={handleSave}
+                            />
+                        </label>
+                    </Button>
+            </DialogContent>
+        </Dialog>
+    )
+}
+
+export default ProfilePicDialog

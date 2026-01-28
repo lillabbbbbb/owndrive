@@ -17,9 +17,11 @@ import { useNavigate } from "react-router-dom";
 type TableProps = {
   onRowClick: (info: IFileTest) => void;
   sortedFilteredData: IFileTest[];
+  fileName?: string,
+  setFileName: (newFileName: string) => void;
 }
 
-export default function FilesTable({ onRowClick, sortedFilteredData }: TableProps) {
+export default function FilesTable({ onRowClick, sortedFilteredData, fileName, setFileName }: TableProps) {
   const navigate = useNavigate()
   const [columns, setColumns] = useState<string[]>(["filename", "file_type", "created_by", "last_edited_at", "created_at"]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -27,9 +29,10 @@ export default function FilesTable({ onRowClick, sortedFilteredData }: TableProp
 
 
 
-  const handleRowDoubleClick = (user: IFileTest) => {
-    console.log(`${user.filename} double-clicked, file should be opened in editor...`)
-    navigate(`/${user.created_by}/${user.filename}`)
+  const handleRowDoubleClick = (file: IFileTest) => {
+    console.log(`${file.filename} double-clicked, file should be opened in editor...`)
+    setFileName(file.filename)
+    navigate(`/${file.created_by}/${file.filename}`)
   }
 
   const toggleColumn = (col: string) => {
@@ -75,13 +78,13 @@ export default function FilesTable({ onRowClick, sortedFilteredData }: TableProp
           </TableHeader>
 
           <TableBody>
-            {currentRows.map((user) => (
-              <TableRow className="text-left w-auto whitespace-nowrap px-4 py-2" key={user.filename} onClick={() => onRowClick(user)} onDoubleClick={() => handleRowDoubleClick(user)}>
-                {columns.includes("filename") && <TableCell className="whitespace-nowrap pr-16 py-2">{user.filename}</TableCell>}
-                {columns.includes("file_type") && <TableCell className="whitespace-nowrap pr-16 py-2">{user.file_type}</TableCell>}
-                {columns.includes("last_edited_at") && <TableCell className="whitespace-nowrap pr-16 py-2">{user.last_edited_at.toLocaleDateString()}</TableCell>}
-                {columns.includes("created_by") && <TableCell className="whitespace-nowrap pr-16 py-2">{user.created_by}</TableCell>}
-                {columns.includes("created_at") && <TableCell className="whitespace-nowrap pl-16 py-2">{user.created_at.toLocaleDateString()}</TableCell>}
+            {currentRows.map((file) => (
+              <TableRow className="text-left w-auto whitespace-nowrap px-4 py-2" key={file.filename} onClick={() => onRowClick(file)} onDoubleClick={() => handleRowDoubleClick(file)}>
+                {columns.includes("filename") && <TableCell className="whitespace-nowrap pr-16 py-2">{file.filename}</TableCell>}
+                {columns.includes("file_type") && <TableCell className="whitespace-nowrap pr-16 py-2">{file.file_type}</TableCell>}
+                {columns.includes("last_edited_at") && <TableCell className="whitespace-nowrap pr-16 py-2">{file.last_edited_at.toLocaleDateString()}</TableCell>}
+                {columns.includes("created_by") && <TableCell className="whitespace-nowrap pr-16 py-2">{file.created_by}</TableCell>}
+                {columns.includes("created_at") && <TableCell className="whitespace-nowrap pl-16 py-2">{file.created_at.toLocaleDateString()}</TableCell>}
               </TableRow>
             ))}
           </TableBody>
