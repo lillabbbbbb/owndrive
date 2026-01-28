@@ -93,6 +93,8 @@ const Home = ({ userData, setUserData, fileName, setFileName }: HomeProps) => {
   console.log(filters.date)
   console.log(filters.status)
 
+  console.log(fileName)
+
 
 
   const fileTypeFilter: Filter<customOption> = {
@@ -365,7 +367,7 @@ const Home = ({ userData, setUserData, fileName, setFileName }: HomeProps) => {
       {!showingArchives && isClicked && <EditorButtons canView={canView} setCanView={setCanView} canEdit={canEdit} setCanEdit={setCanEdit} visibleToGuest={visibleToGuest} setVisibleToGuest={setVisibleToGuest} isPrivate={isPrivate} setIsPrivate={setIsPrivate} />}
       */}
 
-      <FilesTable setFileName={setFileName} onRowClick={() => handleRowClick()} sortedFilteredData={sortedFilteredData} />
+      <FilesTable fileName={fileName} setFileName={setFileName} onRowClick={() => handleRowClick()} sortedFilteredData={sortedFilteredData} />
     </div>
   )
 }
