@@ -8,6 +8,7 @@ import { IFile } from "../../../../server/src/models/File"
 import { IUser } from "../../../../server/src/models/User"
 import { IUserTest, IFileTest } from "../../App"
 import SettingsDropdownMenu from "../SettingsDropdownMenu"
+import LanguageDropdown from "../LanguageDropdown"
 
 type HeaderProps = {
     userData: IUserTest,
@@ -57,6 +58,7 @@ const Header = ({ userData, setUserData, jwt, setJwt }: HeaderProps) => {
             {/* Right */}
             <div className="flex items-center justify-between gap-6">
                 <Button onClick={() => handleLanguageChange()}>EN</Button> //this should be a dropdown menu
+                <LanguageDropdown />
             {jwt && <SettingsDropdownMenu userData={userData} setUserData={setUserData} jwt={jwt} setJwt={(c) => setJwt(c)} />}
             
             </div>
