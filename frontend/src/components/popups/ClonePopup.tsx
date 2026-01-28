@@ -57,6 +57,8 @@ export function ClonePopup() {
         //check if special characters are used like "/", etc.
 
         //check if a file with this name in the user's drive already exists
+        //GET - FETCH ALL FILENAMES IN THIS USER'S DRIVE
+        fetch..
         setIsInvalidName(true)
     }
 

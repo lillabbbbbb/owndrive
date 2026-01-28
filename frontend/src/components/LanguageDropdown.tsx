@@ -11,6 +11,8 @@ const languageOptions = ["en", "fi"]
 
 const LanguageDropdown = () => {
 
+    //Note: language choice should be stored in browser's local storage
+
     const [selected, setSelected] = useState<string>(languageOptions[0])
     const triggerRef = useRef<HTMLButtonElement>(null)
     const [contentWidth, setContentWidth] = useState<number | undefined>()

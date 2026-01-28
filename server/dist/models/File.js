@@ -38,7 +38,7 @@ exports.File = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const fileSchema = new mongoose_1.Schema({
     created_at: { type: Date, required: true }, //permanent
-    created_by: { type: String, required: true }, //permanent
+    created_by: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', required: true }, //permanent
     last_edited_at: { type: Date, required: true },
     file_type: { type: String, required: true }, //permanent
     filename: { type: String, required: true },
@@ -49,6 +49,8 @@ const fileSchema = new mongoose_1.Schema({
     visibleToGuests: { type: Boolean, required: true },
     showsInHomeShared: { type: Boolean, required: true },
     private: { type: Boolean, required: true },
+    isArchived: { type: Boolean, required: true },
+    archivedAt: { type: Date, required: false },
     inUse: { type: Boolean, required: true }, //= is anyone viewing (with edit permission) /editing this document
     usedBy: { type: String, required: false } //the user _id, if any, that is "using" the file
 });

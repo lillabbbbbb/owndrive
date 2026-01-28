@@ -43,6 +43,8 @@ const handleLogout = () => {
     const handleModeChange = () => {
         console.log("Mode button clicked")
 
+        //store in browser's local storage
+
         //Mode should be changed:
           //Dark -> Light
           //Light -> Dark

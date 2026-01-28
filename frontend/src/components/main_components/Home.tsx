@@ -66,6 +66,11 @@ const Home = ({ userData, setUserData, fileName, setFileName }: HomeProps) => {
 
   const navigate = useNavigate()
 
+  //GET - FETCH THIS ONE USER'S METADATA
+    useEffect()
+
+  //GET - FETCH THIS ONE USER'S ALL FILES' DATA
+
   const getUserFiles = () => {
     return userData.files || []
   }

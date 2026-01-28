@@ -40,6 +40,9 @@ const Editor = ({ jwt, userData, setUserData, fileName, setFileName }: EditorPro
 
     const navigate = useNavigate()
 
+    //GET - FETCH DATA OF THIS ONE FILE
+    useEffect()
+
     const username = userData.username || userData.email
 
 

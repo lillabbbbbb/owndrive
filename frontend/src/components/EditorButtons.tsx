@@ -49,7 +49,7 @@ const EditorButtons = ({canView, canEdit, isPrivate, visibleToGuest, setCanView,
     console.log("Delete button clicked, reassuring window should pop up")
 
     //set file's status to "archived"
-
+    patch
   }
 
 

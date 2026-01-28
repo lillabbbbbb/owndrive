@@ -58,6 +58,9 @@ export function SharePopup({ canView, canEdit, isPrivate, visibleToGuest, setCan
   const [shortUrl, setShortUrl] = useState(`http://localhost:3000/user/file`);
   const [addUsersMenuOpen, setAddUsersMenuOpen] = useState<boolean>(false)
 
+  //UPDATE DB
+  post useEffect{}, [canEdit, canView, isPrivate]
+
   console.log("This file is " + (!isPrivate ? "not " : "") + "private.");
   console.log("This file is " + (!visibleToGuest ? "not " : "") + "visible to guests.");
 

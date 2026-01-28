@@ -35,6 +35,8 @@ const ProfilePicDialog = ({ open, setOpen }: ProfilePicDialogProps) => {
         console.log("Save button clicked... image should be updated in DB...")
 
         //UPDATE PATCH call goes here 
+        //store new image in DB (overwrite the reference in user..)
+        post
     }
 
     return (

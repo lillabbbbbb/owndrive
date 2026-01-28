@@ -42,6 +42,7 @@ type FilterDialogProps = {
 
 export function ControlledFilterDialog({ filters, onChange }: FilterDialogProps) {
 
+  //Note: active filters could be stored in local storage
 
   const [open, setOpen] = useState<boolean>(false)
 

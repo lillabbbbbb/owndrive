@@ -10,47 +10,9 @@ const userRouter: Router = Router()
 
 //route to anything else: handled in frontend
 
-//NOTE: Is this route really needed?
-//Home
-userRouter.get("/:user/home", 
-    async (req: Request, res: Response) => {
-    try {
-        
-        return res.status(200).json()
-    } catch (error: any) {
-        console.log(error)
-        return res.status(500).json({"message": "Internal Server Error"})
-    }
-})
 
-//NOTE: Is this route really needed?
-//upload profile pic
-userRouter.post("/profile_pic/upload", upload.single("image"), async (req: Request, res: Response) => {
-    try {
-        if (!req.file) {
-            return res.status(400).json({message: "No file uploaded"})
-        }
-
-        const imgPath: string = req.file.path.replace("public", "")
-
-        const image: IImage = new Image({
-            filename: req.file.filename,
-            description: req.body.description,
-            path: imgPath
-        })
-        await image.save()
-        console.log("File uploaded and saved in the database")
-        return res.status(201).json({message: "File uploaded and saved in the database"})
-    } catch(error: any) {
-        console.error(`Error while uploading file: ${error}`)
-        return res.status(500).json({message: 'Internal server error'})
-    }
- 
-    
-})
-
-//UPDATE change profile picture
-userRouter.patch("/profile_pic/change", upload.single("image"), async (req: Request, res: Response) => {
+//UPDATE Upload or change profile picture
+userRouter.patch("/users/:userId/profile_pic", upload.single("image"), async (req: Request, res: Response) => {
     try {
         if (!req.file) {
             return res.status(400).json({message: "No file uploaded"})
@@ -97,8 +59,8 @@ userRouter.patch("/profile_pic/change", upload.single("image"), async (req: Requ
 })
 
 //GET get profile picture of a user
-//params: username
-userRouter.get("/:user/profile_picture", async (req: Request, res: Response) => {
+//params: userId
+userRouter.get("/users/:userId/profile_picture", async (req: Request, res: Response) => {
     try {
 
         //check if username (:user) matches the user signed inside the jwt token
@@ -117,34 +79,6 @@ userRouter.get("/:user/profile_picture", async (req: Request, res: Response) => 
 
         console.log(user.profile_pic)
         return res.status(201).json({message: user.profile_pic})
-    } catch(error: any) {
-        console.error(`Error while uploading file: ${error}`)
-        return res.status(500).json({message: 'Internal server error'})
-    }
-})
-
-
-//UPDATE change light / dark mode
-//params: mode: string (e.g. "light"), username: from URL
-userRouter.post("/:user/mode", async (req: Request, res: Response) => {
-    try {
-
-        //check if username (:user) matches the user signed inside the jwt token
-
-        //fetch image record from user db:
-        //get the right user
-        const user = await User
-            .findOneAndUpdate({username: req.body.username},
-                {mode: req.body.mode}
-            )
-
-
-        //if user not found
-        if (!user) return res.status(404).json({message: 'User not found'})
-
-
-        console.log(user.mode)
-        return res.status(201).json({message: `User's mode set to: ${user.mode}`})
     } catch(error: any) {
         console.error(`Error while uploading file: ${error}`)
         return res.status(500).json({message: 'Internal server error'})

@@ -31,6 +31,7 @@ export function EditableText({value, onSave, className, validate = () => true,
   const finishEditing = () => {
     const valid = validate(draft)
     setIsValid(valid)
+    onSave
   }
 
   if (!editing) {
