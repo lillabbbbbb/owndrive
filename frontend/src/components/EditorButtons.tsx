@@ -19,7 +19,7 @@ import { Button } from "./ui/button"
 const EditorButtons = () => {
 
   const [PDFDialogOpen, setPDFDialogOpen] = useState<boolean>(false)
-  const {currentFileId, createFile, deleteFile, filesLoading, filesError} = useAppContext()
+  const {currentFileId, createFile, updateFile, filesLoading, filesError} = useAppContext()
 
 
   const handleCloneButtonClick = () => {
@@ -42,7 +42,7 @@ const EditorButtons = () => {
     console.log("Delete button clicked, reassuring window should pop up")
 
     //set file's status to "archived"
-    deleteFile(currentFileId)
+    updateFile(currentFileId, {status: "archived"})
   }
 
 

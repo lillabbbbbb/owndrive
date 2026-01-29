@@ -85,6 +85,7 @@ const Editor = () => {
             last_edited_at: new Date(),
             inUse: true,
             usedBy: user._id,
+            status: "active",
         })
 
     }
@@ -100,6 +101,7 @@ const Editor = () => {
             filename: newFileName,
             inUse: true,
             usedBy: user._id,
+            status: "active",
         })
 
         //and display the new one
