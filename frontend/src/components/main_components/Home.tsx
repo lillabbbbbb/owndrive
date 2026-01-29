@@ -12,6 +12,8 @@ import UploadFileDialog from "../popups/UploadFileDialog"
 //import { IUser } from "../../../../server/src/models/User"
 import { IUserTest, IFileTest } from "../../App"
 import { useNavigate } from "react-router-dom";
+import { useUser } from '../../hooks/useUser';
+import { useFiles } from '../../hooks/useFiles';
 import { config } from 'process';
 
 
@@ -54,25 +56,16 @@ enum datesEnum {
   OLDER_THAN_1_YEAR = "Older than a year"
 }
 
-type HomeProps = {
-  userData: IUserTest,
-  setUserData: (modifiedUser: IUserTest) => void
-  fileName?: string,
-  setFileName: (newFileName: string) => void;
-}
-
-
-const Home = ({ userData, setUserData, fileName, setFileName }: HomeProps) => {
+const Home = () => {
 
   const navigate = useNavigate()
-
-  //GET - FETCH THIS ONE USER'S METADATA
-    useEffect()
+  const {user} = useUser()
+  const {getFile, getFiles, updateFile} = useFiles()
 
   //GET - FETCH THIS ONE USER'S ALL FILES' DATA
 
   const getUserFiles = () => {
-    return userData.files || []
+    return getFiles()
   }
 
   const [isClicked, setClicked] = useState(false)

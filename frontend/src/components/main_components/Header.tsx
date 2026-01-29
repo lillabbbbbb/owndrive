@@ -10,17 +10,10 @@ import { IUserTest, IFileTest } from "../../App"
 import SettingsDropdownMenu from "../SettingsDropdownMenu"
 import LanguageDropdown from "../LanguageDropdown"
 
-type HeaderProps = {
-    userData: IUserTest,
-    setUserData: (modifiedUser: IUserTest) => void,
-    jwt: string | null,
-    setJwt: (c: string | null) => void;
-}
-
-
-const Header = ({ userData, setUserData, jwt, setJwt }: HeaderProps) => {
+const Header = () => {
 
     const navigate = useNavigate()
+    const jwt = localStorage.getItem("token")
 
     const handleHomeClick = () => {
         console.log("Home button clicked")
@@ -34,7 +27,7 @@ const Header = ({ userData, setUserData, jwt, setJwt }: HeaderProps) => {
     }
 
     return (
-        <header className="flex items-center justify-between fixed top-0 left-0 w-full z-50 p-4 bg-gradient-to-r from-indigo-600 to-black-600 shadow-lg text-white">
+        <header className="flex items-center justify-between fixed top-0 left-0 w-full z-50 p-4 bg-linear-to-r from-indigo-600 to-black-600 shadow-lg text-white">
             {/* Left: Logo / Menu */}
             <div className="flex items-center gap-4">
                 <span className="text-2xl font-bold tracking-tight">MyApp</span>
@@ -59,7 +52,7 @@ const Header = ({ userData, setUserData, jwt, setJwt }: HeaderProps) => {
             <div className="flex items-center justify-between gap-6">
                 <Button onClick={() => handleLanguageChange()}>EN</Button> //this should be a dropdown menu
                 <LanguageDropdown />
-            {jwt && <SettingsDropdownMenu userData={userData} setUserData={setUserData} jwt={jwt} setJwt={(c) => setJwt(c)} />}
+            {jwt && <SettingsDropdownMenu />}
             
             </div>
         </header>

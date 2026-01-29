@@ -1,58 +1,60 @@
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../components/ui/dropdown-menu"
 import { LucideMenu, LucideLogOut, LucideSettings, LucideUser } from "lucide-react"
-import {IUserTest, IFileTest} from "../App"
+import { IUserTest, IFileTest } from "../App"
 import { useNavigate } from "react-router-dom"
 import ProfilePicDialog from "./popups/ProfilePicDialog"
 import { useState } from "react"
+import { useUser } from "../hooks/useUser"
 
 
 type SettingsDropDownMenuProps = {
-    userData: IUserTest,
-    setUserData: (modifiedUser : IUserTest) => void,
-    jwt: string | null,
-    setJwt: (c: string | null) => void;
+  userData: IUserTest,
+  setUserData: (modifiedUser: IUserTest) => void,
+  jwt: string | null,
+  setJwt: (c: string | null) => void;
 }
 
-function SettingsDropdownMenu({userData, setUserData, jwt, setJwt}: SettingsDropDownMenuProps) {
+function SettingsDropdownMenu() {
 
   const navigate = useNavigate()
+  const {logout} = useUser()
   const [openProfilePicDialog, setOpenProfilePicDialog] = useState<boolean>(false)
 
-const handleLogout = () => {
-        console.log("Logout clicked")
+  const handleLogout = () => {
+    console.log("Logout clicked")
 
-        localStorage.removeItem("token")
-        localStorage.removeItem("logged_in")
-        setJwt(null)
+    localStorage.removeItem("token")
+    localStorage.removeItem("logged_in")
+    logout()
 
-        console.log("User successfully logged out.")
+    console.log("User successfully logged out.")
 
-        navigate("/login")
-    }
+    navigate("/login")
+  }
 
-    const handleProfilePic = (event: Event) => {
-      event.preventDefault()
-        console.log("Change profile pic button clicked")
+  const handleProfilePic = (event: Event) => {
+    event.preventDefault()
+    console.log("Change profile pic button clicked")
 
-        //ProfilePicturePopup should open
-        setOpenProfilePicDialog(true)
+    //ProfilePicturePopup should open
+    setOpenProfilePicDialog(true)
 
-    }
+  }
 
-    const handleModeChange = () => {
-        console.log("Mode button clicked")
+  const handleModeChange = () => {
+    console.log("Mode button clicked")
 
-        //store in browser's local storage
+    //store in browser's local storage
 
-        //Mode should be changed:
-          //Dark -> Light
-          //Light -> Dark
+    //Mode should be changed:
+    //Dark -> Light
+    //Light -> Dark
 
-    }
+  }
 
   return (
-<>
+    <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar className="cursor-pointer">
@@ -62,7 +64,7 @@ const handleLogout = () => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="bg-white text-black">
           <DropdownMenuItem onSelect={(e) => handleProfilePic(e)}><LucideUser className="mr-2" /> Change profile picture</DropdownMenuItem>
-          <ProfilePicDialog open={openProfilePicDialog} setOpen={setOpenProfilePicDialog}/>
+          <ProfilePicDialog open={openProfilePicDialog} setOpen={setOpenProfilePicDialog} />
           <DropdownMenuItem onClick={() => handleModeChange()}><LucideSettings className="mr-2" /> Dark mode</DropdownMenuItem>
           <DropdownMenuItem onClick={() => handleLogout()}><LucideLogOut className="mr-2" /> Logout</DropdownMenuItem>
         </DropdownMenuContent>

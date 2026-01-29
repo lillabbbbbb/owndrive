@@ -3,6 +3,7 @@ import { Tooltip, TooltipTrigger, TooltipContent } from "../components/ui/toolti
 import { HiShare } from "react-icons/hi2";
 import SharePopup from './popups/SharePopup';
 import { ClonePopup } from './popups/ClonePopup';
+import { useFiles } from '../hooks/useFiles'
 import {
     Dialog,
     DialogContent,
@@ -27,11 +28,13 @@ interface EditorButtonsProps {
 const EditorButtons = ({canView, canEdit, isPrivate, visibleToGuest, setCanView, setCanEdit, setIsPrivate, setVisibleToGuest} : EditorButtonsProps) => {
 
   const [PDFDialogOpen, setPDFDialogOpen] = useState<boolean>(false)
+  const {createFile, deleteFile} = useFiles()
 
 
   const handleCloneButtonClick = () => {
     console.log("Clone button clicked, clone window should pop up")
 
+    createFile()
 
   }
   const handlePDFButtonClick = () => {
@@ -49,7 +52,7 @@ const EditorButtons = ({canView, canEdit, isPrivate, visibleToGuest, setCanView,
     console.log("Delete button clicked, reassuring window should pop up")
 
     //set file's status to "archived"
-    patch
+    deleteFile()
   }
 
 

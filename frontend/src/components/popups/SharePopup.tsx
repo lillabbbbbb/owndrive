@@ -23,24 +23,13 @@ import { MultiSelect } from '../Multiselect'
 import { Filter, Filters } from '../main_components/Home';
 import { Text } from 'lucide-react';
 import { HiShare } from "react-icons/hi2";
+import { useFiles } from '../../hooks/useFiles';
 
 export type customOption = {
   label: string
   value: string
 }
 
-
-
-type SharePopupProps = {
-  canView: string[],
-  canEdit: string[],
-  visibleToGuest: boolean,
-  isPrivate: boolean,
-  setCanView: (users: string[]) => void,
-  setCanEdit: (users: string[]) => void,
-  setVisibleToGuest: (b: boolean) => void,
-  setIsPrivate: (b: boolean) => void,
-}
 
 const usernames: string[] = ["elisbet29", "9dbaskj2", "lillabbbbbbb"]
 
@@ -50,22 +39,23 @@ const allUsers = usernames.map((u) => ({
 }))
 
 
-export function SharePopup({ canView, canEdit, isPrivate, visibleToGuest, setCanView, setCanEdit, setIsPrivate, setVisibleToGuest }: SharePopupProps) {
+export function SharePopup() {
 
+  const {getFile, updateFile} = useFiles()
 
   const [open, setOpen] = useState<boolean>(false)
   const [copied, setCopied] = useState(false);
   const [shortUrl, setShortUrl] = useState(`http://localhost:3000/user/file`);
   const [addUsersMenuOpen, setAddUsersMenuOpen] = useState<boolean>(false)
 
-  //UPDATE DB
-  post useEffect{}, [canEdit, canView, isPrivate]
-
-  console.log("This file is " + (!isPrivate ? "not " : "") + "private.");
-  console.log("This file is " + (!visibleToGuest ? "not " : "") + "visible to guests.");
+  const file = getFile(fileId)
 
 
-  console.log("Selected options:", canEdit);
+  console.log("This file is " + (!file.isPrivate ? "not " : "") + "private.");
+  console.log("This file is " + (!file.visibleToGuest ? "not " : "") + "visible to guests.");
+
+
+  console.log("Selected options:", file.canEdit);
 
   //https://medium.com/@plsreeparvathy/copy-to-clipboard-feature-with-react-and-mui-065afa55f866
   const handleCopy = async () => {
@@ -78,6 +68,7 @@ export function SharePopup({ canView, canEdit, isPrivate, visibleToGuest, setCan
       console.error('Failed to copy text: ', err);
     }
   };
+
 
   return (
     <>
@@ -106,7 +97,7 @@ export function SharePopup({ canView, canEdit, isPrivate, visibleToGuest, setCan
               </FieldDescription>
             </FieldContent>
             
-            <Switch id="visible-to-guest" onCheckedChange={(c) => setVisibleToGuest(!c)} />
+            <Switch id="visible-to-guest" onCheckedChange={(c) => updateFile(!c)} /> //visible to guest
           </Field>
 
 
@@ -123,10 +114,9 @@ export function SharePopup({ canView, canEdit, isPrivate, visibleToGuest, setCan
                   setAddUsersMenuOpen(true);
                 }
               }}
-              value={canEdit.map(user => ({ value: user, label: user }))} // controlled component
+              value={file.canEdit.map(user => ({ value: user, label: user }))} // controlled component
               onChange={(newValue: MultiValue<customOption>, actionMeta: ActionMeta<customOption>) => {
-                setCanEdit(newValue.map((v: customOption) => v.value)); // back to string[]
-                console.log(canEdit)
+                updateFile(newValue.map((v: customOption) => v.value)); // back to string[] //set who can edit
               }}
 
               menuIsOpen={addUsersMenuOpen}
@@ -142,8 +132,8 @@ export function SharePopup({ canView, canEdit, isPrivate, visibleToGuest, setCan
             </FieldContent>
             <Switch
               id="is-private"
-              checked={isPrivate}
-              onCheckedChange={(c) => setIsPrivate(c)}
+              checked={file.isPrivate}
+              onCheckedChange={(c) => updateFile(c)} //set is private
             />
           </Field>
 

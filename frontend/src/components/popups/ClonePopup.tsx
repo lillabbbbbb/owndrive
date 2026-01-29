@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState } from "react"
-import Select, { components } from 'react-select';
+import Select, { components, createFilter } from 'react-select';
 //https://ui.shadcn.com/docs/components/radix/dialog
 import {
     Dialog,
@@ -24,6 +24,7 @@ import {
     FieldSet,
     FieldTitle,
 } from "../ui/field"
+import { useFiles } from '../../hooks/useFiles';
 
 export type customOption = {
     label: string
@@ -41,6 +42,7 @@ const fileName = "testFileNameNotreal"
 
 export function ClonePopup() {
 
+    const {getFiles, createFile} = useFiles()
 
     const [open, setOpen] = useState<boolean>(false)
     const [changed, setChanged] = useState<boolean>(false);
@@ -50,15 +52,14 @@ export function ClonePopup() {
 
     const handleSave = async () => {
 
-        //
+        createFile()
     };
 
     const isValidFilename = () => {
         //check if special characters are used like "/", etc.
 
         //check if a file with this name in the user's drive already exists
-        //GET - FETCH ALL FILENAMES IN THIS USER'S DRIVE
-        fetch..
+        getFiles()
         setIsInvalidName(true)
     }
 
@@ -68,9 +69,6 @@ export function ClonePopup() {
 
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogContent>
-                    {/*<DialogHeader>
-            <DialogTitle>Yes</DialogTitle>
-          </DialogHeader>*/}
 
                     <div className="flex flex-col gap-4">
                         <form>

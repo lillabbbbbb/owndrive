@@ -6,14 +6,18 @@ import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import '@mantine/core/styles.css';
 // ‼️ import dropzone styles after core package styles
 import '@mantine/dropzone/styles.css';
+import { useFiles } from '../../hooks/useFiles';
 
 import { useDropzone } from "react-dropzone";
 
 const UploadFileDialog = ()  => {
 
-  const handleFileUpload = (files : File[]) => {
+  const {createFile} = useFiles()
+
+  const handleFileUpload = (file : File) => {
 
     //handle text-based file upload
+    createFile()
 
 
     //handle image upload
@@ -22,6 +26,7 @@ const UploadFileDialog = ()  => {
 
     //POST to DB
     //Route: 
+    createFile()
   }
 
   const { getInputProps, open } = useDropzone({

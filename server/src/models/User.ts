@@ -2,7 +2,6 @@
 
 import mongoose, {Document, Schema} from "mongoose";
 import { IFile } from "./File";
-import e from "express";
 
 export interface IUser extends Document {
    username?: string, //only for Google users?

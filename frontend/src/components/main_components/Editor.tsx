@@ -15,20 +15,14 @@ import ConcurrentEditingPopup from '../popups/ConcurrentEditingPopup';
 import { IUserTest } from '../../App';
 import { EditableText } from '../EditableText';
 import { useNavigate } from 'react-router-dom';
+import { useFiles } from '../../hooks/useFiles';
+import { useUser } from '../../hooks/useUser';
 
-
-type EditorProps = {
-    jwt: string | null,
-    setJwt?: (c: string | null) => void;
-    userData: IUserTest,
-    setUserData: (modifiedUser: IUserTest) => void,
-    fileName: string,
-    setFileName: (newValue: string) => void
-}
-
-const Editor = ({ jwt, userData, setUserData, fileName, setFileName }: EditorProps) => {
+const Editor = () => {
 
     const [guestDialogOpen, setGuestDialogOpen] = useState<boolean>(true)
+    const jwt = localStorage.getItem("token")
+
     const [beingUsed, setBeingUsed] = useState<boolean>(true)
     const [content, setContent] = useState<string>("")
     const [lastEditedAt, setLastEditedAt] = useState<string>("")
@@ -39,11 +33,13 @@ const Editor = ({ jwt, userData, setUserData, fileName, setFileName }: EditorPro
     const [editable, setEditable] = useState<boolean>(false) //turn this into useEffect
 
     const navigate = useNavigate()
+    const {user} = useUser()
+    const {getFile, createFile, updateFile} = useFiles()
 
-    //GET - FETCH DATA OF THIS ONE FILE
-    useEffect()
+    const file = getFile(fileId)
 
-    const username = userData.username || userData.email
+
+    const username = user.username || user.email
 
 
     console.log(`File content is now:`)
@@ -55,13 +51,13 @@ const Editor = ({ jwt, userData, setUserData, fileName, setFileName }: EditorPro
 
         //if a file with this name doesnt exist in the user's drive (go through userData.files array in search of a match)
         //create new file record and append it to the user
-        //POST Route: 
+        createFile()
 
         //if this file exists, but the content has been modified
         //save new content
 
         //POST Route: 
-
+        updateFile()
 
     }
 
@@ -70,13 +66,14 @@ const Editor = ({ jwt, userData, setUserData, fileName, setFileName }: EditorPro
         //check if filename is valid and unique,
 
         //if so, save the new name of the file in the DB (PATCH call)
-
+        updateFile()
 
         //and display the new one
-        setFileName(newFileName)
+        //needs state or sum?
         //refresh URL with correct new filename
         navigate(`/${username}/${newFileName}`, { replace: true })
-        //if not, set the value to be the previous file name
+
+        //if not valid, set the value to be the previous file name
 
 
     }
@@ -89,10 +86,10 @@ const Editor = ({ jwt, userData, setUserData, fileName, setFileName }: EditorPro
 
             <Button onClick={() => handleSave()}>Save</Button>
             {<div>
-                <EditorButtons canView={canView} setCanView={setCanView} canEdit={canEdit} setCanEdit={setCanEdit} visibleToGuest={visibleToGuest} setVisibleToGuest={setVisibleToGuest} isPrivate={isPrivate} setIsPrivate={setIsPrivate}/>
-                <EditableText value={fileName} onSave={handleSaveFileName}/>
+                <EditorButtons />
+                <EditableText value={file.title} onSave={handleSaveFileName}/>
                 <div>
-                    <EditorField jwt={jwt} content={content} setContent={setContent} editable={editable}/>
+                    <EditorField content={file.content} editable={editable}/>
                     <div>Word count</div>
                 </div>
 

@@ -1,0 +1,79 @@
+import { useState, useCallback } from "react";
+import axios from "axios";
+import { IFileFrontend } from "../types/File";
+
+export function useFiles() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+
+  //Automatically add the Bearer token to each request
+  axios.interceptors.request.use((config) => {
+    const token = localStorage.getItem("token"); // or from context
+    if (token && config.headers) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  });
+
+  //General error handler, manually called with each API request
+  const handleError = (err: unknown) => {
+    if (axios.isAxiosError(err)) setError(err.response?.data?.message || "Server error");
+    else setError("Unexpected error");
+  };
+
+
+  const createFile = useCallback(async (fileData: Partial<IFileFrontend>) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.post<IFileFrontend>("/api/files", fileData);
+      return res.data;
+    } catch (err) {
+      handleError(err);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+
+  const updateFile = useCallback(async (id: string, updates: Partial<IFileFrontend>) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.patch<IFileFrontend>(`/api/files/${id}`, updates);
+      return res.data;
+    } catch (err) {
+      handleError(err);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+
+  const deleteFile = useCallback(async (id: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await axios.delete(`/api/files/${id}`);
+      return true;
+    } catch (err) {
+      handleError(err);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  //Some day: attach image to a file 
+
+  return {
+    loading,
+    error,
+    createFile,
+    updateFile,
+    deleteFile,
+  };
+}

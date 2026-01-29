@@ -81,7 +81,7 @@ export default function FilesTable({ onRowClick, sortedFilteredData, fileName, s
 
           <TableBody>
             {currentRows.map((file) => (
-              <TableRow className="text-left w-auto whitespace-nowrap px-4 py-2" key={file.filename} onClick={() => onRowClick(file)} onDoubleClick={() => handleRowDoubleClick(file)}>
+              <TableRow className="text-left w-auto whitespace-nowrap px-4 py-2" key={file._id} onClick={() => onRowClick(file)} onDoubleClick={() => handleRowDoubleClick(file)}>
                 {columns.includes("filename") && <TableCell className="whitespace-nowrap pr-16 py-2">{file.filename}</TableCell>}
                 {columns.includes("file_type") && <TableCell className="whitespace-nowrap pr-16 py-2">{file.file_type}</TableCell>}
                 {columns.includes("last_edited_at") && <TableCell className="whitespace-nowrap pr-16 py-2">{file.last_edited_at.toLocaleDateString()}</TableCell>}

@@ -4,7 +4,7 @@ import { TextStyleKit } from '@tiptap/extension-text-style'
 import type { Editor } from '@tiptap/react'
 import { EditorContent, useEditor, useEditorState } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import React, { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { Button } from '@headlessui/react'
 import clsx from 'clsx';
 

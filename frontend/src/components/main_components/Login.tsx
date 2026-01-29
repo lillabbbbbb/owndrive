@@ -3,17 +3,14 @@ import React from 'react'
 import {Link, useNavigate} from "react-router-dom"
 import AppleNotAvailablePopup from "../popups/AppleNotAvailablePopup";
 
-type LoginProps = {
-    jwt: string | null,
-    setJwt: (c: string | null) => void;
-}
 
-const Login = ({jwt, setJwt} : LoginProps) => {
+const Login = () => {
 
     const navigate = useNavigate()
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const jwt = localStorage.getItem("token")
 
 
     const handleSubmit = async (e: FormEvent) => {
@@ -35,7 +32,6 @@ const Login = ({jwt, setJwt} : LoginProps) => {
         if (response.ok) {
             const data = await response.json()
             localStorage.setItem("token", data.token)
-            setJwt(localStorage.getItem("token"))
 
 
             navigate("/home")

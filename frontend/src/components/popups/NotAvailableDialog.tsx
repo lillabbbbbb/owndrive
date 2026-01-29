@@ -23,9 +23,6 @@ const NotAvailablePopup = () => {
 
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogContent>
-                    {/*<DialogHeader>
-            <DialogTitle>Yes</DialogTitle>
-          </DialogHeader>*/}
 
                     <div className="flex flex-col gap-4">
 

@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import {IUser} from "../../server/src/models/User"
 import { statusEnum } from './components/main_components/Home'
+import { AppProvider } from './hooks/globalContext'
 
 
 
@@ -278,11 +279,13 @@ function App() {
 
   return (
     <>
-      <BrowserRouter>
+      <AppProvider>
+        <BrowserRouter>
         <Header userData={userData} setUserData={setUserData} jwt={jwt} setJwt={(c) => setJwt(c)}/>
         <Body userData={userData} setUserData={setUserData} jwt={jwt} setJwt={(c) => setJwt(c)}/>
 
       </BrowserRouter>
+      </AppProvider>
     </>
   )
 }
