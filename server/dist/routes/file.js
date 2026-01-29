@@ -29,17 +29,17 @@ fileRouter.get("/", async (req, res) => {
 //POST create new file
 //params: username: string, token: string, filedata: JSON
 //NOTE: check if the user has the right permissions to post to this route
-fileRouter.post("/create", async (req, res) => {
+fileRouter.post("/", async (req, res) => {
     try {
         //check if username (:user) matches the user signed inside the jwt token
         //NOTE: I COULD CREATE A MIDDLEWARE THAT DECONSTRUCTS THE TOKEN AND COMPARES IT TO THE USERNAME
         //check if there is already a file with this name in the db of the owner (schema within schema), return if so'
-        const existingFile = await File_1.File.findOne({ filename: req.body.fileName });
+        const existingFile = await File_1.File.findOne({ _id: req.body._id });
         if (existingFile)
             return res.status(401).json({ "message": "A file with this name already exists" });
         //get the right user
         const user = await User_1.User
-            .findOne({ email: req.body.email })
+            .findOne({ _id: req.headers["authorization"] })
             .select("files");
         //if user not found
         if (!user)
