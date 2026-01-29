@@ -14,8 +14,9 @@ import {
 import ConcurrentEditingPopup from '../popups/ConcurrentEditingPopup';
 import { IUserTest } from '../../App';
 import { EditableText } from '../EditableText';
+import CustomDialog from '../popups/CustomDialog';
 import { useNavigate } from 'react-router-dom';
-import { useAppContext } from "../../context/AppContext";
+import { useAppContext } from "../context/globalContext";
 import { useFiles } from '../../hooks/useFiles';
 import { useUser } from '../../hooks/useUser';
 
@@ -34,10 +35,9 @@ const Editor = () => {
     const [editable, setEditable] = useState<boolean>(false) //turn this into useEffect
 
     const navigate = useNavigate()
-    const {user} = useUser()
-    const {getFile, createFile, updateFile} = useFiles()
+    const {user, currentFileId, getFile, createFile, updateFile, userLoading, userError, filesLoading, filesError} = useAppContext()
 
-    const file = getFile(fileId)
+    const file = getFile(currentFileId)
 
 
     const username = user.username || user.email
@@ -121,6 +121,10 @@ const Editor = () => {
                     </Dialog>
                 </>
             }
+            {userError && <CustomDialog text="User error"/>}
+            {userLoading && <p>Loading...</p>}
+            {filesError && <CustomDialog heading="Error" text="File error"/>}
+            {filesLoading && <p>Loading...</p>}
 
         </>
     )

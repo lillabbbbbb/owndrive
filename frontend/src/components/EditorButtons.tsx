@@ -4,7 +4,8 @@ import { HiShare } from "react-icons/hi2";
 import SharePopup from './popups/SharePopup';
 import { ClonePopup } from './popups/ClonePopup';
 import { useFiles } from '../hooks/useFiles'
-import { useAppContext } from "../context/globalContext";
+import { useAppContext } from "./context/globalContext";
+import CustomDialog from '../popups/CustomDialog';
 import {
     Dialog,
     DialogContent,
@@ -15,27 +16,15 @@ import {
 import { Label } from "./ui/label"
 import { Button } from "./ui/button"
 
-interface EditorButtonsProps {
-  canView: string[],
-  canEdit: string[],
-  visibleToGuest: boolean,
-  isPrivate: boolean,
-  setCanView: (users: string[]) => void,
-  setCanEdit: (users: string[]) => void,
-  setVisibleToGuest: (b: boolean) => void,
-  setIsPrivate: (b: boolean) => void,
-}
-
-const EditorButtons = ({canView, canEdit, isPrivate, visibleToGuest, setCanView, setCanEdit, setIsPrivate, setVisibleToGuest} : EditorButtonsProps) => {
+const EditorButtons = () => {
 
   const [PDFDialogOpen, setPDFDialogOpen] = useState<boolean>(false)
-  const {createFile, deleteFile} = useAppContext()
+  const {createFile, deleteFile, filesLoading, filesError} = useAppContext()
 
 
   const handleCloneButtonClick = () => {
     console.log("Clone button clicked, clone window should pop up")
 
-    createFile()
 
   }
   const handlePDFButtonClick = () => {
@@ -60,10 +49,11 @@ const EditorButtons = ({canView, canEdit, isPrivate, visibleToGuest, setCanView,
   return (
     <div>
       
+      {filesError && <CustomDialog heading="Error" text="File error"/>}
 
       <Tooltip>
         <TooltipTrigger asChild>
-          <SharePopup canView={canView} setCanView={setCanView} canEdit={canEdit} setCanEdit={setCanEdit} visibleToGuest={visibleToGuest} setVisibleToGuest={setVisibleToGuest} isPrivate={isPrivate} setIsPrivate={setIsPrivate}/>
+          <SharePopup />
           
         </TooltipTrigger>
         <TooltipContent side="top">

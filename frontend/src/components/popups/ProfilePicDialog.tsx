@@ -14,6 +14,7 @@ import {
 } from "../ui/avatar"
 import { useUser } from "../../hooks/useUser"
 import { useAppContext } from "../context/globalContext";
+import CustomDialog from '../popups/CustomDialog';
 
 import { Button } from "../ui/button"
 
@@ -24,7 +25,7 @@ type ProfilePicDialogProps = {
 
 const ProfilePicDialog = ({ open, setOpen }: ProfilePicDialogProps) => {
 
-    const { updateProfilePic } = useAppContext()
+    const { updateProfilePic, userLoading, userError } = useAppContext()
 
     const [preview, setPreview] = useState<string | null>(null)
 
@@ -76,6 +77,9 @@ const ProfilePicDialog = ({ open, setOpen }: ProfilePicDialogProps) => {
                             />
                         </label>
                     </Button>
+                    {userError && <CustomDialog text="User error"/>}
+                    {userLoading && <p>Loading...</p>}
+            
             </DialogContent>
         </Dialog>
     )

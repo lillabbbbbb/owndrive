@@ -14,6 +14,8 @@ import { IUserTest, IFileTest } from "../../App"
 import { useNavigate } from "react-router-dom";
 import { useUser } from '../../hooks/useUser';
 import { useFiles } from '../../hooks/useFiles';
+import { useAppContext } from "../context/globalContext";
+import CustomDialog from '../popups/CustomDialog';
 import { config } from 'process';
 
 
@@ -59,8 +61,7 @@ enum datesEnum {
 const Home = () => {
 
   const navigate = useNavigate()
-  const {user} = useUser()
-  const {getFile, getFiles, updateFile} = useFiles()
+  const {user, getFile, getFiles, updateFile, userLoading, userError, filesLoading, filesError} = useAppContext()
 
   //GET - FETCH THIS ONE USER'S ALL FILES' DATA
 
@@ -360,6 +361,11 @@ const Home = () => {
             }}
         />
       </div>
+
+      {userError && <CustomDialog text="User error"/>}
+      {userError && <p>Loading...</p>}
+      {filesError && <CustomDialog heading="Error" text="File error"/>}
+      {filesLoading && <p>Loading...</p>}
 
       {/*
       {!showingArchives && isClicked && <EditorButtons canView={canView} setCanView={setCanView} canEdit={canEdit} setCanEdit={setCanEdit} visibleToGuest={visibleToGuest} setVisibleToGuest={setVisibleToGuest} isPrivate={isPrivate} setIsPrivate={setIsPrivate} />}

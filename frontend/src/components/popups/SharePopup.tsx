@@ -25,6 +25,7 @@ import { Text } from 'lucide-react';
 import { HiShare } from "react-icons/hi2";
 import { useFiles } from '../../hooks/useFiles';
 import { useAppContext } from "../context/globalContext";
+import CustomDialog from '../popups/CustomDialog';
 
 export type customOption = {
   label: string
@@ -42,14 +43,14 @@ const allUsers = usernames.map((u) => ({
 
 export function SharePopup() {
 
-  const {getFile, updateFile} = useAppContext()
+  const {currentFileId, getFile, updateFile, filesLoading, filesError} = useAppContext()
 
   const [open, setOpen] = useState<boolean>(false)
   const [copied, setCopied] = useState(false);
   const [shortUrl, setShortUrl] = useState(`http://localhost:3000/user/file`);
   const [addUsersMenuOpen, setAddUsersMenuOpen] = useState<boolean>(false)
 
-  const file = getFile(fileId)
+  const file = getFile(currentFileId)
 
 
   console.log("This file is " + (!file.isPrivate ? "not " : "") + "private.");
@@ -137,6 +138,8 @@ export function SharePopup() {
               onCheckedChange={(c) => updateFile(c)} //set is private
             />
           </Field>
+            {filesError && <CustomDialog heading="Error" text="File error"/>}
+            {filesLoading && <p>Loading...</p>}
 
 
         </DialogContent>

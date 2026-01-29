@@ -22,6 +22,33 @@ export function useFiles() {
     else setError("Unexpected error");
   };
 
+  const getFiles = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.get<IFileFrontend[]>("/api/files");
+      return res.data;
+    } catch (err) {
+      handleError(err);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const getFile = useCallback(async (id: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.get<IFileFrontend>(`/api/files/${id}`);
+      return res.data;
+    } catch (err) {
+      handleError(err);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   const createFile = useCallback(async (fileData: Partial<IFileFrontend>) => {
     setLoading(true);
@@ -51,6 +78,34 @@ export function useFiles() {
       setLoading(false);
     }
   }, []);
+  
+  const lockFile = useCallback(async (id: string, lockedById: string ) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.patch<IFileFrontend>(`/api/files/${id}`, lockedById);
+      return res.data;
+    } catch (err) {
+      handleError(err);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const unlockFile = useCallback(async (id: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.patch<IFileFrontend>(`/api/files/${id}`);
+      return res.data;
+    } catch (err) {
+      handleError(err);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
 
   const deleteFile = useCallback(async (id: string) => {
@@ -72,8 +127,12 @@ export function useFiles() {
   return {
     loading,
     error,
+    getFiles,
+    getFile,
     createFile,
     updateFile,
+    lockFile,
+    unlockFile,
     deleteFile,
   };
 }

@@ -7,12 +7,13 @@ import ProfilePicDialog from "./popups/ProfilePicDialog"
 import { useState } from "react"
 import { useUser } from "../hooks/useUser"
 import { useAppContext } from "./context/globalContext";
+import CustomDialog from '../popups/CustomDialog';
 
 
 function SettingsDropdownMenu() {
 
   const navigate = useNavigate()
-  const {logout} = useAppContext()
+  const {logout, userLoading, userError} = useAppContext()
   const [openProfilePicDialog, setOpenProfilePicDialog] = useState<boolean>(false)
 
   const handleLogout = () => {
@@ -63,6 +64,8 @@ function SettingsDropdownMenu() {
           <DropdownMenuItem onClick={() => handleLogout()}><LucideLogOut className="mr-2" /> Logout</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      {userError && <CustomDialog text="User error"/>}
     </>
   )
 }

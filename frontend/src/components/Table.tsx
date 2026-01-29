@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "../components/ui/table";
 import { useNavigate } from "react-router-dom";
+import { useAppContext } from "./context/globalContext";
 
 
 type TableProps = {
@@ -23,6 +24,8 @@ type TableProps = {
 
 export default function FilesTable({ onRowClick, sortedFilteredData, fileName, setFileName }: TableProps) {
   const navigate = useNavigate()
+  const {setCurrentFileId} = useAppContext()
+  
   const [columns, setColumns] = useState<string[]>(["filename", "file_type", "created_by", "last_edited_at", "created_at"]);
   const [currentPage, setCurrentPage] = useState(1);
   const ROWS_PER_PAGE = 12;
@@ -31,9 +34,13 @@ export default function FilesTable({ onRowClick, sortedFilteredData, fileName, s
 
   const handleRowDoubleClick = (file: IFileTest) => {
     console.log(`${file.filename} double-clicked, file should be opened in editor...`)
+
+    //??
     setFileName(file.filename)
     console.log("Filename is now " + file.filename)
     console.log(fileName)
+
+    setCurrentFileId(file._id)
     navigate(`/${file.created_by}/${file.filename}`)
   }
 

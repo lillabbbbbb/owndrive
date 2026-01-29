@@ -1,5 +1,5 @@
 
-import { createContext, useContext, ReactNode } from "react";
+import { createContext, useContext, ReactNode, useState } from "react";
 import { useUser } from "../../hooks/useUser";
 import { useFiles } from "../../hooks/useFiles";
 import { IUserFrontend } from "../../types/User";
@@ -12,6 +12,8 @@ export interface AppContextType {
   filesLoading: boolean;
   filesError: string | null;
 
+  currentFileId: string;
+
   // User actions
   refreshUser: () => Promise<void>;
   updateUser: (changes: Partial<IUserFrontend>) => Promise<IUserFrontend | null>;
@@ -19,9 +21,13 @@ export interface AppContextType {
   logout: () => Promise<void>;
 
   // File actions
+  getFile: (id: string) => Promise<IFileFrontend | null>;
+  getFiles: () => Promise<IFileFrontend[] | null>;
   createFile: (fileData: Partial<IFileFrontend>) => Promise<IFileFrontend | null>;
   updateFile: (id: string, updates: Partial<IFileFrontend>) => Promise<IFileFrontend | null>;
   deleteFile: (id: string) => Promise<boolean>;
+
+  setCurrentFileId: (id: string) => void;
 }
 
 
@@ -42,12 +48,16 @@ interface AppProviderProps {
 export const AppProvider = ({ children }: AppProviderProps) => {
   const userHook = useUser();
   const filesHook = useFiles();
+  const [currentFileId, setCurrentFileId] = useState<string>("")
 
   const value = {
     // User state
     user: userHook.user,
     userLoading: userHook.loading,
     userError: userHook.error,
+
+    //Editor-related
+    currentFileId: currentFileId,
 
     // File state
     filesLoading: filesHook.loading,
@@ -60,9 +70,15 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     logout: userHook.logout,
 
     // File actions
+    getFiles: filesHook.getFiles,
+    getFile: filesHook.getFile,
+    lockFile: filesHook.lockFile,
+    unlockFile: filesHook.unlockFile,
     createFile: filesHook.createFile,
     updateFile: filesHook.updateFile,
     deleteFile: filesHook.deleteFile,
+
+    setCurrentFileId: setCurrentFileId,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

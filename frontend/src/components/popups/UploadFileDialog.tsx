@@ -8,12 +8,13 @@ import '@mantine/core/styles.css';
 import '@mantine/dropzone/styles.css';
 import { useFiles } from '../../hooks/useFiles';
 import { useAppContext } from "../context/globalContext";
+import CustomDialog from '../popups/CustomDialog';
 
 import { useDropzone } from "react-dropzone";
 
 const UploadFileDialog = ()  => {
 
-  const {createFile} = useAppContext()
+  const {createFile, filesLoading, filesError} = useAppContext()
 
   const handleFileUpload = (file : File) => {
 
@@ -50,6 +51,9 @@ const UploadFileDialog = ()  => {
       <Button type="button" onClick={open}>
         Upload...
       </Button>
+
+      {filesError && <CustomDialog heading="Error" text="File error"/>}
+      {filesLoading && <p>Loading...</p>}
     </>
   );
 }

@@ -27,13 +27,12 @@ import {
 
 import { useAppContext } from "../context/globalContext";
 import { useFiles } from '../../hooks/useFiles';
+import CustomDialog from '../popups/CustomDialog';
 
 export type customOption = {
     label: string
     value: string
 }
-
-
 
 type ClonePopupProps = {
     fileData?: Filter<customOption>[],
@@ -44,7 +43,7 @@ const fileName = "testFileNameNotreal"
 
 export function ClonePopup() {
 
-    const {getFiles, createFile} = useAppContext()
+    const {getFiles, createFile, filesLoading, filesError} = useAppContext()
 
     const [open, setOpen] = useState<boolean>(false)
     const [changed, setChanged] = useState<boolean>(false);
@@ -90,6 +89,9 @@ export function ClonePopup() {
                         </form>
 
                     </div>
+                
+            {filesError && <CustomDialog heading="Error" text="File error"/>}
+            {filesLoading && <p>Loading...</p>}
 
 
                 </DialogContent>
