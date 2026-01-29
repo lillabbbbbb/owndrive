@@ -1,9 +1,9 @@
 
 import { createContext, useContext, ReactNode } from "react";
-import { useUser } from "../hooks/useUser";
-import { useFiles } from "../hooks/useFiles";
-import { IUserFrontend } from "../types/User";
-import { IFileFrontend } from "../types/File";
+import { useUser } from "../../hooks/useUser";
+import { useFiles } from "../../hooks/useFiles";
+import { IUserFrontend } from "../../types/User";
+import { IFileFrontend } from "../../types/File";
 
 export interface AppContextType {
   user: IUserFrontend | null;

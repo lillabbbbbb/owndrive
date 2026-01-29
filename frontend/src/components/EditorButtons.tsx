@@ -4,6 +4,7 @@ import { HiShare } from "react-icons/hi2";
 import SharePopup from './popups/SharePopup';
 import { ClonePopup } from './popups/ClonePopup';
 import { useFiles } from '../hooks/useFiles'
+import { useAppContext } from "../context/globalContext";
 import {
     Dialog,
     DialogContent,
@@ -28,7 +29,7 @@ interface EditorButtonsProps {
 const EditorButtons = ({canView, canEdit, isPrivate, visibleToGuest, setCanView, setCanEdit, setIsPrivate, setVisibleToGuest} : EditorButtonsProps) => {
 
   const [PDFDialogOpen, setPDFDialogOpen] = useState<boolean>(false)
-  const {createFile, deleteFile} = useFiles()
+  const {createFile, deleteFile} = useAppContext()
 
 
   const handleCloneButtonClick = () => {

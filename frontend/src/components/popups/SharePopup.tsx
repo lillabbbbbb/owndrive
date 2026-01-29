@@ -24,6 +24,7 @@ import { Filter, Filters } from '../main_components/Home';
 import { Text } from 'lucide-react';
 import { HiShare } from "react-icons/hi2";
 import { useFiles } from '../../hooks/useFiles';
+import { useAppContext } from "../context/globalContext";
 
 export type customOption = {
   label: string
@@ -41,7 +42,7 @@ const allUsers = usernames.map((u) => ({
 
 export function SharePopup() {
 
-  const {getFile, updateFile} = useFiles()
+  const {getFile, updateFile} = useAppContext()
 
   const [open, setOpen] = useState<boolean>(false)
   const [copied, setCopied] = useState(false);

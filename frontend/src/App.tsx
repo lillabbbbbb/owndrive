@@ -5,7 +5,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import {IUser} from "../../server/src/models/User"
 import { statusEnum } from './components/main_components/Home'
-import { AppProvider } from './hooks/globalContext'
+import { AppProvider } from './components/context/globalContext'
 
 
 

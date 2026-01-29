@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react";
 import axios from "axios";
 import { IUserFrontend } from "../types/User";
-import { IImageFrontend } from "../types/Image";
 
 type UseUserReturn = {
   user: IUserFrontend | null;

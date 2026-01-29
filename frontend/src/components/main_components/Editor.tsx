@@ -15,6 +15,7 @@ import ConcurrentEditingPopup from '../popups/ConcurrentEditingPopup';
 import { IUserTest } from '../../App';
 import { EditableText } from '../EditableText';
 import { useNavigate } from 'react-router-dom';
+import { useAppContext } from "../../context/AppContext";
 import { useFiles } from '../../hooks/useFiles';
 import { useUser } from '../../hooks/useUser';
 

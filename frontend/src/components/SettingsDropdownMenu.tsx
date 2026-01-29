@@ -6,19 +6,13 @@ import { useNavigate } from "react-router-dom"
 import ProfilePicDialog from "./popups/ProfilePicDialog"
 import { useState } from "react"
 import { useUser } from "../hooks/useUser"
+import { useAppContext } from "./context/globalContext";
 
-
-type SettingsDropDownMenuProps = {
-  userData: IUserTest,
-  setUserData: (modifiedUser: IUserTest) => void,
-  jwt: string | null,
-  setJwt: (c: string | null) => void;
-}
 
 function SettingsDropdownMenu() {
 
   const navigate = useNavigate()
-  const {logout} = useUser()
+  const {logout} = useAppContext()
   const [openProfilePicDialog, setOpenProfilePicDialog] = useState<boolean>(false)
 
   const handleLogout = () => {

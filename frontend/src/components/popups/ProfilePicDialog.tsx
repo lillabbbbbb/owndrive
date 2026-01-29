@@ -12,6 +12,8 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "../ui/avatar"
+import { useUser } from "../../hooks/useUser"
+import { useAppContext } from "../context/globalContext";
 
 import { Button } from "../ui/button"
 
@@ -21,6 +23,8 @@ type ProfilePicDialogProps = {
 }
 
 const ProfilePicDialog = ({ open, setOpen }: ProfilePicDialogProps) => {
+
+    const { updateProfilePic } = useAppContext()
 
     const [preview, setPreview] = useState<string | null>(null)
 
@@ -34,9 +38,8 @@ const ProfilePicDialog = ({ open, setOpen }: ProfilePicDialogProps) => {
     const handleSave = () => {
         console.log("Save button clicked... image should be updated in DB...")
 
-        //UPDATE PATCH call goes here 
         //store new image in DB (overwrite the reference in user..)
-        post
+        updateProfilePic()
     }
 
     return (

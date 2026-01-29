@@ -24,6 +24,8 @@ import {
     FieldSet,
     FieldTitle,
 } from "../ui/field"
+
+import { useAppContext } from "../context/globalContext";
 import { useFiles } from '../../hooks/useFiles';
 
 export type customOption = {
@@ -42,7 +44,7 @@ const fileName = "testFileNameNotreal"
 
 export function ClonePopup() {
 
-    const {getFiles, createFile} = useFiles()
+    const {getFiles, createFile} = useAppContext()
 
     const [open, setOpen] = useState<boolean>(false)
     const [changed, setChanged] = useState<boolean>(false);

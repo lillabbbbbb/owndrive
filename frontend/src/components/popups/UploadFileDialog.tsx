@@ -7,12 +7,13 @@ import '@mantine/core/styles.css';
 // ‼️ import dropzone styles after core package styles
 import '@mantine/dropzone/styles.css';
 import { useFiles } from '../../hooks/useFiles';
+import { useAppContext } from "../context/globalContext";
 
 import { useDropzone } from "react-dropzone";
 
 const UploadFileDialog = ()  => {
 
-  const {createFile} = useFiles()
+  const {createFile} = useAppContext()
 
   const handleFileUpload = (file : File) => {
 
@@ -34,7 +35,7 @@ const UploadFileDialog = ()  => {
     noKeyboard: true,
     onDrop: async (files) => {
       try {
-        await handleFileUpload(files); // your API call
+        await handleFileUpload(files[0]); // your API call
         console.log("Upload successful!");
       } catch (err) {
         console.error("Upload failed", err);
