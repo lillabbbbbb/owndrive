@@ -10,13 +10,13 @@ import { customOption } from '../popups/FilterPopup';
 import UploadFileDialog from "../popups/UploadFileDialog"
 //import { IFile } from "../../../../server/src/models/File"
 //import { IUser } from "../../../../server/src/models/User"
-import { IUserTest, IFileTest } from "../../App"
 import { useNavigate } from "react-router-dom";
 import { useUser } from '../../hooks/useUser';
 import { useFiles } from '../../hooks/useFiles';
 import { useAppContext } from "../context/globalContext";
 import CustomDialog from '../popups/CustomDialog';
 import { config } from 'process';
+import { IFileFrontend } from '../../types/File';
 
 
 export const sortingTypes = {
@@ -61,25 +61,19 @@ enum datesEnum {
 const Home = () => {
 
   const navigate = useNavigate()
-  const {user, getFile, getFiles, updateFile, userLoading, userError, filesLoading, filesError} = useAppContext()
+  const {user, files, getFile, updateFile, userLoading, userError, filesLoading, filesError} = useAppContext()
 
-  //GET - FETCH THIS ONE USER'S ALL FILES' DATA
-
-  const getUserFiles = () => {
-    return getFiles()
-  }
 
 
   const [isClicked, setClicked] = useState(false)
   const [selectedSorting, setSelectedSorting] = useState(sortingTypes.by_last_modified)
-  const [sortedFilteredData, setSortedFilteredData] = useState(getUserFiles())
+  const [sortedFilteredData, setSortedFilteredData] = useState(files)
   const [searchKeyword, setSearchKeyword] = useState("")
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
   const [showingArchives, setShowingArchives] = useState<boolean>(false)
 
-
-  const fileTypes = [...new Set(getUserFiles().map((file) => file.file_type))]
-  const ownerNames = [...new Set(getUserFiles().map((file) => file.created_by))]
+  const fileTypes = [...new Set(files.map((file: IFileFrontend) => file.file_type))]
+  const ownerNames = [...new Set(files.map((file: IFileFrontend) => file.created_by))]
 
   const [filters, setFilters] = useState<Filters>({
     fileTypes: new Set(),
@@ -92,9 +86,6 @@ const Home = () => {
   console.log(filters.owners)
   console.log(filters.date)
   console.log(filters.status)
-
-  console.log(fileName)
-
 
 
   const fileTypeFilter: Filter<customOption> = {
@@ -161,7 +152,7 @@ const Home = () => {
     console.log("sorting the data in progress..")
 
 
-    const filteredFiles = applyFilters(getUserFiles(), filters)
+    const filteredFiles = applyFilters(files, filters)
     console.log(filteredFiles)
 
 
@@ -171,7 +162,7 @@ const Home = () => {
     console.log(array)
 
 
-    let sortedArray: IFileTest[] = []
+    let sortedArray: IFileFrontend[] = []
 
     const selectedSorting = sorting ? sorting : sortingTypes.by_last_modified //if no sorting is selected, defaults to sort by last modified
 
@@ -203,7 +194,7 @@ const Home = () => {
     setSortedFilteredData(sortedArray)
   }
 
-  const matchSearch = (data: IFileTest[], keyword?: string) => {
+  const matchSearch = (data: IFileFrontend[], keyword?: string) => {
 
     //show all results if no keyword is given
     if (!keyword) return data
@@ -225,7 +216,7 @@ const Home = () => {
 
   }
 
-  function isEditedToday(file: IFileTest) {
+  function isEditedToday(file: IFileFrontend) {
     const edited = new Date(file.last_edited_at)
     const today = new Date()
     return (
@@ -234,20 +225,20 @@ const Home = () => {
       edited.getFullYear() === today.getFullYear()
     )
   }
-  function isEditedWithin(file: IFileTest, days: number) {
+  function isEditedWithin(file: IFileFrontend, days: number) {
     const edited = new Date(file.last_edited_at)
     const cutoff = new Date()
     cutoff.setDate(cutoff.getDate() - days)
     return edited >= cutoff
   }
-  function isOlderThan(file: IFileTest, days: number) {
+  function isOlderThan(file: IFileFrontend, days: number) {
     const edited = new Date(file.last_edited_at)
     const cutoff = new Date()
     cutoff.setDate(cutoff.getDate() - days)
     return edited < cutoff
   }
 
-  const applyFilters = (files: IFileTest[], passedFilters: Filters = filters) => {
+  const applyFilters = (files: IFileFrontend[], passedFilters: Filters = filters) => {
 
 
     const filteredFiles = files.filter(file => {
@@ -299,10 +290,10 @@ const Home = () => {
 
   const handleCreateNewClick = () => {
     console.log("Create new button clicked")
+    
+    //Redirect to editor page
+    navigate(`/${user?.username}/${DEFAULT_FILE_NAME}`)
 
-    //should redirect to editor page
-    setFileName(DEFAULT_FILE_NAME)
-    navigate(`/${user.username}/${DEFAULT_FILE_NAME}`)
   }
 
   const handleRowClick = () => {
@@ -372,7 +363,7 @@ const Home = () => {
       {!showingArchives && isClicked && <EditorButtons canView={canView} setCanView={setCanView} canEdit={canEdit} setCanEdit={setCanEdit} visibleToGuest={visibleToGuest} setVisibleToGuest={setVisibleToGuest} isPrivate={isPrivate} setIsPrivate={setIsPrivate} />}
       */}
 
-      <FilesTable onRowClick={() => handleRowClick()} sortedFilteredData={sortedFilteredData} />
+      {sortedFilteredData && <FilesTable onRowClick={() => handleRowClick()} sortedFilteredData={sortedFilteredData} />}
     </div>
   )
 }

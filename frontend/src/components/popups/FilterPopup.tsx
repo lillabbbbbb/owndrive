@@ -21,8 +21,8 @@ import { Filter, Filters } from '../main_components/Home';
 import { Text } from 'lucide-react';
 
 export type customOption = {
-  label: string
-  value: string
+  label: string | null
+  value: string | null
 }
 
 enum dateOptions {
@@ -77,7 +77,7 @@ export function ControlledFilterDialog({ filters, onChange }: FilterDialogProps)
                       </SelectTrigger>
                       <SelectContent position='popper'>
                         {filter.options.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
+                          <SelectItem key={option.value} value={option.value as string}>
                             {option.label}
                           </SelectItem>
                         ))}

@@ -11,6 +11,7 @@ export interface AppContextType {
   userError: string | null;
   filesLoading: boolean;
   filesError: string | null;
+  files: IFileFrontend[] | [];
 
   currentFileId: string;
 
@@ -22,9 +23,10 @@ export interface AppContextType {
 
   // File actions
   getFile: (id: string) => Promise<IFileFrontend | null>;
-  getFiles: () => Promise<IFileFrontend[] | null>;
   createFile: (fileData: Partial<IFileFrontend>) => Promise<IFileFrontend | null>;
   updateFile: (id: string, updates: Partial<IFileFrontend>) => Promise<IFileFrontend | null>;
+  lockFile: (id: string, lockedById: string) => Promise<IFileFrontend | null>;
+  unlockFile: (id: string) => Promise<IFileFrontend | null>;
   deleteFile: (id: string) => Promise<boolean>;
 
   setCurrentFileId: (id: string) => void;
@@ -62,6 +64,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     // File state
     filesLoading: filesHook.loading,
     filesError: filesHook.error,
+    files: filesHook.files,
 
     // User actions
     refreshUser: userHook.refreshUser,
@@ -70,7 +73,6 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     logout: userHook.logout,
 
     // File actions
-    getFiles: filesHook.getFiles,
     getFile: filesHook.getFile,
     lockFile: filesHook.lockFile,
     unlockFile: filesHook.unlockFile,

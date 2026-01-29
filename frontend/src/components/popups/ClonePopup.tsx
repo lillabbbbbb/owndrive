@@ -43,7 +43,7 @@ const fileName = "testFileNameNotreal"
 
 export function ClonePopup() {
 
-    const { currentFileId, user, getFiles, getFile createFile, filesLoading, filesError } = useAppContext()
+    const { currentFileId, user, files, getFile, createFile, filesLoading, filesError } = useAppContext()
 
     const [open, setOpen] = useState<boolean>(false)
     const [changed, setChanged] = useState<boolean>(false);
@@ -52,24 +52,25 @@ export function ClonePopup() {
 
 
     const handleSave = async () => {
+        if (!user) return
 
-        const originalFile = getFile(currentFileId)
+        const originalFile = await getFile(currentFileId)
 
-        if (originalFile) {
-            createFile({
-                created_by: user._id,
-                filename: newName,
-                file_type: originalFile.file_type,
-                content: originalFile.content
-            })
-        }
+        if (!originalFile) return
+
+        createFile({
+            created_by: user._id,
+            filename: newName,
+            file_type: originalFile.file_type,
+            content: originalFile.content
+        })
     };
 
     const isValidFilename = () => {
         //check if special characters are used like "/", etc.
 
         //check if a file with this name in the user's drive already exists
-        getFiles()
+        files
         setIsInvalidName(true)
     }
 

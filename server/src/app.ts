@@ -11,7 +11,6 @@ import morgan from "morgan"
 import mongoose, { Connection } from 'mongoose'
 import cors, {CorsOptions} from 'cors'
 import fileRouter from "./routes/file";
-import sessionRouter from "./routes/session"
 
 console.log("🔥 ENTRY FILE LOADED");
 
@@ -44,10 +43,9 @@ app.use(morgan("dev"))
 
 
 app.use(express.static(path.join(__dirname, "../public")))
-app.use("/api", router)
-app.use("/api", userRouter)
-app.use("/api", fileRouter)
-app.use("/api", sessionRouter)
+app.use("/api/auth", router)
+app.use("/api/users/", userRouter)
+app.use("/api/files/", fileRouter)
 
 
 

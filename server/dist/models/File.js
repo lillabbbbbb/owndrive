@@ -44,12 +44,12 @@ const fileSchema = new mongoose_1.Schema({
     filename: { type: String, required: true },
     content: { type: String, required: true, default: "" },
     word_count: { type: Number, required: false }, //NOTE: maybe not needed to be stored in DB...
-    canView: { type: (Array), required: true }, //list of usernames that can view the file
+    canView: { type: [String], required: true }, //list of usernames that can view the file
     canEdit: { type: (Array), required: true }, //list of usernames that can edit the file
     visibleToGuests: { type: Boolean, required: true },
     showsInHomeShared: { type: Boolean, required: true },
     private: { type: Boolean, required: true },
-    isArchived: { type: Boolean, required: true },
+    status: { type: String, required: true },
     archivedAt: { type: Date, required: false },
     inUse: { type: Boolean, required: true }, //= is anyone viewing (with edit permission) /editing this document
     usedBy: { type: String, required: false } //the user _id, if any, that is "using" the file

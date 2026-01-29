@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Select, { components } from 'react-select';
 import type { MultiValue, ActionMeta } from "react-select";
 //https://ui.shadcn.com/docs/components/radix/dialog
@@ -26,6 +26,7 @@ import { HiShare } from "react-icons/hi2";
 import { useFiles } from '../../hooks/useFiles';
 import { useAppContext } from "../context/globalContext";
 import CustomDialog from '../popups/CustomDialog';
+import { IFileFrontend } from '../../types/File';
 
 export type customOption = {
   label: string
@@ -43,21 +44,32 @@ const allUsers = usernames.map((u) => ({
 
 export function SharePopup() {
 
-  const {currentFileId, getFile, updateFile, filesLoading, filesError} = useAppContext()
+  const { currentFileId, getFile, updateFile, filesLoading, filesError } = useAppContext()
 
+  const [file, setFile] = useState<IFileFrontend | null>(null)
   const [open, setOpen] = useState<boolean>(false)
   const [copied, setCopied] = useState(false);
   const [shortUrl, setShortUrl] = useState(`http://localhost:3000/user/file`);
   const [addUsersMenuOpen, setAddUsersMenuOpen] = useState<boolean>(false)
 
-  const file = getFile(currentFileId)
+  useEffect(() => {
+    if (!currentFileId) return;
+
+    const loadFile = async () => {
+      const f = await getFile(currentFileId); // await the Promise
+      setFile(f);
+    };
+
+    loadFile();
+  }, [currentFileId, getFile]);
 
 
-  console.log("This file is " + (!file.isPrivate ? "not " : "") + "private.");
-  console.log("This file is " + (!file.visibleToGuest ? "not " : "") + "visible to guests.");
+  if (file) {
+    console.log("This file is " + (!file.private ? "not " : "") + "private.");
+    console.log("This file is " + (!file.visibleToGuests ? "not " : "") + "visible to guests.");
+    console.log("Selected options:", file.canEdit);
+  }
 
-
-  console.log("Selected options:", file.canEdit);
 
   //https://medium.com/@plsreeparvathy/copy-to-clipboard-feature-with-react-and-mui-065afa55f866
   const handleCopy = async () => {
@@ -85,22 +97,22 @@ export function SharePopup() {
           <div className="flex flex-col gap-4">
 
             <Field orientation="horizontal" className='mt-5'>
-            <FieldContent>
-              <FieldLabel htmlFor="copy-link-text">{shortUrl}</FieldLabel>
-            </FieldContent>
-            <Button onClick={() => handleCopy()}>Copy link</Button>
-          </Field>
+              <FieldContent>
+                <FieldLabel htmlFor="copy-link-text">{shortUrl}</FieldLabel>
+              </FieldContent>
+              <Button onClick={() => handleCopy()}>Copy link</Button>
+            </Field>
 
             <Field orientation="horizontal">
-            <FieldContent>
-              <FieldLabel htmlFor="visible-to-guests">Allow guests to see file</FieldLabel>
-              <FieldDescription>
-                ...
-              </FieldDescription>
-            </FieldContent>
-            
-            <Switch id="visible-to-guest" onCheckedChange={(c) => updateFile(currentFileId, {visibleToGuests: !c})} /> //visible to guest
-          </Field>
+              <FieldContent>
+                <FieldLabel htmlFor="visible-to-guests">Allow guests to see file</FieldLabel>
+                <FieldDescription>
+                  ...
+                </FieldDescription>
+              </FieldContent>
+
+              <Switch id="visible-to-guest" onCheckedChange={(c) => updateFile(currentFileId, { visibleToGuests: !c })} /> //visible to guest
+            </Field>
 
 
             <Select<customOption, true>
@@ -118,10 +130,11 @@ export function SharePopup() {
               }}
               value={file.canEdit.map(user => ({ value: user, label: user }))} // controlled component
               onChange={(newValue: MultiValue<customOption>, actionMeta: ActionMeta<customOption>) => {
-                updateFile(currentFileId, {canEdit: newValue.map((v: customOption) => v.value)}); // back to string[] //set who can edit
+                updateFile(currentFileId, { canEdit: newValue.map((v: customOption) => v.value) }); // back to string[] //set who can edit
               }}
 
               menuIsOpen={addUsersMenuOpen}
+              onBlur={() => setAddUsersMenuOpen(false)}
             />
           </div>
 
@@ -135,11 +148,11 @@ export function SharePopup() {
             <Switch
               id="is-private"
               checked={file.private}
-              onCheckedChange={(c) => {updateFile(currentFileId, {private: c})}} //set is private
+              onCheckedChange={(c) => { updateFile(currentFileId, { private: c }) }} //set is private
             />
           </Field>
-            {filesError && <CustomDialog heading="Error" text="File error"/>}
-            {filesLoading && <p>Loading...</p>}
+          {filesError && <CustomDialog heading="Error" text="File error" />}
+          {filesLoading && <p>Loading...</p>}
 
 
         </DialogContent>

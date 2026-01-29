@@ -14,7 +14,6 @@ const morgan_1 = __importDefault(require("morgan"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const cors_1 = __importDefault(require("cors"));
 const file_1 = __importDefault(require("./routes/file"));
-const session_1 = __importDefault(require("./routes/session"));
 console.log("🔥 ENTRY FILE LOADED");
 //backbone of the backend
 //Configure environment variables
@@ -34,10 +33,9 @@ app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
 app.use((0, morgan_1.default)("dev"));
 app.use(express_1.default.static(path_1.default.join(__dirname, "../public")));
-app.use("/api", index_1.default);
-app.use("/api", user_1.default);
-app.use("/api", file_1.default);
-app.use("/api", session_1.default);
+app.use("/api/auth", index_1.default);
+app.use("/api/users/", user_1.default);
+app.use("/api/files/", file_1.default);
 //Server listens to port
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);

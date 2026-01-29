@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { sortingTypes } from "./main_components/Home"
-import {IFileTest} from "../App"
 
 //whole doc from chatGPT
 import {
@@ -13,13 +12,14 @@ import {
 } from "../components/ui/table";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "./context/globalContext";
+import { IFileFrontend } from "../types/File";
 
 
 type TableProps = {
-  onRowClick: (info: IFileTest) => void;
-  sortedFilteredData: IFileTest[];
+  onRowClick: (info: IFileFrontend) => void;
+  sortedFilteredData: IFileFrontend[];
   fileName?: string,
-  setFileName: (newFileName: string) => void;
+  setFileName?: (newFileName: string) => void;
 }
 
 export default function FilesTable({ onRowClick, sortedFilteredData, fileName, setFileName }: TableProps) {
@@ -32,13 +32,8 @@ export default function FilesTable({ onRowClick, sortedFilteredData, fileName, s
 
 
 
-  const handleRowDoubleClick = (file: IFileTest) => {
+  const handleRowDoubleClick = (file: IFileFrontend) => {
     console.log(`${file.filename} double-clicked, file should be opened in editor...`)
-
-    //??
-    setFileName(file.filename)
-    console.log("Filename is now " + file.filename)
-    console.log(fileName)
 
     setCurrentFileId(file._id)
     navigate(`/${file.created_by}/${file.filename}`)

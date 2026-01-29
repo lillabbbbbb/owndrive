@@ -10,20 +10,15 @@ const fileRouter = (0, express_1.Router)();
 //GET fetch all files (and a lot of their data) of a user
 //params: username: string, token: string, filter?: JSON[] (e.g. [{filter: "lillabbbbbb", filter_type: "user"}])
 //since the filter is passed into here, pls also add it to the corresponding Session db object schema
-fileRouter.get("/files/:fileId", async (req, res) => {
+fileRouter.get("/", async (req, res) => {
     try {
-        //check if username (:user) matches the user signed inside the jwt token
-        //NOTE: I COULD CREATE A MIDDLEWARE THAT DECONSTRUCTS THE TOKEN AND COMPARES IT TO THE USERNAME
         //get the right user
-        const user = await User_1.User.findOne({ email: req.params.user });
+        const user = await User_1.User.findOne({ _id: req.headers["authorization"] }).populate("files");
         //return if user not found
         if (!user)
-            throw new Error("Parent not found");
+            throw new Error("Owner not found");
         //get the files of the user
         const files = user.files;
-        //NOTE: HANDLE THE FILTERS (AND SORTING) IN THE FRONTEND
-        //iterate the array and choose files which (1) name or (2) content or (3) author matches the filter
-        //check the diff cases depending on what kind of filter it is
         return res.status(200).json(files);
     }
     catch (error) {
@@ -34,7 +29,7 @@ fileRouter.get("/files/:fileId", async (req, res) => {
 //POST create new file
 //params: username: string, token: string, filedata: JSON
 //NOTE: check if the user has the right permissions to post to this route
-fileRouter.post("/users/:userId/files", async (req, res) => {
+fileRouter.post("/create", async (req, res) => {
     try {
         //check if username (:user) matches the user signed inside the jwt token
         //NOTE: I COULD CREATE A MIDDLEWARE THAT DECONSTRUCTS THE TOKEN AND COMPARES IT TO THE USERNAME
@@ -81,7 +76,7 @@ fileRouter.post("/users/:userId/files", async (req, res) => {
 });
 //DELETE delete file
 //params: username: string, token: string, filedata: JSON
-fileRouter.delete("/files/:fileId", async (req, res) => {
+fileRouter.delete("/:fileId", async (req, res) => {
     try {
         //check if username (:user) matches the user signed inside the jwt token
         //NOTE: I COULD CREATE A MIDDLEWARE THAT DECONSTRUCTS THE TOKEN AND COMPARES IT TO THE USERNAME
@@ -115,7 +110,7 @@ fileRouter.delete("/files/:fileId", async (req, res) => {
 //params: username: string, token: string, filename: JSON
 //NOTE: check if the user has the right permissions to post to this route
 //NOTE: check if the file is set to private by the owner (don't render to others if it is)!!!!
-fileRouter.get("/files/:fileId", userValidation_1.validateOwnerToken, async (req, res) => {
+fileRouter.get("/:fileId", userValidation_1.validateOwnerToken, async (req, res) => {
     try {
         //check if there is already a file with this name in the db of the owner (schema within schema), return if not
         const existingFile = await File_1.File.findOne({ file_name: req.body.fileName });
@@ -160,11 +155,29 @@ fileRouter.get("/files/:fileId", userValidation_1.validateOwnerToken, async (req
 //UPDATE one file
 //params: username, updates
 //NOTE: check if the user has the right permissions to post to this route
-fileRouter.patch("/files/:fileId", async (req, res) => {
+fileRouter.patch("/:fileId", async (req, res) => {
     try {
-        //check if username (:user) matches the user signed inside the jwt token
-        //NOTE: I COULD CREATE A MIDDLEWARE THAT DECONSTRUCTS THE TOKEN AND COMPARES IT TO THE USERNAME
-        ////?????????????
+        //
+        return res.status(200).json();
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ "message": "Internal Server Error" });
+    }
+});
+fileRouter.patch("/:fileId/lock", async (req, res) => {
+    try {
+        //
+        return res.status(200).json();
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ "message": "Internal Server Error" });
+    }
+});
+fileRouter.patch("/:fileId/unlock", async (req, res) => {
+    try {
+        //
         return res.status(200).json();
     }
     catch (error) {
@@ -173,7 +186,7 @@ fileRouter.patch("/files/:fileId", async (req, res) => {
     }
 });
 //DELETE LATER, ONLY HERE FOR TESTING
-fileRouter.get("/list/files", async (req, res) => {
+fileRouter.get("/files/list", async (req, res) => {
     try {
         const files = await File_1.File.find();
         console.log(files);

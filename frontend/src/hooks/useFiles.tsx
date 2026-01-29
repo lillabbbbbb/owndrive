@@ -3,6 +3,7 @@ import axios from "axios";
 import { IFileFrontend } from "../types/File";
 
 export function useFiles() {
+  const [files, setFiles] = useState<IFileFrontend[] | []>([])
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,6 +28,7 @@ export function useFiles() {
     setError(null);
     try {
       const res = await axios.get<IFileFrontend[]>("/api/files");
+      setFiles(res.data)
       return res.data;
     } catch (err) {
       handleError(err);
@@ -83,7 +85,7 @@ export function useFiles() {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.patch<IFileFrontend>(`/api/files/${id}`, lockedById);
+      const res = await axios.patch<IFileFrontend>(`/api/files/${id}/lock`, lockedById);
       return res.data;
     } catch (err) {
       handleError(err);
@@ -97,7 +99,7 @@ export function useFiles() {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.patch<IFileFrontend>(`/api/files/${id}`);
+      const res = await axios.patch<IFileFrontend>(`/api/files/${id}/unlock`);
       return res.data;
     } catch (err) {
       handleError(err);
@@ -127,7 +129,7 @@ export function useFiles() {
   return {
     loading,
     error,
-    getFiles,
+    files,
     getFile,
     createFile,
     updateFile,

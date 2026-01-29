@@ -12,7 +12,7 @@ const userRouter: Router = Router()
 
 
 //UPDATE Upload or change profile picture
-userRouter.patch("/users/:userId/profile_pic", upload.single("image"), async (req: Request, res: Response) => {
+userRouter.patch("/:userId/profile_pic", upload.single("image"), async (req: Request, res: Response) => {
     try {
         if (!req.file) {
             return res.status(400).json({message: "No file uploaded"})
@@ -60,7 +60,7 @@ userRouter.patch("/users/:userId/profile_pic", upload.single("image"), async (re
 
 //GET get profile picture of a user
 //params: userId
-userRouter.get("/users/:userId/profile_picture", async (req: Request, res: Response) => {
+userRouter.get("/:userId/profile_picture", async (req: Request, res: Response) => {
     try {
 
         //check if username (:user) matches the user signed inside the jwt token

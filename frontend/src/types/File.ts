@@ -11,7 +11,7 @@ export interface IFileFrontend {
    visibleToGuests: boolean,
    showsInHomeShared: boolean,
    private: boolean,
-   isArchived: boolean,
+   status: string, //"active" or "archived"
    archivedAt?: Date,
    inUse: boolean, //= is anyone viewing (with edit permission) /editing this document
    usedBy?: string //the user _id, if any, that is "using" the file

@@ -17,26 +17,18 @@ const fileRouter: Router = Router()
 //GET fetch all files (and a lot of their data) of a user
 //params: username: string, token: string, filter?: JSON[] (e.g. [{filter: "lillabbbbbb", filter_type: "user"}])
 //since the filter is passed into here, pls also add it to the corresponding Session db object schema
-fileRouter.get("/files/:fileId",
+fileRouter.get("/",
     async (req: Request, res: Response) => {
         try {
 
-            //check if username (:user) matches the user signed inside the jwt token
-            //NOTE: I COULD CREATE A MIDDLEWARE THAT DECONSTRUCTS THE TOKEN AND COMPARES IT TO THE USERNAME
-
-
             //get the right user
-            const user: IUser | null = await User.findOne({ email: req.params.user as string })
+            const user: IUser | null = await User.findOne({ _id: req.headers["authorization"] as string }).populate("files")
 
             //return if user not found
-            if (!user) throw new Error("Parent not found");
+            if (!user) throw new Error("Owner not found");
 
             //get the files of the user
             const files: IFile[] = user.files
-
-            //NOTE: HANDLE THE FILTERS (AND SORTING) IN THE FRONTEND
-            //iterate the array and choose files which (1) name or (2) content or (3) author matches the filter
-            //check the diff cases depending on what kind of filter it is
 
 
             return res.status(200).json(files)
@@ -51,7 +43,7 @@ fileRouter.get("/files/:fileId",
 //POST create new file
 //params: username: string, token: string, filedata: JSON
 //NOTE: check if the user has the right permissions to post to this route
-fileRouter.post("/users/:userId/files",
+fileRouter.post("/create",
     async (req: Request, res: Response) => {
         try {
 
@@ -72,7 +64,7 @@ fileRouter.post("/users/:userId/files",
 
             const content = req.body.content ? req.body.content : ""
             const createdAt = new Date()
-            
+
             //pass the received fileData JSON to create the new db record
             const newFile = await File.create({
                 created_at: createdAt,
@@ -111,7 +103,7 @@ fileRouter.post("/users/:userId/files",
 
 //DELETE delete file
 //params: username: string, token: string, filedata: JSON
-fileRouter.delete("/files/:fileId",
+fileRouter.delete("/:fileId",
     async (req: Request, res: Response) => {
         try {
 
@@ -119,7 +111,7 @@ fileRouter.delete("/files/:fileId",
             //NOTE: I COULD CREATE A MIDDLEWARE THAT DECONSTRUCTS THE TOKEN AND COMPARES IT TO THE USERNAME
 
             //check if there is already a file with this name in the db of the owner (schema within schema), return if not
-            const existingFile: IFile | null = await File.findOne({ filename: req.body.fileName})
+            const existingFile: IFile | null = await File.findOne({ filename: req.body.fileName })
             if (!existingFile) return res.status(404).json({ "message": "File not found with this name" })
 
             //get the right user
@@ -140,7 +132,7 @@ fileRouter.delete("/files/:fileId",
                 user._id,
                 {
                     $pull: {
-                        files: {filename: existingFile.filename}
+                        files: { filename: existingFile.filename }
                     }
                 },
                 { new: true }
@@ -160,7 +152,7 @@ fileRouter.delete("/files/:fileId",
 //params: username: string, token: string, filename: JSON
 //NOTE: check if the user has the right permissions to post to this route
 //NOTE: check if the file is set to private by the owner (don't render to others if it is)!!!!
-fileRouter.get("/files/:fileId",
+fileRouter.get("/:fileId",
     validateOwnerToken,
     async (req: CustomRequest, res: Response) => {
         try {
@@ -170,7 +162,7 @@ fileRouter.get("/files/:fileId",
 
             //find owner of file
             const user = await User
-                .findOne({ username: req.params?.username as string}) //ATTENTION: if there's a space in the req params, record may not be found
+                .findOne({ username: req.params?.username as string }) //ATTENTION: if there's a space in the req params, record may not be found
 
             //if user not found
             if (!user) return res.status(404).json({ message: `${req.body.username} workspace not found` })
@@ -187,7 +179,7 @@ fileRouter.get("/files/:fileId",
 
             //CHECK IF TOKEN BELONGS TO ...
             //(1) if the token belongs to the author of the file
-            if(req.body.email === req.user?.email){
+            if (req.body.email === req.user?.email) {
                 permissions.accessType = "owner"
                 //RETURN HERE
                 return res.status(200).json(permissions)
@@ -207,9 +199,9 @@ fileRouter.get("/files/:fileId",
             //(3) check if otheruser AND haspermission (view or edit!)
             if (existingFile?.canView.includes(user2name)) permissions.accessType = "viewer"
             else if (existingFile?.canView.includes(user2name)) permissions.accessType = "editor"
-        
+
             //return res.status(200).json(permissions)
-            
+
         } catch (error: any) {
             console.log(error)
             return res.status(500).json({ "message": "Internal Server Error" })
@@ -220,36 +212,58 @@ fileRouter.get("/files/:fileId",
 //UPDATE one file
 //params: username, updates
 //NOTE: check if the user has the right permissions to post to this route
-fileRouter.patch("/files/:fileId",
-    async (req: Request, res: Response) => {
-        try {
+fileRouter.patch("/:fileId", async (req: Request, res: Response) => {
+    try {
 
-            //check if username (:user) matches the user signed inside the jwt token
-            //NOTE: I COULD CREATE A MIDDLEWARE THAT DECONSTRUCTS THE TOKEN AND COMPARES IT TO THE USERNAME
-
-            ////?????????????
+        //
 
 
-            return res.status(200).json()
-        } catch (error: any) {
-            console.log(error)
-            return res.status(500).json({ "message": "Internal Server Error" })
-        }
-    })
+        return res.status(200).json()
+    } catch (error: any) {
+        console.log(error)
+        return res.status(500).json({ "message": "Internal Server Error" })
+    }
+})
+
+fileRouter.patch("/:fileId/lock", async (req: Request, res: Response) => {
+    try {
+
+        //
 
 
-    //DELETE LATER, ONLY HERE FOR TESTING
-    fileRouter.get("/list/files", async (req: Request, res: Response) => {
-        try {
-            const files: IFile[] = await File.find()
-            console.log(files)
-            return res.status(200).json(files)
-        } catch (error: any) {
-            console.log(`Error while fecthing users ${error}`)
-            return res.status(500).json({error: "Internal Server Error"})
-        }
-    
-    })
+        return res.status(200).json()
+    } catch (error: any) {
+        console.log(error)
+        return res.status(500).json({ "message": "Internal Server Error" })
+    }
+})
+
+fileRouter.patch("/:fileId/unlock", async (req: Request, res: Response) => {
+    try {
+
+        //
+
+
+        return res.status(200).json()
+    } catch (error: any) {
+        console.log(error)
+        return res.status(500).json({ "message": "Internal Server Error" })
+    }
+})
+
+
+//DELETE LATER, ONLY HERE FOR TESTING
+fileRouter.get("/files/list", async (req: Request, res: Response) => {
+    try {
+        const files: IFile[] = await File.find()
+        console.log(files)
+        return res.status(200).json(files)
+    } catch (error: any) {
+        console.log(`Error while fecthing users ${error}`)
+        return res.status(500).json({ error: "Internal Server Error" })
+    }
+
+})
 
 
 export default fileRouter

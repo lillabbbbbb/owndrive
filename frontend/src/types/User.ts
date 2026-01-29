@@ -3,6 +3,7 @@ import { IFileFrontend } from "./File";
 
 
 export interface IUserFrontend {
+   _id: string
    username?: string, //only for Google users?
    //googleId?: string, //google ID
    email: string,

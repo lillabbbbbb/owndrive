@@ -11,7 +11,7 @@ const multer_config_1 = __importDefault(require("../middleware/multer-config"));
 const userRouter = (0, express_1.Router)();
 //route to anything else: handled in frontend
 //UPDATE Upload or change profile picture
-userRouter.patch("/users/:userId/profile_pic", multer_config_1.default.single("image"), async (req, res) => {
+userRouter.patch("/:userId/profile_pic", multer_config_1.default.single("image"), async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ message: "No file uploaded" });
@@ -49,7 +49,7 @@ userRouter.patch("/users/:userId/profile_pic", multer_config_1.default.single("i
 });
 //GET get profile picture of a user
 //params: userId
-userRouter.get("/users/:userId/profile_picture", async (req, res) => {
+userRouter.get("/:userId/profile_picture", async (req, res) => {
     try {
         //check if username (:user) matches the user signed inside the jwt token
         //fetch image record from user db:

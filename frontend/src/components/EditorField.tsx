@@ -14,9 +14,9 @@ const DISABLED_BUTTON = "opacity-50 cursor-not-allowed"
 
 const extensions = [TextStyleKit, StarterKit]
 
-function EditorMenu({ editor, jwt }: { editor: Editor, jwt: string | null }) {
+function EditorMenu({ editor}: { editor: Editor }) {
 
-
+const jwt = localStorage.getItem("token")
 
   const editorState = useEditorState({
     editor,
@@ -237,13 +237,12 @@ function EditorMenu({ editor, jwt }: { editor: Editor, jwt: string | null }) {
 }
 
 type EditorFieldProps = {
-  jwt: string | null,
   content: string,
   setContent: (content: string) => void,
   editable: boolean
 }
 
-const EditorField =  ({jwt, content, setContent, editable} : EditorFieldProps) => {
+const EditorField =  ({ content, setContent, editable} : EditorFieldProps) => {
 
 
   const editor = useEditor({
@@ -270,7 +269,7 @@ onUpdate: ({ editor }) => {
 
   return (
     <div>
-      <EditorMenu editor={editor} jwt={jwt}/>
+      <EditorMenu editor={editor}/>
       <EditorContent editor={editor} className="tiptap-editor prose prose-slate dark:prose-invert"/>
     </div>
   )

@@ -7,7 +7,7 @@ import ProfilePicDialog from "./popups/ProfilePicDialog"
 import { useState } from "react"
 import { useUser } from "../hooks/useUser"
 import { useAppContext } from "./context/globalContext";
-import CustomDialog from '../popups/CustomDialog';
+import CustomDialog from './popups/CustomDialog';
 
 
 function SettingsDropdownMenu() {
