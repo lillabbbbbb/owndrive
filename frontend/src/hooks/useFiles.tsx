@@ -109,6 +109,20 @@ export function useFiles() {
     }
   }, []);
 
+  const getLockStatus = useCallback(async (id: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.get<IFileFrontend>(`/api/files/${id}/lock_status`);
+      return res.data;
+    } catch (err) {
+      handleError(err);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
 
   const deleteFile = useCallback(async (id: string) => {
     setLoading(true);
@@ -135,6 +149,7 @@ export function useFiles() {
     updateFile,
     lockFile,
     unlockFile,
+    getLockStatus,
     deleteFile,
   };
 }
