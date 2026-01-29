@@ -43,7 +43,7 @@ const fileName = "testFileNameNotreal"
 
 export function ClonePopup() {
 
-    const {getFiles, createFile, filesLoading, filesError} = useAppContext()
+    const { currentFileId, user, getFiles, getFile createFile, filesLoading, filesError } = useAppContext()
 
     const [open, setOpen] = useState<boolean>(false)
     const [changed, setChanged] = useState<boolean>(false);
@@ -53,7 +53,16 @@ export function ClonePopup() {
 
     const handleSave = async () => {
 
-        createFile()
+        const originalFile = getFile(currentFileId)
+
+        if (originalFile) {
+            createFile({
+                created_by: user._id,
+                filename: newName,
+                file_type: originalFile.file_type,
+                content: originalFile.content
+            })
+        }
     };
 
     const isValidFilename = () => {
@@ -89,9 +98,9 @@ export function ClonePopup() {
                         </form>
 
                     </div>
-                
-            {filesError && <CustomDialog heading="Error" text="File error"/>}
-            {filesLoading && <p>Loading...</p>}
+
+                    {filesError && <CustomDialog heading="Error" text="File error" />}
+                    {filesLoading && <p>Loading...</p>}
 
 
                 </DialogContent>

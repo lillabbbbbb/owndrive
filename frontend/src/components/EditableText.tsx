@@ -80,7 +80,7 @@ export function EditableText(
             setIsValid(true)
             setEditing(false)
             updateFile(currentFileId, 
-              {title: value}
+              {filename: value}
             )
           }
         }}

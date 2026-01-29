@@ -73,7 +73,7 @@ export function SharePopup() {
 
 
   return (
-    <>
+    file && <>
       <Button onClick={() => setOpen(true)}><HiShare className="w-5 h-5" /></Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
@@ -99,7 +99,7 @@ export function SharePopup() {
               </FieldDescription>
             </FieldContent>
             
-            <Switch id="visible-to-guest" onCheckedChange={(c) => updateFile(!c)} /> //visible to guest
+            <Switch id="visible-to-guest" onCheckedChange={(c) => updateFile(currentFileId, {visibleToGuests: !c})} /> //visible to guest
           </Field>
 
 
@@ -118,7 +118,7 @@ export function SharePopup() {
               }}
               value={file.canEdit.map(user => ({ value: user, label: user }))} // controlled component
               onChange={(newValue: MultiValue<customOption>, actionMeta: ActionMeta<customOption>) => {
-                updateFile(newValue.map((v: customOption) => v.value)); // back to string[] //set who can edit
+                updateFile(currentFileId, {canEdit: newValue.map((v: customOption) => v.value)}); // back to string[] //set who can edit
               }}
 
               menuIsOpen={addUsersMenuOpen}
@@ -134,8 +134,8 @@ export function SharePopup() {
             </FieldContent>
             <Switch
               id="is-private"
-              checked={file.isPrivate}
-              onCheckedChange={(c) => updateFile(c)} //set is private
+              checked={file.private}
+              onCheckedChange={(c) => {updateFile(currentFileId, {private: c})}} //set is private
             />
           </Field>
             {filesError && <CustomDialog heading="Error" text="File error"/>}

@@ -69,6 +69,7 @@ const Home = () => {
     return getFiles()
   }
 
+
   const [isClicked, setClicked] = useState(false)
   const [selectedSorting, setSelectedSorting] = useState(sortingTypes.by_last_modified)
   const [sortedFilteredData, setSortedFilteredData] = useState(getUserFiles())
@@ -301,7 +302,7 @@ const Home = () => {
 
     //should redirect to editor page
     setFileName(DEFAULT_FILE_NAME)
-    navigate(`/${userData.username}/${DEFAULT_FILE_NAME}`)
+    navigate(`/${user.username}/${DEFAULT_FILE_NAME}`)
   }
 
   const handleRowClick = () => {
@@ -371,7 +372,7 @@ const Home = () => {
       {!showingArchives && isClicked && <EditorButtons canView={canView} setCanView={setCanView} canEdit={canEdit} setCanEdit={setCanEdit} visibleToGuest={visibleToGuest} setVisibleToGuest={setVisibleToGuest} isPrivate={isPrivate} setIsPrivate={setIsPrivate} />}
       */}
 
-      <FilesTable fileName={fileName} setFileName={setFileName} onRowClick={() => handleRowClick()} sortedFilteredData={sortedFilteredData} />
+      <FilesTable onRowClick={() => handleRowClick()} sortedFilteredData={sortedFilteredData} />
     </div>
   )
 }

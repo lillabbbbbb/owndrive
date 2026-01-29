@@ -1,11 +1,11 @@
 export interface IFileFrontend {
+    _id: string
     created_at: Date,
    created_by: string,
    last_edited_at: Date,
    file_type: string,
    filename: string,
    content: string,
-   word_count?: number,
    canView: string[], //list of usernames that can view the file
    canEdit: string[], //list of usernames that can edit the file
    visibleToGuests: boolean,

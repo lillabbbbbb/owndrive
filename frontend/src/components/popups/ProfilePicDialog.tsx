@@ -28,11 +28,13 @@ const ProfilePicDialog = ({ open, setOpen }: ProfilePicDialogProps) => {
     const { updateProfilePic, userLoading, userError } = useAppContext()
 
     const [preview, setPreview] = useState<string | null>(null)
+    const [chosenFile, setChosenFile] = useState<File>(null)
 
     //AI-generated code snippet
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
         const file = e.target.files?.[0]
         if (!file) return
+        setChosenFile(file)
         setPreview(URL.createObjectURL(file))
     }
 
@@ -40,7 +42,7 @@ const ProfilePicDialog = ({ open, setOpen }: ProfilePicDialogProps) => {
         console.log("Save button clicked... image should be updated in DB...")
 
         //store new image in DB (overwrite the reference in user..)
-        updateProfilePic()
+        updateProfilePic(chosenFile, "my new avatar")
     }
 
     return (

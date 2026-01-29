@@ -35,7 +35,7 @@ const Editor = () => {
     const [editable, setEditable] = useState<boolean>(false) //turn this into useEffect
 
     const navigate = useNavigate()
-    const {user, currentFileId, getFile, createFile, updateFile, userLoading, userError, filesLoading, filesError} = useAppContext()
+    const { user, currentFileId, getFile, createFile, updateFile, userLoading, userError, filesLoading, filesError } = useAppContext()
 
     const file = getFile(currentFileId)
 
@@ -52,13 +52,24 @@ const Editor = () => {
 
         //if a file with this name doesnt exist in the user's drive (go through userData.files array in search of a match)
         //create new file record and append it to the user
-        createFile()
+        createFile({
+            created_by: user._id,
+            filename: "default",
+            file_type: "default",
+            content: content,
+            inUse: true,
+            usedBy: user._id
+        })
 
         //if this file exists, but the content has been modified
         //save new content
 
         //POST Route: 
-        updateFile()
+        updateFile(currentFileId, {
+            last_edited_at: new Date(),
+            inUse: true, 
+            usedBy: user._id,
+        })
 
     }
 
@@ -67,7 +78,12 @@ const Editor = () => {
         //check if filename is valid and unique,
 
         //if so, save the new name of the file in the DB (PATCH call)
-        updateFile()
+        updateFile(currentFileId, {
+            last_edited_at: new Date(),
+            filename: newFileName,
+            inUse: true,
+            usedBy: user._id,
+        })
 
         //and display the new one
         //needs state or sum?
@@ -75,8 +91,6 @@ const Editor = () => {
         navigate(`/${username}/${newFileName}`, { replace: true })
 
         //if not valid, set the value to be the previous file name
-
-
     }
 
 
@@ -88,9 +102,9 @@ const Editor = () => {
             <Button onClick={() => handleSave()}>Save</Button>
             {<div>
                 <EditorButtons />
-                <EditableText value={file.title} onSave={handleSaveFileName}/>
+                <EditableText value={file.title} onSave={handleSaveFileName} />
                 <div>
-                    <EditorField content={file.content} editable={editable}/>
+                    <EditorField content={file.content} editable={editable} />
                     <div>Word count</div>
                 </div>
 
@@ -121,9 +135,9 @@ const Editor = () => {
                     </Dialog>
                 </>
             }
-            {userError && <CustomDialog text="User error"/>}
+            {userError && <CustomDialog text="User error" />}
             {userLoading && <p>Loading...</p>}
-            {filesError && <CustomDialog heading="Error" text="File error"/>}
+            {filesError && <CustomDialog heading="Error" text="File error" />}
             {filesLoading && <p>Loading...</p>}
 
         </>

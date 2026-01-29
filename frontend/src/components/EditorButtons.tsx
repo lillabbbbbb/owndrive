@@ -5,7 +5,7 @@ import SharePopup from './popups/SharePopup';
 import { ClonePopup } from './popups/ClonePopup';
 import { useFiles } from '../hooks/useFiles'
 import { useAppContext } from "./context/globalContext";
-import CustomDialog from '../popups/CustomDialog';
+import CustomDialog from './popups/CustomDialog';
 import {
     Dialog,
     DialogContent,
@@ -19,7 +19,7 @@ import { Button } from "./ui/button"
 const EditorButtons = () => {
 
   const [PDFDialogOpen, setPDFDialogOpen] = useState<boolean>(false)
-  const {createFile, deleteFile, filesLoading, filesError} = useAppContext()
+  const {currentFileId, createFile, deleteFile, filesLoading, filesError} = useAppContext()
 
 
   const handleCloneButtonClick = () => {
@@ -42,7 +42,7 @@ const EditorButtons = () => {
     console.log("Delete button clicked, reassuring window should pop up")
 
     //set file's status to "archived"
-    deleteFile()
+    deleteFile(currentFileId)
   }
 
 
@@ -50,6 +50,7 @@ const EditorButtons = () => {
     <div>
       
       {filesError && <CustomDialog heading="Error" text="File error"/>}
+      {filesLoading && <p>Loading...</p>}
 
       <Tooltip>
         <TooltipTrigger asChild>
