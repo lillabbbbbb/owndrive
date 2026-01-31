@@ -41,47 +41,59 @@ fileRouter.get("/",
 
 
 //POST create new file
-//params: username: string, token: string, filedata: JSON
-//NOTE: check if the user has the right permissions to post to this route
+//params: id: string, filedata: JSON
 fileRouter.post("/",
     async (req: Request, res: Response) => {
         try {
 
-            //check if username (:user) matches the user signed inside the jwt token
-            //NOTE: I COULD CREATE A MIDDLEWARE THAT DECONSTRUCTS THE TOKEN AND COMPARES IT TO THE USERNAME
+            const userId = req.user?._id; // from auth middleware
 
-            //check if there is already a file with this name in the db of the owner (schema within schema), return if so'
-            const existingFile: IFile | null = await File.findOne({ _id: req.body._id })
-            if (existingFile) return res.status(401).json({ "message": "A file with this name already exists" })
+            const {
+                filename,
+                file_type = "doc",
+                content = "",
+                inUse = false,
+                usedBy,
+                status = "active",
+                visibleToGuests = false,
+                showsInHomeShared = true,
+                private: isPrivate = false
+            } = req.body;
 
-            //get the right user
-            const user = await User
-                .findOne({ _id: req.headers["authorization"] })
-                .select("files")
+            if (!filename) {
+                return res.status(400).json({ message: "Filename is required" });
+            }
 
-            //if user not found
-            if (!user) return res.status(404).json({ message: 'User not found' })
+            // 1️⃣ Check if a file with this name already exists for this user
+            let file = await File.findOne({ filename, created_by: userId });
 
-            const content = req.body.content ? req.body.content : ""
-            const createdAt = new Date()
 
-            //pass the received fileData JSON to create the new db record
-            const newFile = await File.create({
-                created_at: createdAt,
-                created_by: req.body.email,
-                last_edited_at: createdAt,
-                file_type: ".docx",
-                filename: req.body.fileName,
-                content: content,
-                canView: [],
-                canEdit: [],
-                visibleToGuests: false,
-                showsInHomeShared: true,
-                private: false,
-                inUse: false,
-            });
+            if (!file) {
+                // 2️⃣ Create new file
+                const now = new Date();
 
-            //store new reference in the user record
+                file = await File.create({
+                    created_at: now,
+                    created_by: userId,
+                    last_edited_at: now,
+                    file_type,
+                    filename,
+                    content,
+                    inUse,
+                    usedBy,
+                    status,
+                    visibleToGuests,
+                    showsInHomeShared,
+                    private: isPrivate,
+                    canView: [userId],
+                    canEdit: [userId],
+                });
+
+            }
+
+            // 3️⃣ Push reference to user's files array
+            await User.findByIdAndUpdate(userId, { $push: { files: file._id } });
+            /*store new reference in the user record
             await User.findByIdAndUpdate(
                 user._id,
                 {
@@ -91,9 +103,11 @@ fileRouter.post("/",
                 },
                 { new: true }
             )
+            */
 
+            const updatedFile = await file.save();
 
-            return res.status(200).json({ "message": "New file successfully saved" })
+            return res.status(200).json(updatedFile);
         } catch (error: any) {
             console.log(error)
             return res.status(500).json({ "message": "Internal Server Error" })
@@ -107,39 +121,29 @@ fileRouter.delete("/:fileId",
     async (req: Request, res: Response) => {
         try {
 
-            //check if username (:user) matches the user signed inside the jwt token
-            //NOTE: I COULD CREATE A MIDDLEWARE THAT DECONSTRUCTS THE TOKEN AND COMPARES IT TO THE USERNAME
-
-            //check if there is already a file with this name in the db of the owner (schema within schema), return if not
-            const existingFile: IFile | null = await File.findOne({ filename: req.body.fileName })
-            if (!existingFile) return res.status(404).json({ "message": "File not found with this name" })
-
-            //get the right user
-            const user = await User
-                .findOne({ username: req.body.username })
-                .select("files")
-
-            //if user not found
-            if (!user) return res.status(404).json({ message: 'User not found' })
+            const userId = req.user?._id; // from auth middleware
 
 
-            //NOTE: I SHOULD IMPLEMENT THE ARCHIVED HERE
-            //const file = await Archive.create(req.body.fileData);
+
+            const existingFile: IFile | null = await File.findOne({ _id: req.params.fileId })
+            if (!existingFile) return res.status(404).json({ "message": "File not found based on _id" })
+
+            const filename = existingFile.filename
 
 
             //delete record
             await User.findByIdAndUpdate(
-                user._id,
+                userId,
                 {
                     $pull: {
-                        files: { filename: existingFile.filename }
+                        files: { _id: existingFile._id }
                     }
                 },
                 { new: true }
             )
 
 
-            return res.status(200).json({ "message": `File "${req.body.filename}" successfully deleted.` })
+            return res.status(200).json({ "message": `File "${filename}" successfully deleted.` })
 
         } catch (error: any) {
             console.log(error)
@@ -156,16 +160,18 @@ fileRouter.get("/:fileId",
     validateOwnerToken,
     async (req: CustomRequest, res: Response) => {
         try {
-            //check if there is already a file with this name in the db of the owner (schema within schema), return if not
-            const existingFile: IFile | null = await File.findOne({ file_name: req.body.fileName })
-            if (!existingFile) return res.status(404).json({ "message": "File not found with this name" })
 
+            const userId = req.user?._id; // from auth middleware
+
+
+            const existingFile: IFile | null = await File.findOne({ _id: req.params.fileId })
+            if (!existingFile) return res.status(404).json({ "message": "File not found based on _id" })
             //find owner of file
             const user = await User
                 .findOne({ username: req.params?.username as string }) //ATTENTION: if there's a space in the req params, record may not be found
 
             //if user not found
-            if (!user) return res.status(404).json({ message: `${req.body.username} workspace not found` })
+            if (!user) return res.status(404).json({ message: `File's owner (user) not found` })
 
             type TPermission = {
                 accessType: string,
@@ -197,10 +203,10 @@ fileRouter.get("/:fileId",
             const user2name = "some user"
 
             //(3) check if otheruser AND haspermission (view or edit!)
-            if (existingFile?.canView.includes(user2name)) permissions.accessType = "viewer"
-            else if (existingFile?.canView.includes(user2name)) permissions.accessType = "editor"
+            if (existingFile?.canView.includes(userId)) permissions.accessType = "viewer"
+            else if (existingFile?.canView.includes(userId)) permissions.accessType = "editor"
 
-            //return res.status(200).json(permissions)
+            return res.status(200).json({ permissions: permissions, file: existingFile })
 
         } catch (error: any) {
             console.log(error)
@@ -211,12 +217,45 @@ fileRouter.get("/:fileId",
 
 //UPDATE one file
 //params: username, updates
-//NOTE: check if the user has the right permissions to post to this route
 fileRouter.patch("/:fileId", async (req: Request, res: Response) => {
     try {
 
-        //
+        const fileId = req.params.id;
+        const userId = req.user?._id; // from auth middleware
+        const updates: Partial<IFile> = req.body;
 
+
+        // 1️⃣ Find the file and make sure the user owns it
+        const file = await File.findOne({ _id: fileId, created_by: userId });
+        if (!file) {
+            return res.status(404).json({ message: "File not found or access denied" });
+        }
+
+        // 2️⃣ Check for filename conflict if updates include a new filename
+        if (updates.filename) {
+            const conflict = await File.findOne({
+                filename: updates.filename,
+                created_by: userId,
+                _id: { $ne: fileId } // exclude the current file itself
+            });
+
+            if (conflict) {
+                return res.status(400).json({ message: "A file with this name already exists" });
+            }
+        }
+
+        // 3️⃣ Apply updates (only fields provided in the request)
+        Object.entries(updates).forEach(([key, value]) => {
+            (file as any)[key] = value;
+        });
+
+        // 4️⃣ Update last_edited_at if not provided
+        if (!updates.last_edited_at) {
+            file.last_edited_at = new Date();
+        }
+
+        // 5️⃣ Save changes
+        const updatedFile = await file.save();
 
         return res.status(200).json()
     } catch (error: any) {
@@ -228,10 +267,19 @@ fileRouter.patch("/:fileId", async (req: Request, res: Response) => {
 fileRouter.patch("/:fileId/lock", async (req: Request, res: Response) => {
     try {
 
-        //
+        const fileId = req.params.id;
+        const userId = req.user?._id; // from auth middleware
 
+        // 1️⃣ Find the file and make sure the user owns it
+        const file = await File.findOne({ _id: fileId, created_by: userId });
+        const file = await File.findOne({ _id: fileId, canEdit: [userId] });
+        if (!file) {
+            return res.status(404).json({ message: "File not found or access denied" });
+        }
 
-        return res.status(200).json()
+        await File.findByIdAndUpdate(userId, { inUse: true, usedBy: userId })
+
+        return res.status(200).json({ "message": `File locked by ${userId}` })
     } catch (error: any) {
         console.log(error)
         return res.status(500).json({ "message": "Internal Server Error" })
@@ -241,10 +289,19 @@ fileRouter.patch("/:fileId/lock", async (req: Request, res: Response) => {
 fileRouter.patch("/:fileId/unlock", async (req: Request, res: Response) => {
     try {
 
-        //
+        const fileId = req.params.id;
+        const userId = req.user?._id; // from auth middleware
 
+        // 1️⃣ Find the file and make sure the user owns it
+        const file = await File.findOne({ _id: fileId, created_by: userId });
+        const file = await File.findOne({ _id: fileId, canEdit: [userId] });
+        if (!file) {
+            return res.status(404).json({ message: "File not found or access denied" });
+        }
 
-        return res.status(200).json()
+        await File.findByIdAndUpdate(userId, { inUse: false })
+
+        return res.status(200).json({ "message": `File unlocked` })
     } catch (error: any) {
         console.log(error)
         return res.status(500).json({ "message": "Internal Server Error" })
