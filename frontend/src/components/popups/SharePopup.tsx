@@ -151,7 +151,7 @@ export function SharePopup() {
               onCheckedChange={(c) => { updateFile(currentFileId, { private: c }) }} //set is private
             />
           </Field>
-          {filesError && <CustomDialog heading="Error" text="File error" />}
+          {filesError && <CustomDialog heading="Error" text={filesError} />}
           {filesLoading && <p>Loading...</p>}
 
 

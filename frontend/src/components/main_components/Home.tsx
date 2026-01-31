@@ -354,9 +354,9 @@ const Home = () => {
         />
       </div>
 
-      {userError && <CustomDialog text="User error"/>}
+      {userError && <CustomDialog text={userError}/>}
       {userError && <p>Loading...</p>}
-      {filesError && <CustomDialog heading="Error" text="File error"/>}
+      {filesError && <CustomDialog heading="Error" text={filesError}/>}
       {filesLoading && <p>Loading...</p>}
 
       {/*

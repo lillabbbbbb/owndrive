@@ -65,7 +65,7 @@ function SettingsDropdownMenu() {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {userError && <CustomDialog text="User error"/>}
+      {userError && <CustomDialog text={userError} />}
     </>
   )
 }

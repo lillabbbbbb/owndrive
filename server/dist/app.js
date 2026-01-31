@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.connectDB = connectDB;
 const dotenv_1 = __importDefault(require("dotenv"));
 require("dotenv/config"); //if this line is not HERE, the google oauth passport runs into an error
 const google_passport_config_1 = __importDefault(require("./middleware/google-passport-config"));
@@ -26,6 +27,12 @@ const mongoDB = "mongodb://127.0.0.1:27017/OwnDrive";
 mongoose_1.default.connect(mongoDB);
 mongoose_1.default.Promise = Promise;
 const db = mongoose_1.default.connection;
+// Connect function for scripts
+async function connectDB() {
+    if (mongoose_1.default.connection.readyState === 0) {
+        await mongoose_1.default.connect(mongoDB);
+    }
+}
 db.on("error", console.error.bind(console, "MongoDB connection error"));
 //Set up what the app should use
 app.use(google_passport_config_1.default.initialize());
@@ -40,6 +47,10 @@ app.use("/api/files/", file_1.default);
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
+const allowedEnvs = ['development', 'test'];
+if (!allowedEnvs.includes(process.env.NODE_ENV ?? '')) {
+    throw new Error('❌ Invalid environment for seeding');
+}
 //Enable cross-origin resource sharing
 if (process.env.NODE_ENV === "development") {
     const corsOptions = {

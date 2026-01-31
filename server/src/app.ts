@@ -33,6 +33,13 @@ mongoose.connect(mongoDB)
 mongoose.Promise = Promise
 const db: Connection = mongoose.connection
 
+// Connect function for scripts
+export async function connectDB(): Promise<void> {
+  if (mongoose.connection.readyState === 0) {
+    await mongoose.connect(mongoDB);
+  }
+}
+
 db.on("error", console.error.bind(console, "MongoDB connection error"))
 
 //Set up what the app should use
@@ -54,6 +61,12 @@ app.listen(port, () => {
     console.log(`Server running on port ${port}`)
 
 })
+
+
+const allowedEnvs = ['development', 'test']
+if (!allowedEnvs.includes(process.env.NODE_ENV ?? '')) {
+  throw new Error('❌ Invalid environment for seeding')
+}
 
 
 

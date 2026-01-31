@@ -155,9 +155,9 @@ const Editor = () => {
                     </Dialog>
                 </>
             }
-            {userError && <CustomDialog text="User error" />}
+            {userError && <CustomDialog text={userError} />}
             {userLoading && <p>Loading...</p>}
-            {filesError && <CustomDialog heading="Error" text="File error" />}
+            {filesError && <CustomDialog heading="Error" text={filesError} />}
             {filesLoading && <p>Loading...</p>}
 
         </>

@@ -1,6 +1,6 @@
 //DB model for User
 
-import mongoose, {Document, Schema} from "mongoose";
+import mongoose, {Document, Schema, Types } from "mongoose";
 import { IFile } from "./File";
 
 export interface IUser extends Document {
@@ -8,7 +8,7 @@ export interface IUser extends Document {
    //googleId?: string, //google ID
    email: string,
    password_hash?: string,
-   profile_pic?: string, //!
+   profile_pic?: Types.ObjectId, //!
    language: string,
    mode: string, //light or dark mode
    files: IFile[]

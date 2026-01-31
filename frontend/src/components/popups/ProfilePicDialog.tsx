@@ -79,7 +79,7 @@ const ProfilePicDialog = ({ open, setOpen }: ProfilePicDialogProps) => {
                             />
                         </label>
                     </Button>
-                    {userError && <CustomDialog text="User error"/>}
+                    {userError && <CustomDialog text={userError}/>}
                     {userLoading && <p>Loading...</p>}
             
             </DialogContent>

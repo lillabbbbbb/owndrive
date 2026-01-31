@@ -1,23 +1,23 @@
 //DB model for File
 
-import mongoose, {Document, Schema} from "mongoose";
+import mongoose, {Document, Schema, Types } from "mongoose";
 
 interface IFile extends Document {
    created_at: Date,
-   created_by: string,
+   created_by: Types.ObjectId,
    last_edited_at: Date,
    file_type: string,
    filename: string,
    content: string,
-   canView: string[], //list of usernames that can view the file
-   canEdit: string[], //list of usernames that can edit the file
+   canView: Types.ObjectId[], //list of usernames that can view the file
+   canEdit: Types.ObjectId[], //list of usernames that can edit the file
    visibleToGuests: boolean,
    showsInHomeShared: boolean,
    private: boolean,
    status: string, //"active" or "archived"
    archivedAt?: Date,
    inUse: boolean, //= is anyone viewing (with edit permission) /editing this document
-   usedBy?: string //the user _id, if any, that is "using" the file
+   usedBy?: Types.ObjectId //the user _id, if any, that is "using" the file
 }
 
 const fileSchema = new Schema({
@@ -28,15 +28,15 @@ const fileSchema = new Schema({
    filename: {type: String, required: true},
    content: {type: String, required: true, default: ""},
    word_count: {type: Number, required: false}, //NOTE: maybe not needed to be stored in DB...
-   canView: {type: [String], required: true}, //list of usernames that can view the file
-   canEdit: {type: Array<String>, required: true}, //list of usernames that can edit the file
+   canView: {type: [Schema.Types.ObjectId], required: true}, //list of usernames that can view the file
+   canEdit: {type: [Schema.Types.ObjectId], required: true}, //list of usernames that can edit the file
    visibleToGuests: {type: Boolean, required: true},
    showsInHomeShared: {type: Boolean, required: true},
    private: {type: Boolean, required: true},
    status: {type: String, required: true},
    archivedAt: {type: Date, required: false},
    inUse: {type: Boolean, required: true}, //= is anyone viewing (with edit permission) /editing this document
-   usedBy: {type: String, required: false} //the user _id, if any, that is "using" the file
+   usedBy: {type: Schema.Types.ObjectId, required: false} //the user _id, if any, that is "using" the file
 
 })
 
