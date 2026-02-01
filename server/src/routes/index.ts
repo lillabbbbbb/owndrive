@@ -7,10 +7,13 @@ import bcrypt from "bcrypt"
 import jwt, { JwtPayload } from "jsonwebtoken"
 import { IUser, User } from "../models/User"
 import { validateEmail, validatePassword, validateUsername } from "../validators/inputValidation"
+import { validateUserToken } from "../middleware/userValidation"
 //import { validateToken} from "../middleware/validateToken"
 
 
 const router: Router = Router()
+
+router.use(validateUserToken)
 
 
 //route to anything else: handled in frontend
@@ -33,7 +36,7 @@ router.post("/login",
             //inputted password matches with corresponding password in database
             if (bcrypt.compareSync(req.body.password, user.password_hash as string)){
                 const jwtPayload : JwtPayload = {
-                    email: user.email
+                    id: user._id
                 }
 
                 //tokenize the data
@@ -70,25 +73,20 @@ router.post("/register",
             //check if there is a user in the database with the provided email
             const existingUser = await User.findOne({email: req.body.email});
             console.log(existingUser)
-            
-
-            //return if there is already a user with this email
             if(existingUser){
                 return res.status(403).json({message: "Email already in use"})
             }
 
-            //create salt and encrypt the password
+            //otherwise, create salt and encrypt the password
             const salt: string = bcrypt.genSaltSync(10)
             const hash: string = bcrypt.hashSync(req.body.password, salt)
 
 
-            //create other values (default):
-            const language: string = "en"
-            const mode: string = "light"
-
-
-            //append new user to the local storage list
-            await User.create({email: req.body.email, username: req.body.username, password_hash: hash, language: language, mode: mode})
+            //create new user record in db
+            await User.create({
+                email: req.body.email, 
+                username: req.body.username, 
+                password_hash: hash})
 
             //Return email and pw (with status code 200)
             return res.status(200).json({email: req.body.email, password: hash})
@@ -101,19 +99,6 @@ router.post("/register",
             return res.status(500).json({error: "Internal Server Error"})
 
         }
-})
-
-
-//DELETE LATER, ONLY HERE FOR TESTING
-router.get("/list", async (req: Request, res: Response) => {
-    try {
-        const users: IUser[] = await User.find()
-        return res.status(200).json(users)
-    } catch (error: any) {
-        console.log(`Error while fecthing users ${error}`)
-        return res.status(500).json({error: "Internal Server Error"})
-    }
-
 })
     
 router.post("/login/google", passport.authenticate("google",  {scope: ['profile']}))

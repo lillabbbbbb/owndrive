@@ -9,7 +9,7 @@ interface IImage extends Document {
 
 const imageSchema = new Schema({
     filename: {type: String, required: true},
-    description: {type: String, required: true},
+    description: {type: String, required: true, default: "an image"},
     path: {type: String, required: true},
     createdAt: {type: Date, default: Date.now}
 })

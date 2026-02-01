@@ -23,8 +23,8 @@ const userSchema = new Schema({
     files: [{ type: Schema.Types.ObjectId, ref: 'File' }], // array of references
     session: { type: Schema.Types.ObjectId, ref: 'Session' }, // session schema
     profile_pic: { type: Schema.Types.ObjectId, ref: 'Image', required: false },
-    language: {type: String, required: true},
-    mode: {type: String, required: true},
+    language: {type: String, required: true, default: "en"},
+    mode: {type: String, required: true, default: "light"},
 })
 
 export const User: mongoose.Model<IUser> = mongoose.model<IUser>("User", userSchema)

@@ -8,10 +8,12 @@ import jwt, { JwtPayload } from "jsonwebtoken"
 import { IUser, User } from "../models/User"
 import { IFile, File } from "../models/File"
 import { validateEmail, validatePassword, validateUsername } from "../validators/inputValidation"
-import { CustomRequest, validateOwnerToken } from "../middleware/userValidation"
+import { CustomRequest, validateUserToken } from "../middleware/userValidation"
 
 
 const fileRouter: Router = Router()
+
+fileRouter.use(validateUserToken)
 
 //NOTE: SORTING CAN BE HANDLED IN THE FRONTEND
 //GET fetch all files (and a lot of their data) of a user
@@ -21,8 +23,10 @@ fileRouter.get("/",
     async (req: Request, res: Response) => {
         try {
 
+            const userId = req.user!._id.toString(); // safe // from auth middleware
+
             //get the right user
-            const user: IUser | null = await User.findOne({ _id: req.headers["authorization"] as string }).populate("files")
+            const user: IUser | null = await User.findOne({ _id: userId }).populate("files")
 
             //return if user not found
             if (!user) throw new Error("Owner not found");
@@ -46,7 +50,9 @@ fileRouter.post("/",
     async (req: Request, res: Response) => {
         try {
 
-            const userId = req.user?._id; // from auth middleware
+            if(!req.user) return res.status(401).json({message: "Unauthorized"})
+
+            const userId = req.user!._id.toString(); // safe // from auth middleware
 
             const {
                 filename,
@@ -272,8 +278,8 @@ fileRouter.patch("/:fileId/lock", async (req: Request, res: Response) => {
 
         // 1️⃣ Find the file and make sure the user owns it
         const file = await File.findOne({ _id: fileId, created_by: userId });
-        const file = await File.findOne({ _id: fileId, canEdit: [userId] });
-        if (!file) {
+        const canEdit = await File.findOne({ _id: fileId, canEdit: userId});
+        if (!file || !canEdit) {
             return res.status(404).json({ message: "File not found or access denied" });
         }
 
@@ -294,14 +300,15 @@ fileRouter.patch("/:fileId/unlock", async (req: Request, res: Response) => {
 
         // 1️⃣ Find the file and make sure the user owns it
         const file = await File.findOne({ _id: fileId, created_by: userId });
-        const file = await File.findOne({ _id: fileId, canEdit: [userId] });
-        if (!file) {
+        const canEdit = await File.findOne({ _id: fileId, canEdit: userId});
+        if (!file || !canEdit) {
             return res.status(404).json({ message: "File not found or access denied" });
         }
 
-        await File.findByIdAndUpdate(userId, { inUse: false })
+        await File.findByIdAndUpdate(userId, { inUse: false, usedBy: null })
 
         return res.status(200).json({ "message": `File unlocked` })
+
     } catch (error: any) {
         console.log(error)
         return res.status(500).json({ "message": "Internal Server Error" })
