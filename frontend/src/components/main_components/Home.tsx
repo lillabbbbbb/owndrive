@@ -1,4 +1,4 @@
-import { useMemo, useState, type ChangeEvent } from 'react'
+import { useMemo, useState, useEffect, type ChangeEvent } from 'react'
 import { TextField, Autocomplete } from "@mui/material";
 import SortingDropdown from '../SortingDropdown';
 import FilesTable from '../Table';
@@ -61,9 +61,7 @@ enum datesEnum {
 const Home = () => {
 
   const navigate = useNavigate()
-  const {user, files, getFile, updateFile, userLoading, userError, filesLoading, filesError} = useAppContext()
-
-
+  const { user, files,getFiles, getFile, updateFile, userLoading, userError, filesLoading, filesError } = useAppContext()
 
   const [isClicked, setClicked] = useState(false)
   const [selectedSorting, setSelectedSorting] = useState(sortingTypes.by_last_modified)
@@ -71,6 +69,15 @@ const Home = () => {
   const [searchKeyword, setSearchKeyword] = useState("")
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
   const [showingArchives, setShowingArchives] = useState<boolean>(false)
+
+  useEffect(() => {
+    setSortedFilteredData(files);
+    console.log(files)
+  }, [files]);
+
+  useEffect(() => {
+    getFiles();
+}, []); // empty deps → runs once
 
   const fileTypes = [...new Set(files.map((file: IFileFrontend) => file.file_type))]
   const ownerNames = [...new Set(files.map((file: IFileFrontend) => file.created_by))]
@@ -290,7 +297,7 @@ const Home = () => {
 
   const handleCreateNewClick = () => {
     console.log("Create new button clicked")
-    
+
     //Redirect to editor page
     navigate(`/${user?.username}/${DEFAULT_FILE_NAME}`)
 
@@ -354,9 +361,9 @@ const Home = () => {
         />
       </div>
 
-      {userError && <CustomDialog text={userError}/>}
+      {userError && <CustomDialog text={userError} />}
       {userError && <p>Loading...</p>}
-      {filesError && <CustomDialog heading="Error" text={filesError}/>}
+      {filesError && <CustomDialog heading="Error" text={filesError} />}
       {filesLoading && <p>Loading...</p>}
 
       {/*

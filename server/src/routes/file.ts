@@ -10,7 +10,6 @@ import { IFile, File } from "../models/File"
 import { Types } from "mongoose"
 import { validateEmail, validatePassword, validateUsername } from "../validators/inputValidation"
 import { CustomRequest, validateUserToken } from "../middleware/userValidation"
-import { asyncHandler } from "../middleware/asyncHelper"
 
 
 const fileRouter: Router = Router()
@@ -32,6 +31,7 @@ fileRouter.get("/", async (req: Request, res: Response) => {
         if (!user) throw new Error("Owner not found");
 
 
+        console.log(user.files)
         return res.status(200).json(user.files)
 
     } catch (error: any) {

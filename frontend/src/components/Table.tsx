@@ -22,11 +22,13 @@ type TableProps = {
   setFileName?: (newFileName: string) => void;
 }
 
-export default function FilesTable({ onRowClick, sortedFilteredData, fileName, setFileName }: TableProps) {
+const COLUMN_NAMES = ["filename", "file_type", "created_by", "last_edited_at", "created_at"]
+
+export default function FilesTable({ onRowClick, sortedFilteredData}: TableProps) {
   const navigate = useNavigate()
   const {setCurrentFileId} = useAppContext()
   
-  const [columns, setColumns] = useState<string[]>(["filename", "file_type", "created_by", "last_edited_at", "created_at"]);
+  const [columns, setColumns] = useState<string[]>(COLUMN_NAMES);
   const [currentPage, setCurrentPage] = useState(1);
   const ROWS_PER_PAGE = 12;
 
@@ -55,7 +57,7 @@ export default function FilesTable({ onRowClick, sortedFilteredData, fileName, s
     <div className="space-y-4">
       {/* Column selectors */}
       <div className="flex gap-2 flex-wrap">
-        {["filename", "file_type", "created_by", "last_edited_at", "created_at"].map((col) => (
+        {COLUMN_NAMES.map((col) => (
           <label key={col} className="flex items-center gap-1">
             <input
               type="checkbox"
@@ -73,22 +75,22 @@ export default function FilesTable({ onRowClick, sortedFilteredData, fileName, s
         <Table>
           <TableHeader>
             <TableRow >
-              {columns.includes("filename") && <TableHead>Name</TableHead>}
-              {columns.includes("file_type") && <TableHead>Type</TableHead>}
-              {columns.includes("created_by") && <TableHead>Created By</TableHead>}
-              {columns.includes("last_edited_at") && <TableHead>Last modified</TableHead>}
-              {columns.includes("created_at") && <TableHead className="text-right">Created At</TableHead>}
+              {columns.includes(COLUMN_NAMES[0]) && <TableHead>Name</TableHead>}
+              {columns.includes(COLUMN_NAMES[1]) && <TableHead>Type</TableHead>}
+              {columns.includes(COLUMN_NAMES[2]) && <TableHead>Created By</TableHead>}
+              {columns.includes(COLUMN_NAMES[3]) && <TableHead>Last modified</TableHead>}
+              {columns.includes(COLUMN_NAMES[4]) && <TableHead className="text-right">Created At</TableHead>}
             </TableRow>
           </TableHeader>
 
           <TableBody>
             {currentRows.map((file) => (
               <TableRow className="text-left w-auto whitespace-nowrap px-4 py-2" key={file._id} onClick={() => onRowClick(file)} onDoubleClick={() => handleRowDoubleClick(file)}>
-                {columns.includes("filename") && <TableCell className="whitespace-nowrap pr-16 py-2">{file.filename}</TableCell>}
-                {columns.includes("file_type") && <TableCell className="whitespace-nowrap pr-16 py-2">{file.file_type}</TableCell>}
-                {columns.includes("last_edited_at") && <TableCell className="whitespace-nowrap pr-16 py-2">{file.last_edited_at.toLocaleDateString()}</TableCell>}
-                {columns.includes("created_by") && <TableCell className="whitespace-nowrap pr-16 py-2">{file.created_by}</TableCell>}
-                {columns.includes("created_at") && <TableCell className="whitespace-nowrap pl-16 py-2">{file.created_at.toLocaleDateString()}</TableCell>}
+                {columns.includes(COLUMN_NAMES[0]) && <TableCell className="whitespace-nowrap pr-16 py-2">{file.filename}</TableCell>}
+                {columns.includes(COLUMN_NAMES[1]) && <TableCell className="whitespace-nowrap pr-16 py-2">{file.file_type}</TableCell>}
+                {columns.includes(COLUMN_NAMES[2]) && <TableCell className="whitespace-nowrap pr-16 py-2">{file.last_edited_at.toLocaleDateString()}</TableCell>}
+                {columns.includes(COLUMN_NAMES[3]) && <TableCell className="whitespace-nowrap pr-16 py-2">{file.created_by}</TableCell>}
+                {columns.includes(COLUMN_NAMES[4]) && <TableCell className="whitespace-nowrap pl-16 py-2">{file.created_at.toLocaleDateString()}</TableCell>}
               </TableRow>
             ))}
           </TableBody>

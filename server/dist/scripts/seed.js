@@ -18,6 +18,20 @@ async function seed() {
     await User_1.User.deleteMany({});
     await File_1.File.deleteMany({});
     await Image_1.Image.deleteMany({});
+    async function seedDefaultUsers() {
+        const existing = await User_1.User.findOne({ email: "admin@example.com" });
+        if (!existing) {
+            await User_1.User.create({
+                username: "admin",
+                email: "admin@example.com",
+                password_hash: "$2b$10$QW4pgakcv692XpiiCWj7O.gmpxQIy9F0Ryo36eUrFyYxn6gZy2Pe6",
+            });
+            console.log("Admin user seeded");
+        }
+        return existing;
+    }
+    await seedDefaultUsers();
+    const admin = await User_1.User.findOne({ email: "admin@example.com" });
     // 2️⃣ Create images
     const images = await Image_1.Image.insertMany(Array.from({ length: IMAGE_COUNT }).map(() => ({
         filename: faker_1.faker.system.fileName(),
@@ -39,17 +53,14 @@ async function seed() {
       }))
     );
     */
-    const user = await User_1.User.findOne({ email: process.env.TEST_EMAIL });
-    if (!user)
+    if (!admin)
         return;
+    console.log("Admin found");
     // 4️⃣ Create files and link to users
     for (let i = 0; i < FILE_COUNT; i++) {
-        const creator = faker_1.faker.helpers.arrayElement([user]);
-        if (!creator)
-            return;
         const file = await File_1.File.create({
             created_at: faker_1.faker.date.past(),
-            created_by: creator._id,
+            created_by: admin._id,
             last_edited_at: faker_1.faker.date.recent(),
             file_type: faker_1.faker.helpers.arrayElement(['doc', 'txt', 'md']),
             filename: faker_1.faker.system.fileName(),
@@ -63,9 +74,10 @@ async function seed() {
             usedBy: undefined,
         });
         // Push file to creator's files array
-        user.files.push(file._id);
-        await creator.save();
+        admin.files.push(file._id);
+        await admin.save();
     }
+    console.log(await File_1.File.find().lean().exec());
     console.log('✅ Seed finished');
     mongoose_1.default.connection.close();
 }

@@ -20,6 +20,7 @@ fileRouter.get("/", async (req, res) => {
         //return if user not found
         if (!user)
             throw new Error("Owner not found");
+        console.log(user.files);
         return res.status(200).json(user.files);
     }
     catch (error) {

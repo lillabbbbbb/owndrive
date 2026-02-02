@@ -27,9 +27,12 @@ export function useFiles() {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.get<IFileFrontend[]>("/api/files");
-      setFiles(res.data)
-      return res.data;
+      const res = await axios.get<IFileFrontend[]>("/api/files/");
+      const data = res.data
+      setFiles(data)
+      console.log("Files:")
+      console.log(data)
+      return data;
     } catch (err) {
       handleError(err);
       return null;
@@ -145,6 +148,7 @@ export function useFiles() {
     error,
     files,
     getFile,
+    getFiles,
     createFile,
     updateFile,
     lockFile,

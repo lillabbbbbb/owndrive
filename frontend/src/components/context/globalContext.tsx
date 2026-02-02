@@ -22,6 +22,7 @@ export interface AppContextType {
   logout: () => Promise<void>;
 
   // File actions
+  getFiles: () => Promise<IFileFrontend[] | null>;
   getFile: (id: string) => Promise<IFileFrontend | null>;
   createFile: (fileData: Partial<IFileFrontend>) => Promise<IFileFrontend | null>;
   updateFile: (id: string, updates: Partial<IFileFrontend>) => Promise<IFileFrontend | null>;
@@ -74,6 +75,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
 
     // File actions
     getFile: filesHook.getFile,
+    getFiles: filesHook.getFiles,
     lockFile: filesHook.lockFile,
     unlockFile: filesHook.unlockFile,
     createFile: filesHook.createFile,

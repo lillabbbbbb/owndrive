@@ -18,6 +18,22 @@ async function seed() {
   await File.deleteMany({});
   await Image.deleteMany({});
 
+  async function seedDefaultUsers() {
+    const existing = await User.findOne({ email: "admin@example.com" });
+    if (!existing) { await User.create({
+            username: "admin",
+            email: "admin@example.com",
+            password_hash: "$2b$10$QW4pgakcv692XpiiCWj7O.gmpxQIy9F0Ryo36eUrFyYxn6gZy2Pe6",
+        });
+        console.log("Admin user seeded");
+    }
+    return existing
+}
+
+await seedDefaultUsers()
+const admin = await User.findOne({ email: "admin@example.com" });
+
+
   // 2️⃣ Create images
   const images = await Image.insertMany(
     Array.from({ length: IMAGE_COUNT }).map(() => ({
@@ -42,19 +58,15 @@ async function seed() {
   );
   */
 
-  const user = await User.findOne({email : process.env.TEST_EMAIL})
-
-  if(!user) return
+  if(!admin) return
+  console.log("Admin found")
 
   // 4️⃣ Create files and link to users
   for (let i = 0; i < FILE_COUNT; i++) {
-    const creator = faker.helpers.arrayElement([user]);
-
-    if(!creator) return
 
     const file = await File.create({
       created_at: faker.date.past(),
-      created_by: creator._id,
+      created_by: admin._id,
       last_edited_at: faker.date.recent(),
       file_type: faker.helpers.arrayElement(['doc', 'txt', 'md']),
       filename: faker.system.fileName(),
@@ -69,9 +81,11 @@ async function seed() {
     });
 
     // Push file to creator's files array
-    user.files.push(file._id);
-    await creator.save();
+    admin.files.push(file._id);
+    await admin.save();
   }
+
+  console.log(await File.find().lean().exec())
 
   console.log('✅ Seed finished');
   mongoose.connection.close();
