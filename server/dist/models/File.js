@@ -40,16 +40,15 @@ const fileSchema = new mongoose_1.Schema({
     created_at: { type: Date, required: true }, //permanent
     created_by: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', required: true }, //permanent
     last_edited_at: { type: Date, required: true },
-    file_type: { type: String, required: true }, //permanent
+    file_type: { type: String, required: true, default: ".docx" }, //permanent
     filename: { type: String, required: true },
     content: { type: String, required: true, default: "" },
-    word_count: { type: Number, required: false }, //NOTE: maybe not needed to be stored in DB...
-    canView: { type: [mongoose_1.Schema.Types.ObjectId], required: true }, //list of usernames that can view the file
-    canEdit: { type: [mongoose_1.Schema.Types.ObjectId], required: true }, //list of usernames that can edit the file
-    visibleToGuests: { type: Boolean, required: true },
-    showsInHomeShared: { type: Boolean, required: true },
-    private: { type: Boolean, required: true },
-    status: { type: String, required: true },
+    canView: { type: [mongoose_1.Schema.Types.ObjectId], required: true, default: [] }, //list of userids that can view the file
+    canEdit: { type: [mongoose_1.Schema.Types.ObjectId], required: true, default: [] }, //list of userids that can edit the file
+    visibleToGuests: { type: Boolean, required: true, default: false },
+    showsInHomeShared: { type: Boolean, required: true, default: true },
+    private: { type: Boolean, required: true, default: false },
+    status: { type: String, required: true, default: "active" },
     archivedAt: { type: Date, required: false },
     inUse: { type: Boolean, required: true }, //= is anyone viewing (with edit permission) /editing this document
     usedBy: { type: mongoose_1.Schema.Types.ObjectId, required: false } //the user _id, if any, that is "using" the file

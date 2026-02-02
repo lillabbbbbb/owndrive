@@ -4,22 +4,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const User_1 = require("../models/User");
 const File_1 = require("../models/File");
+const mongoose_1 = require("mongoose");
 const userValidation_1 = require("../middleware/userValidation");
 const fileRouter = (0, express_1.Router)();
-//NOTE: SORTING CAN BE HANDLED IN THE FRONTEND
-//GET fetch all files (and a lot of their data) of a user
-//params: username: string, token: string, filter?: JSON[] (e.g. [{filter: "lillabbbbbb", filter_type: "user"}])
-//since the filter is passed into here, pls also add it to the corresponding Session db object schema
+//This way, all the routes will first run validateUserToken 
+fileRouter.use(userValidation_1.validateUserToken);
 fileRouter.get("/", async (req, res) => {
     try {
+        const customReq = req;
+        if (!req.user)
+            return res.status(401).json({ message: "Unauthorized" });
+        const userId = customReq.user?._id;
         //get the right user
-        const user = await User_1.User.findOne({ _id: req.headers["authorization"] }).populate("files");
+        const user = await User_1.User.findOne({ _id: userId }).populate("files");
         //return if user not found
         if (!user)
             throw new Error("Owner not found");
-        //get the files of the user
-        const files = user.files;
-        return res.status(200).json(files);
+        return res.status(200).json(user.files);
     }
     catch (error) {
         console.log(error);
@@ -30,7 +31,10 @@ fileRouter.get("/", async (req, res) => {
 //params: id: string, filedata: JSON
 fileRouter.post("/", async (req, res) => {
     try {
-        const userId = req.user?._id; // from auth middleware
+        const customReq = req;
+        if (!req.user)
+            return res.status(401).json({ message: "Unauthorized" });
+        const userId = customReq.user?._id;
         const { filename, file_type = "doc", content = "", inUse = false, usedBy, status = "active", visibleToGuests = false, showsInHomeShared = true, private: isPrivate = false } = req.body;
         if (!filename) {
             return res.status(400).json({ message: "Filename is required" });
@@ -82,7 +86,10 @@ fileRouter.post("/", async (req, res) => {
 //params: username: string, token: string, filedata: JSON
 fileRouter.delete("/:fileId", async (req, res) => {
     try {
-        const userId = req.user?._id; // from auth middleware
+        const customReq = req;
+        if (!req.user)
+            return res.status(401).json({ message: "Unauthorized" });
+        const userId = customReq.user?._id;
         const existingFile = await File_1.File.findOne({ _id: req.params.fileId });
         if (!existingFile)
             return res.status(404).json({ "message": "File not found based on _id" });
@@ -104,9 +111,12 @@ fileRouter.delete("/:fileId", async (req, res) => {
 //params: username: string, token: string, filename: JSON
 //NOTE: check if the user has the right permissions to post to this route
 //NOTE: check if the file is set to private by the owner (don't render to others if it is)!!!!
-fileRouter.get("/:fileId", userValidation_1.validateOwnerToken, async (req, res) => {
+fileRouter.get("/:fileId", async (req, res) => {
     try {
-        const userId = req.user?._id; // from auth middleware
+        const customReq = req;
+        if (!req.user)
+            return res.status(401).json({ message: "Unauthorized" });
+        const userId = customReq.user?._id;
         const existingFile = await File_1.File.findOne({ _id: req.params.fileId });
         if (!existingFile)
             return res.status(404).json({ "message": "File not found based on _id" });
@@ -150,9 +160,19 @@ fileRouter.get("/:fileId", userValidation_1.validateOwnerToken, async (req, res)
 //params: username, updates
 fileRouter.patch("/:fileId", async (req, res) => {
     try {
-        const fileId = req.params.id;
-        const userId = req.user?._id; // from auth middleware
+        const customReq = req;
+        if (!req.user)
+            return res.status(401).json({ message: "Unauthorized" });
+        const userId = customReq.user?._id;
         const updates = req.body;
+        const { fileId } = req.params;
+        //Check whether fileId can be coverted into a Mongoose ObjectId
+        if (!fileId || Array.isArray(fileId)) {
+            return res.status(400).json({ message: "Invalid file ID" });
+        }
+        if (!mongoose_1.Types.ObjectId.isValid(fileId)) {
+            return res.status(400).json({ message: "Invalid file ID format" });
+        }
         // 1️⃣ Find the file and make sure the user owns it
         const file = await File_1.File.findOne({ _id: fileId, created_by: userId });
         if (!file) {
@@ -163,7 +183,7 @@ fileRouter.patch("/:fileId", async (req, res) => {
             const conflict = await File_1.File.findOne({
                 filename: updates.filename,
                 created_by: userId,
-                _id: { $ne: fileId } // exclude the current file itself
+                _id: { $ne: new mongoose_1.Types.ObjectId(fileId) } // exclude the current file itself
             });
             if (conflict) {
                 return res.status(400).json({ message: "A file with this name already exists" });
@@ -189,11 +209,14 @@ fileRouter.patch("/:fileId", async (req, res) => {
 fileRouter.patch("/:fileId/lock", async (req, res) => {
     try {
         const fileId = req.params.id;
-        const userId = req.user?._id; // from auth middleware
+        const customReq = req;
+        if (!req.user)
+            return res.status(401).json({ message: "Unauthorized" });
+        const userId = customReq.user?._id;
         // 1️⃣ Find the file and make sure the user owns it
         const file = await File_1.File.findOne({ _id: fileId, created_by: userId });
-        const file = await File_1.File.findOne({ _id: fileId, canEdit: [userId] });
-        if (!file) {
+        const canEdit = await File_1.File.findOne({ _id: fileId, canEdit: userId });
+        if (!file || !canEdit) {
             return res.status(404).json({ message: "File not found or access denied" });
         }
         await File_1.File.findByIdAndUpdate(userId, { inUse: true, usedBy: userId });
@@ -207,31 +230,22 @@ fileRouter.patch("/:fileId/lock", async (req, res) => {
 fileRouter.patch("/:fileId/unlock", async (req, res) => {
     try {
         const fileId = req.params.id;
-        const userId = req.user?._id; // from auth middleware
+        const customReq = req;
+        if (!req.user)
+            return res.status(401).json({ message: "Unauthorized" });
+        const userId = customReq.user?._id;
         // 1️⃣ Find the file and make sure the user owns it
         const file = await File_1.File.findOne({ _id: fileId, created_by: userId });
-        const file = await File_1.File.findOne({ _id: fileId, canEdit: [userId] });
-        if (!file) {
+        const canEdit = await File_1.File.findOne({ _id: fileId, canEdit: userId });
+        if (!file || !canEdit) {
             return res.status(404).json({ message: "File not found or access denied" });
         }
-        await File_1.File.findByIdAndUpdate(userId, { inUse: false });
+        await File_1.File.findByIdAndUpdate(userId, { inUse: false, usedBy: null });
         return res.status(200).json({ "message": `File unlocked` });
     }
     catch (error) {
         console.log(error);
         return res.status(500).json({ "message": "Internal Server Error" });
-    }
-});
-//DELETE LATER, ONLY HERE FOR TESTING
-fileRouter.get("/files/list", async (req, res) => {
-    try {
-        const files = await File_1.File.find();
-        console.log(files);
-        return res.status(200).json(files);
-    }
-    catch (error) {
-        console.log(`Error while fecthing users ${error}`);
-        return res.status(500).json({ error: "Internal Server Error" });
     }
 });
 exports.default = fileRouter;

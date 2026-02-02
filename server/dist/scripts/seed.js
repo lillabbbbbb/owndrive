@@ -9,8 +9,8 @@ const app_1 = require("../app");
 const User_1 = require("../models/User");
 const File_1 = require("../models/File");
 const Image_1 = require("../models/Image");
-const USER_COUNT = 5;
-const IMAGE_COUNT = 5;
+const USER_COUNT = 1;
+const IMAGE_COUNT = 1;
 const FILE_COUNT = 10;
 async function seed() {
     await (0, app_1.connectDB)();
@@ -25,19 +25,28 @@ async function seed() {
         path: faker_1.faker.system.filePath(),
         createdAt: faker_1.faker.date.recent(),
     })));
+    /*
     // 3️⃣ Create users
-    const users = await User_1.User.insertMany(Array.from({ length: USER_COUNT }).map(() => ({
-        username: faker_1.faker.internet.username(),
-        email: faker_1.faker.internet.email().toLowerCase(),
+    const users: any[] = await User.insertMany(
+      Array.from({ length: USER_COUNT }).map(() => ({
+        username: faker.internet.username(),
+        email: faker.helpers.arrayElement(['fake@gmail.com']),
         password_hash: 'hashed_password',
         files: [], // will push files later
-        language: faker_1.faker.helpers.arrayElement(['en', 'es', 'fr']),
-        mode: faker_1.faker.helpers.arrayElement(['light', 'dark']),
-        profile_pic: faker_1.faker.helpers.arrayElement(images)._id,
-    })));
+        language: faker.helpers.arrayElement(['en', 'es', 'fr']),
+        mode: faker.helpers.arrayElement(['light', 'dark']),
+        profile_pic: faker.helpers.arrayElement(images)._id,
+      }))
+    );
+    */
+    const user = await User_1.User.findOne({ email: process.env.TEST_EMAIL });
+    if (!user)
+        return;
     // 4️⃣ Create files and link to users
     for (let i = 0; i < FILE_COUNT; i++) {
-        const creator = faker_1.faker.helpers.arrayElement(users);
+        const creator = faker_1.faker.helpers.arrayElement([user]);
+        if (!creator)
+            return;
         const file = await File_1.File.create({
             created_at: faker_1.faker.date.past(),
             created_by: creator._id,
@@ -45,8 +54,6 @@ async function seed() {
             file_type: faker_1.faker.helpers.arrayElement(['doc', 'txt', 'md']),
             filename: faker_1.faker.system.fileName(),
             content: faker_1.faker.lorem.paragraphs(2),
-            canView: users.map(u => u._id), // everyone can view
-            canEdit: [creator._id], // only creator can edit
             visibleToGuests: faker_1.faker.datatype.boolean(),
             showsInHomeShared: faker_1.faker.datatype.boolean(),
             private: faker_1.faker.datatype.boolean(),
@@ -56,7 +63,7 @@ async function seed() {
             usedBy: undefined,
         });
         // Push file to creator's files array
-        creator.files.push(file._id);
+        user.files.push(file._id);
         await creator.save();
     }
     console.log('✅ Seed finished');

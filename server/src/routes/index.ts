@@ -24,6 +24,7 @@ router.post("/login",
     validatePassword],
     async (req: Request, res: Response) => {
         try{
+            console.log(await User.find().lean().exec())
             const user = await User.findOne({email: req.body.email});
             console.log(user)
 

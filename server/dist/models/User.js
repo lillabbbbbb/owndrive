@@ -44,8 +44,8 @@ const userSchema = new mongoose_1.Schema({
     files: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'File' }], // array of references
     session: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Session' }, // session schema
     profile_pic: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Image', required: false },
-    language: { type: String, required: true },
-    mode: { type: String, required: true },
+    language: { type: String, required: true, default: "en" },
+    mode: { type: String, required: true, default: "light" },
 });
 exports.User = mongoose_1.default.model("User", userSchema);
 //# sourceMappingURL=User.js.map

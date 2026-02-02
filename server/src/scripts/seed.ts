@@ -4,9 +4,10 @@ import { connectDB } from '../app';
 import { User } from "../models/User";
 import { File } from "../models/File";
 import { Image } from "../models/Image";
+import env from "dotenv"
 
-const USER_COUNT = 5;
-const IMAGE_COUNT = 5;
+const USER_COUNT = 1;
+const IMAGE_COUNT = 1;
 const FILE_COUNT = 10;
 
 async function seed() {
@@ -26,12 +27,12 @@ async function seed() {
       createdAt: faker.date.recent(),
     }))
   );
-
+  /*
   // 3️⃣ Create users
   const users: any[] = await User.insertMany(
     Array.from({ length: USER_COUNT }).map(() => ({
       username: faker.internet.username(),
-      email: faker.internet.email().toLowerCase(),
+      email: faker.helpers.arrayElement(['fake@gmail.com']),
       password_hash: 'hashed_password',
       files: [], // will push files later
       language: faker.helpers.arrayElement(['en', 'es', 'fr']),
@@ -39,10 +40,17 @@ async function seed() {
       profile_pic: faker.helpers.arrayElement(images)._id,
     }))
   );
+  */
+
+  const user = await User.findOne({email : process.env.TEST_EMAIL})
+
+  if(!user) return
 
   // 4️⃣ Create files and link to users
   for (let i = 0; i < FILE_COUNT; i++) {
-    const creator = faker.helpers.arrayElement(users);
+    const creator = faker.helpers.arrayElement([user]);
+
+    if(!creator) return
 
     const file = await File.create({
       created_at: faker.date.past(),
@@ -51,8 +59,6 @@ async function seed() {
       file_type: faker.helpers.arrayElement(['doc', 'txt', 'md']),
       filename: faker.system.fileName(),
       content: faker.lorem.paragraphs(2),
-      canView: users.map(u => u._id), // everyone can view
-      canEdit: [creator._id], // only creator can edit
       visibleToGuests: faker.datatype.boolean(),
       showsInHomeShared: faker.datatype.boolean(),
       private: faker.datatype.boolean(),
@@ -63,7 +69,7 @@ async function seed() {
     });
 
     // Push file to creator's files array
-    creator.files.push(file._id);
+    user.files.push(file._id);
     await creator.save();
   }
 

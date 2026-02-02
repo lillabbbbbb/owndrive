@@ -11,7 +11,7 @@ export interface IUser extends Document {
    profile_pic?: Types.ObjectId, //!
    language: string,
    mode: string, //light or dark mode
-   files: IFile[]
+   files: Types.ObjectId[]
 }
 
 

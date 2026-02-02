@@ -20,6 +20,7 @@ router.post("/login",
 [inputValidation_1.validateEmail,
     inputValidation_1.validatePassword], async (req, res) => {
     try {
+        console.log(await User_1.User.find().lean().exec());
         const user = await User_1.User.findOne({ email: req.body.email });
         console.log(user);
         if (!user) {
@@ -28,7 +29,7 @@ router.post("/login",
         //inputted password matches with corresponding password in database
         if (bcrypt_1.default.compareSync(req.body.password, user.password_hash)) {
             const jwtPayload = {
-                email: user.email
+                _id: user._id
             };
             //tokenize the data
             const token = jsonwebtoken_1.default.sign(jwtPayload, process.env.SECRET, { expiresIn: "2m" });
@@ -60,18 +61,18 @@ router.post("/register",
         //check if there is a user in the database with the provided email
         const existingUser = await User_1.User.findOne({ email: req.body.email });
         console.log(existingUser);
-        //return if there is already a user with this email
         if (existingUser) {
             return res.status(403).json({ message: "Email already in use" });
         }
-        //create salt and encrypt the password
+        //otherwise, create salt and encrypt the password
         const salt = bcrypt_1.default.genSaltSync(10);
         const hash = bcrypt_1.default.hashSync(req.body.password, salt);
-        //create other values (default):
-        const language = "en";
-        const mode = "light";
-        //append new user to the local storage list
-        await User_1.User.create({ email: req.body.email, username: req.body.username, password_hash: hash, language: language, mode: mode });
+        //create new user record in db
+        await User_1.User.create({
+            email: req.body.email,
+            username: req.body.username,
+            password_hash: hash
+        });
         //Return email and pw (with status code 200)
         return res.status(200).json({ email: req.body.email, password: hash });
         //catch all errors
@@ -79,17 +80,6 @@ router.post("/register",
     catch (error) {
         //catch and log errors
         console.log(`Error during registration: ${error}`);
-        return res.status(500).json({ error: "Internal Server Error" });
-    }
-});
-//DELETE LATER, ONLY HERE FOR TESTING
-router.get("/list", async (req, res) => {
-    try {
-        const users = await User_1.User.find();
-        return res.status(200).json(users);
-    }
-    catch (error) {
-        console.log(`Error while fecthing users ${error}`);
         return res.status(500).json({ error: "Internal Server Error" });
     }
 });

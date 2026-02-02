@@ -31,11 +31,8 @@ fileRouter.get("/", async (req: Request, res: Response) => {
         //return if user not found
         if (!user) throw new Error("Owner not found");
 
-        //get the files of the user
-        const files: IFile[] = user.files
 
-
-        return res.status(200).json(files)
+        return res.status(200).json(user.files)
 
     } catch (error: any) {
         console.log(error)
@@ -245,7 +242,6 @@ fileRouter.patch("/:fileId", async (req: Request, res: Response) => {
         }
 
 
-
         // 1️⃣ Find the file and make sure the user owns it
         const file = await File.findOne({ _id: fileId, created_by: userId });
         if (!file) {
@@ -334,20 +330,6 @@ fileRouter.patch("/:fileId/unlock", async (req: Request, res: Response) => {
         console.log(error)
         return res.status(500).json({ "message": "Internal Server Error" })
     }
-})
-
-
-//DELETE LATER, ONLY HERE FOR TESTING
-fileRouter.get("/files/list", async (req: Request, res: Response) => {
-    try {
-        const files: IFile[] = await File.find()
-        console.log(files)
-        return res.status(200).json(files)
-    } catch (error: any) {
-        console.log(`Error while fecthing users ${error}`)
-        return res.status(500).json({ error: "Internal Server Error" })
-    }
-
 })
 
 

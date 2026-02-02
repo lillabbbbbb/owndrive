@@ -4,7 +4,7 @@ import { Request, Response, Router } from "express"
 import { IImage, Image } from "../models/Image"
 import { User } from "../models/User"
 import upload from "../middleware/multer-config"
-import { validateUserToken } from "../middleware/userValidation"
+import { CustomRequest, validateUserToken } from "../middleware/userValidation"
 
 const userRouter: Router = Router()
 
@@ -18,17 +18,20 @@ userRouter.use(validateUserToken)
 userRouter.patch("/:userId/profile_pic", upload.single("image"), async (req: Request, res: Response) => {
     try {
         if (!req.file) {
-            return res.status(400).json({message: "No file uploaded"})
+            return res.status(400).json({ message: "No file uploaded" })
         }
-        
-        const userId = req.user?._id; // from auth middleware
+
+        const customReq = req as CustomRequest;
+        if (!req.user) return res.status(401).json({ message: "Unauthorized" })
+        const userId = customReq.user?._id
+
         //get the right user
         const user = await User
-            .findOne({_id: userId})
+            .findOne({ _id: userId })
             .select("image")
-        
+
         //if user not found
-        if (!userId) return res.status(404).json({message: 'User not found'})
+        if (!userId) return res.status(404).json({ message: 'User not found' })
 
 
         //set up the image 
@@ -41,7 +44,7 @@ userRouter.patch("/:userId/profile_pic", upload.single("image"), async (req: Req
         })
 
         //if there is no profile pic model in the user record
-        if(!user?.profile_pic) {
+        if (!user?.profile_pic) {
 
             //Create new image record in db
             const img = await Image.create({
@@ -52,7 +55,7 @@ userRouter.patch("/:userId/profile_pic", upload.single("image"), async (req: Req
             })
 
             //Update user record, linking the new image's id to it
-            User.findByIdAndUpdate({userId, profile_pic: img._id})
+            User.findByIdAndUpdate({ userId, profile_pic: img._id })
 
         }
 
@@ -60,21 +63,23 @@ userRouter.patch("/:userId/profile_pic", upload.single("image"), async (req: Req
         //Note: If there was an image previously, then no need to update the parent (user) record since the Image was referenced, not embedded, in the model declaration
         await Image.findByIdAndUpdate(
             user?.profile_pic,
-            {$set: {
-                image
-            }}, 
-            {runValidators: true}
+            {
+                $set: {
+                    image
+                }
+            },
+            { runValidators: true }
 
         )
         console.log("Profile pic successfully changed and saved in the database")
 
-        return res.status(201).json({message: "Profile pic successfully uploaded and saved in the database"})
-    } catch(error: any) {
+        return res.status(201).json({ message: "Profile pic successfully uploaded and saved in the database" })
+    } catch (error: any) {
         console.error(`Error while uploading file: ${error}`)
-        return res.status(500).json({message: 'Internal server error'})
+        return res.status(500).json({ message: 'Internal server error' })
     }
 
-   
+
 })
 
 //GET get profile picture of a user
@@ -82,23 +87,26 @@ userRouter.patch("/:userId/profile_pic", upload.single("image"), async (req: Req
 userRouter.get("/:userId/profile_picture", async (req: Request, res: Response) => {
     try {
 
-        const userId = req.user?._id; // from auth middleware
+        const customReq = req as CustomRequest;
+        if (!req.user) return res.status(401).json({ message: "Unauthorized" })
+        const userId = customReq.user?._id
+
         //find the right user
         const user = await User
-            .findOne({_id: userId})
+            .findOne({ _id: userId })
             .select("image")
 
         //if user not found
-        if (!user) return res.status(404).json({message: 'User not found'})
+        if (!user) return res.status(404).json({ message: 'User not found' })
 
         //if there is no profile pic model in the user record
-        if(!user?.profile_pic) return res.status(404).json({message: 'Profile picture not found'})
+        if (!user?.profile_pic) return res.status(404).json({ message: 'Profile picture not found' })
 
         console.log(user.profile_pic)
         return res.status(201).json(user.profile_pic)
-    } catch(error: any) {
+    } catch (error: any) {
         console.error(`Error while uploading file: ${error}`)
-        return res.status(500).json({message: 'Internal server error'})
+        return res.status(500).json({ message: 'Internal server error' })
     }
 })
 
