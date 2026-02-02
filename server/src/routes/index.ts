@@ -13,8 +13,6 @@ import { validateUserToken } from "../middleware/userValidation"
 
 const router: Router = Router()
 
-router.use(validateUserToken)
-
 
 //route to anything else: handled in frontend
 
@@ -36,7 +34,7 @@ router.post("/login",
             //inputted password matches with corresponding password in database
             if (bcrypt.compareSync(req.body.password, user.password_hash as string)){
                 const jwtPayload : JwtPayload = {
-                    id: user._id
+                    _id: user._id
                 }
 
                 //tokenize the data
