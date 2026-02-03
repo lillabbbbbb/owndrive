@@ -19,7 +19,7 @@ export interface AppContextType {
   refreshUser: () => Promise<void>;
   updateUser: (changes: Partial<IUserFrontend>) => Promise<IUserFrontend | null>;
   updateProfilePic: (file: File, description?: string) => Promise<boolean>;
-  login: (email: string, password: string) => Promise<{token: string}>;
+  login: (email: string, password: string) => Promise<string | null>;
   logout: () => Promise<void>;
 
   // File actions

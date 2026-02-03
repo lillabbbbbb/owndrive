@@ -27,7 +27,8 @@ const Editor = () => {
     const jwt = localStorage.getItem("token")
 
     const [file, setFile] = useState<IFileFrontend | null>(null)
-    const [beingUsed, setBeingUsed] = useState<boolean>(true)
+    const [filename, setFilename] = useState<string>("New file")
+    const [beingUsed, setBeingUsed] = useState<boolean>(false)
     const [content, setContent] = useState<string>("")
     const [lastEditedAt, setLastEditedAt] = useState<string>("")
     const [canView, setCanView] = useState<string[]>([])
@@ -36,19 +37,23 @@ const Editor = () => {
     const [isPrivate, setIsPrivate] = useState<boolean>(false)
     const [editable, setEditable] = useState<boolean>(false) //turn this into useEffect
 
+    useEffect(() => {
+        setEditable(!beingUsed)
+    }, [beingUsed])
+
     const navigate = useNavigate()
     const { user, currentFileId, getFile, createFile, updateFile, lockFile, userLoading, userError, filesLoading, filesError } = useAppContext()
 
     useEffect(() => {
         if (!currentFileId) return;
-    
+
         const loadFile = async () => {
-          const f = await getFile(currentFileId); // await the Promise
-          setFile(f);
+            const f = await getFile(currentFileId); // await the Promise
+            setFile(f);
         };
-    
+
         loadFile();
-      }, [currentFileId, getFile]);
+    }, [currentFileId, getFile]);
 
 
     const username = user?.username || user?.email
@@ -57,14 +62,62 @@ const Editor = () => {
     console.log(`File content is now:`)
     console.log(content)
 
-    if (currentFileId && user) {
-        lockFile(currentFileId, user._id)
+    useEffect(() => {
+        if (currentFileId && user) {
+            lockFile(currentFileId, user._id)
+        }
+    }, [])
+
+    const isValidFilename = (filename: string) => {
+
+        //check if there's any forbidden characters
+
+        //check for exact match between other files of user
+
+        return true
+    }
+
+    const isExistingFile = (filename: string) => {
+        return file?.filename == filename;
     }
 
     const handleSave = () => {
         console.log("Save button is clicked")
+        console.log(user)
         if (!user) return
-        //NOTE: create IFile instance, and push the changes to the existing/new record in DB
+
+        if (!isValidFilename(filename)) return
+
+        if (isExistingFile(filename)) {
+            //if this file exists, but the content has been modified
+            updateFile(currentFileId, {
+                last_edited_at: new Date(),
+                inUse: true,
+                usedBy: user._id,
+                status: "active",
+            })
+            return
+        }
+
+        //if a file with this name doesnt exist in the user's drive (go through userData.files array in search of a match)
+        //create new file record and append it to the user
+        createFile({
+            created_by: user._id,
+            filename: filename,
+            file_type: ".docx",
+            content: content,
+            inUse: true,
+            usedBy: user._id
+        })
+
+    }
+
+    const handleSaveFileName = (newFileName: string) => {
+
+        if (!user) return
+
+        //check if filename is valid and unique,
+        if (!isValidFilename(filename)) return
 
         //if a file with this name doesnt exist in the user's drive (go through userData.files array in search of a match)
         //create new file record and append it to the user
@@ -76,24 +129,6 @@ const Editor = () => {
             inUse: true,
             usedBy: user._id
         })
-
-        //if this file exists, but the content has been modified
-        //save new content
-
-        //POST Route: 
-        updateFile(currentFileId, {
-            last_edited_at: new Date(),
-            inUse: true,
-            usedBy: user._id,
-            status: "active",
-        })
-
-    }
-
-    const handleSaveFileName = (newFileName: string) => {
-
-        if (!user) return
-        //check if filename is valid and unique,
 
         //if so, save the new name of the file in the DB (PATCH call)
         updateFile(currentFileId, {
@@ -119,11 +154,11 @@ const Editor = () => {
             {beingUsed && <ConcurrentEditingPopup />}
 
             <Button onClick={() => handleSave()}>Save</Button>
-            {file && <div>
+            {<div>
                 <EditorButtons />
-                <EditableText value={file.filename} onSave={handleSaveFileName} />
+                <EditableText value={file?.filename || filename} onSave={handleSaveFileName} />
                 <div>
-                    <EditorField content={file.content} setContent={setContent} editable={editable} />
+                    <EditorField content={file?.content || "Write here..."} setContent={setContent} editable={editable} />
                     <div>Word count</div>
                 </div>
 

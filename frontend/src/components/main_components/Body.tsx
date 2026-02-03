@@ -12,9 +12,6 @@ import {IUserTest, IFileTest} from "../../App"
 
 
 const Body = () => {
-  
-
-  const [fileName, setFileName] = useState<string>("")
   const jwt = localStorage.getItem("token")
 
   return (

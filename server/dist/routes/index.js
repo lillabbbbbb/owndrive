@@ -36,7 +36,7 @@ router.post("/login",
             //tokenize the data
             const token = jsonwebtoken_1.default.sign(jwtPayload, process.env.SECRET, { expiresIn: "20m" });
             console.log(token);
-            return res.status(200).json({ success: true, token });
+            return res.status(200).json({ user: user, token });
         }
         return res.status(401).json({ message: "Login failed" });
         //catch all errors

@@ -61,6 +61,7 @@ export function SharePopup() {
     };
 
     loadFile();
+    console.log(file)
   }, [currentFileId, getFile]);
 
 
@@ -128,7 +129,7 @@ export function SharePopup() {
                   setAddUsersMenuOpen(true);
                 }
               }}
-              value={file.canEdit.map(user => ({ value: user, label: user }))} // controlled component
+              value={(file.canEdit || []).map(user => ({ value: user, label: user }))} // controlled component
               onChange={(newValue: MultiValue<customOption>, actionMeta: ActionMeta<customOption>) => {
                 updateFile(currentFileId, { canEdit: newValue.map((v: customOption) => v.value) }); // back to string[] //set who can edit
               }}

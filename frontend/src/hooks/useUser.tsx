@@ -107,13 +107,15 @@ export function useUser(): UseUserReturn {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post<{ success: boolean, token: string }>("/api/auth/login", {
+      const response = await axios.post<{ user: IUserFrontend, token: string }>("/api/auth/login", {
         email: email,
         password: password
       });
       console.log(response)
       localStorage.setItem("token", response.data.token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+      console.log(response.data.user)
+      setUser(response.data.user)
       return response.data.token
     } catch (err) {
       handleError(err);

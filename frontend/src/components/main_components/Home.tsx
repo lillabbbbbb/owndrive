@@ -81,8 +81,11 @@ const Home = () => {
     getFiles();
 }, []); // empty deps → runs once
 
-  const fileTypes = [...new Set(files.map((file: IFileFrontend) => file.file_type))]
-  const ownerNames = [...new Set(files.map((file: IFileFrontend) => file.created_by))]
+  const fileTypes = [...new Set((files || []).map((file: IFileFrontend) => file.file_type))]
+  const ownerNames = [...new Set((files || []).map((file: IFileFrontend) => file.created_by))]
+  console.log(fileTypes)
+  console.log(ownerNames)
+  console.log(files.toLocaleString)
 
   const [filters, setFilters] = useState<Filters>({
     fileTypes: new Set(),
@@ -160,10 +163,8 @@ const Home = () => {
   const sortTable = (keyword?: string, sorting?: string, filters?: Filters) => {
     console.log("sorting the data in progress..")
 
-
     const filteredFiles = applyFilters(files, filters)
     console.log(filteredFiles)
-
 
     //filter the results based on the search yet
     const array = matchSearch([...filteredFiles], keyword)
@@ -201,6 +202,7 @@ const Home = () => {
       );
     }
     setSortedFilteredData(sortedArray)
+    return sortedArray
   }
 
   const matchSearch = (data: IFileFrontend[], keyword?: string) => {

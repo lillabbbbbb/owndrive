@@ -75,11 +75,11 @@ export default function FilesTable({ onRowClick, sortedFilteredData}: TableProps
         <Table>
           <TableHeader>
             <TableRow >
-              {columns.includes(COLUMN_NAMES[0]) && <TableHead>Name</TableHead>}
-              {columns.includes(COLUMN_NAMES[1]) && <TableHead>Type</TableHead>}
-              {columns.includes(COLUMN_NAMES[2]) && <TableHead>Created By</TableHead>}
-              {columns.includes(COLUMN_NAMES[3]) && <TableHead>Last modified</TableHead>}
-              {columns.includes(COLUMN_NAMES[4]) && <TableHead className="text-right">Created At</TableHead>}
+              {columns.includes(COLUMN_NAMES[0]) && <TableHead>{COLUMN_NAMES[0]}</TableHead>}
+              {columns.includes(COLUMN_NAMES[1]) && <TableHead>{COLUMN_NAMES[1]}</TableHead>}
+              {columns.includes(COLUMN_NAMES[2]) && <TableHead>{COLUMN_NAMES[2]}</TableHead>}
+              {columns.includes(COLUMN_NAMES[3]) && <TableHead>{COLUMN_NAMES[3]}</TableHead>}
+              {columns.includes(COLUMN_NAMES[4]) && <TableHead className="text-right">{COLUMN_NAMES[4]}</TableHead>}
             </TableRow>
           </TableHeader>
 
@@ -88,9 +88,9 @@ export default function FilesTable({ onRowClick, sortedFilteredData}: TableProps
               <TableRow className="text-left w-auto whitespace-nowrap px-4 py-2" key={file._id} onClick={() => onRowClick(file)} onDoubleClick={() => handleRowDoubleClick(file)}>
                 {columns.includes(COLUMN_NAMES[0]) && <TableCell className="whitespace-nowrap pr-16 py-2">{file.filename}</TableCell>}
                 {columns.includes(COLUMN_NAMES[1]) && <TableCell className="whitespace-nowrap pr-16 py-2">{file.file_type}</TableCell>}
-                {columns.includes(COLUMN_NAMES[2]) && <TableCell className="whitespace-nowrap pr-16 py-2">{file.last_edited_at.toLocaleDateString()}</TableCell>}
                 {columns.includes(COLUMN_NAMES[3]) && <TableCell className="whitespace-nowrap pr-16 py-2">{file.created_by}</TableCell>}
-                {columns.includes(COLUMN_NAMES[4]) && <TableCell className="whitespace-nowrap pl-16 py-2">{file.created_at.toLocaleDateString()}</TableCell>}
+                {columns.includes(COLUMN_NAMES[2]) && <TableCell className="whitespace-nowrap pr-16 py-2">{new Date(file.last_edited_at).toLocaleDateString()}</TableCell>}
+                {columns.includes(COLUMN_NAMES[4]) && <TableCell className="whitespace-nowrap pl-16 py-2">{new Date(file.created_at).toLocaleDateString()}</TableCell>}
               </TableRow>
             ))}
           </TableBody>

@@ -70,6 +70,7 @@ export function useFiles() {
     setError(null);
     try {
       const res = await axios.post<IFileFrontend>("/api/files", fileData);
+      console.log("File successfully created")
       return res.data;
     } catch (err) {
       handleError(err);
@@ -85,6 +86,7 @@ export function useFiles() {
     setError(null);
     try {
       const res = await axios.patch<IFileFrontend>(`/api/files/${id}`, updates);
+      console.log("File successfully updated")
       return res.data;
     } catch (err) {
       handleError(err);

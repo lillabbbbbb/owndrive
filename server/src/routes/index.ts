@@ -45,7 +45,7 @@ router.post("/login",
                 const token: string = jwt.sign(jwtPayload, process.env.SECRET as string, { expiresIn: "20m" })
                 console.log(token)
 
-                return res.status(200).json({ success: true, token })
+                return res.status(200).json({ user: user, token })
             }
             return res.status(401).json({ message: "Login failed" })
 

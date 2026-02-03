@@ -174,7 +174,7 @@ fileRouter.get("/:fileId",
             if (!existingFile) return res.status(404).json({ "message": "File not found based on _id" })
             //find owner of file
             const user = await User
-                .findOne({ username: req.params?.username as string }) //ATTENTION: if there's a space in the req params, record may not be found
+                .findOne({ _id: userId })
 
             //if user not found
             if (!user) return res.status(404).json({ message: `File's owner (user) not found` })
@@ -191,7 +191,7 @@ fileRouter.get("/:fileId",
 
             //CHECK IF TOKEN BELONGS TO ...
             //(1) if the token belongs to the author of the file
-            if (req.body.email === req.user?.email) {
+            if (existingFile.created_by === userId) {
                 permissions.accessType = "owner"
                 //RETURN HERE
                 return res.status(200).json(permissions)
