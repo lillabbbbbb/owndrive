@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { sortingTypes } from "./main_components/Home"
 
 //whole doc from chatGPT
@@ -24,13 +24,23 @@ type TableProps = {
 
 const COLUMN_NAMES = ["filename", "file_type", "created_by", "last_edited_at", "created_at"]
 
-export default function FilesTable({ onRowClick, sortedFilteredData}: TableProps) {
+export default function FilesTable({ onRowClick, sortedFilteredData }: TableProps) {
+
+  console.log('📊 TABLE RECEIVED:', sortedFilteredData?.length, 'items');
+  console.log('Table data:', sortedFilteredData);
+
+
+  useEffect(() => {
+    console.log('Data changed:', sortedFilteredData);
+  }, [sortedFilteredData])
+
   const navigate = useNavigate()
-  const {setCurrentFileId} = useAppContext()
-  
+  const { setCurrentFileId } = useAppContext()
+
   const [columns, setColumns] = useState<string[]>(COLUMN_NAMES);
   const [currentPage, setCurrentPage] = useState(1);
   const ROWS_PER_PAGE = 12;
+
 
 
 
@@ -38,7 +48,7 @@ export default function FilesTable({ onRowClick, sortedFilteredData}: TableProps
     console.log(`${file.filename} double-clicked, file should be opened in editor...`)
 
     setCurrentFileId(file._id)
-    navigate(`/${file.created_by}/${file.filename}`)
+    navigate(`/${file.created_by}/${file._id}`)
   }
 
   const toggleColumn = (col: string) => {
@@ -52,6 +62,14 @@ export default function FilesTable({ onRowClick, sortedFilteredData}: TableProps
     (currentPage - 1) * ROWS_PER_PAGE,
     currentPage * ROWS_PER_PAGE
   );
+
+  console.log('=== PAGINATION DEBUG ===');
+  console.log('sortedFilteredData length:', sortedFilteredData?.length);
+  console.log('ROWS_PER_PAGE:', ROWS_PER_PAGE);
+  console.log('totalPages:', totalPages);
+  console.log('currentPage:', currentPage);
+  console.log('currentRows length:', currentRows?.length);
+  console.log('currentRows files:', currentRows?.map(f => f.filename));
 
   return (
     <div className="space-y-4">
@@ -70,11 +88,25 @@ export default function FilesTable({ onRowClick, sortedFilteredData}: TableProps
         ))}
       </div>
 
+      {/* Results summary */}
+      <div className="flex justify-between items-center px-1">
+        <div className="text-sm text-gray-600">
+          {currentRows.length === 0 ? (
+            "No files found"
+          ) : (
+            <>
+              Showing {currentRows.length} of {sortedFilteredData.length} file{currentRows.length !== 1 ? 's' : ''}
+            </>
+          )}
+        </div>
+      </div>
+
       {/* Table */}
-      <div className="inline-block overflow-x-auto border rounded-md">
+      {sortedFilteredData.length > 0 && <div className="inline-block overflow-x-auto border rounded-md">
         <Table>
           <TableHeader>
             <TableRow >
+              
               {columns.includes(COLUMN_NAMES[0]) && <TableHead>{COLUMN_NAMES[0]}</TableHead>}
               {columns.includes(COLUMN_NAMES[1]) && <TableHead>{COLUMN_NAMES[1]}</TableHead>}
               {columns.includes(COLUMN_NAMES[2]) && <TableHead>{COLUMN_NAMES[2]}</TableHead>}
@@ -84,7 +116,8 @@ export default function FilesTable({ onRowClick, sortedFilteredData}: TableProps
           </TableHeader>
 
           <TableBody>
-            {currentRows.map((file) => (
+            {(currentRows || []).map((file) => (
+              
               <TableRow className="text-left w-auto whitespace-nowrap px-4 py-2" key={file._id} onClick={() => onRowClick(file)} onDoubleClick={() => handleRowDoubleClick(file)}>
                 {columns.includes(COLUMN_NAMES[0]) && <TableCell className="whitespace-nowrap pr-16 py-2">{file.filename}</TableCell>}
                 {columns.includes(COLUMN_NAMES[1]) && <TableCell className="whitespace-nowrap pr-16 py-2">{file.file_type}</TableCell>}
@@ -95,7 +128,7 @@ export default function FilesTable({ onRowClick, sortedFilteredData}: TableProps
             ))}
           </TableBody>
         </Table>
-      </div>
+      </div>}
 
       {/* Pagination controls */}
       <div className="flex justify-center gap-2 items-center">

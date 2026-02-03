@@ -46,8 +46,8 @@ export interface Filters {
 }
 
 export enum statusEnum {
-  ACTIVE = "Active",
-  ARCHIVED = "Archived"
+  ACTIVE = "active",
+  ARCHIVED = "archived"
 }
 enum datesEnum {
   NONE = "None",
@@ -61,11 +61,10 @@ enum datesEnum {
 const Home = () => {
 
   const navigate = useNavigate()
-  const { user, files,getFiles, getFile, updateFile, userLoading, userError, filesLoading, filesError } = useAppContext()
+  const { user, files = [], getFiles, getFile, updateFile, userLoading, userError, filesLoading, filesError } = useAppContext()
 
   const [isClicked, setClicked] = useState(false)
   const [selectedSorting, setSelectedSorting] = useState(sortingTypes.by_last_modified)
-  const [sortedFilteredData, setSortedFilteredData] = useState(files)
   const [searchKeyword, setSearchKeyword] = useState("")
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
   const [showingArchives, setShowingArchives] = useState<boolean>(false)
@@ -73,13 +72,8 @@ const Home = () => {
   console.log(localStorage.getItem("token"))
 
   useEffect(() => {
-    setSortedFilteredData(files);
-    console.log(files)
-  }, [files]);
-
-  useEffect(() => {
     getFiles();
-}, []); // empty deps → runs once
+  }, []); // empty deps → runs once
 
   const fileTypes = [...new Set((files || []).map((file: IFileFrontend) => file.file_type))]
   const ownerNames = [...new Set((files || []).map((file: IFileFrontend) => file.created_by))]
@@ -111,7 +105,6 @@ const Home = () => {
     onChange: (newSet) => {
       const newFilters: Filters = { ...filters, fileTypes: newSet as Set<string> }
       setFilters(newFilters)
-      sortTable(searchKeyword, selectedSorting, newFilters)
     }
   }
   const ownerFilter: Filter<customOption> = {
@@ -125,7 +118,6 @@ const Home = () => {
     onChange: (newSet) => {
       const newFilters: Filters = { ...filters, owners: newSet as Set<string> }
       setFilters(newFilters)
-      sortTable(searchKeyword, selectedSorting, newFilters)
     }
   }
   const dateFilter: Filter<customOption> = {
@@ -139,7 +131,6 @@ const Home = () => {
     onChange: (newValue) => {
       const newFilters: Filters = { ...filters, date: newValue as string }
       setFilters(newFilters)
-      sortTable(searchKeyword, selectedSorting, newFilters)
     }
   }
   const statusFilter: Filter<customOption> = {
@@ -153,23 +144,14 @@ const Home = () => {
     onChange: (newValue) => {
       const newFilters: Filters = { ...filters, status: newValue as string }
       setFilters(newFilters)
-      sortTable(searchKeyword, selectedSorting, newFilters)
     }
   }
   const filterConfigs = [fileTypeFilter, ownerFilter, dateFilter, statusFilter]
 
   console.log(selectedSorting)
   //apply sorting to the table data and set the sortedData's new state
-  const sortTable = (keyword?: string, sorting?: string, filters?: Filters) => {
+  const sortTable = (files: IFileFrontend[], sorting?: string) => {
     console.log("sorting the data in progress..")
-
-    const filteredFiles = applyFilters(files, filters)
-    console.log(filteredFiles)
-
-    //filter the results based on the search yet
-    const array = matchSearch([...filteredFiles], keyword)
-
-    console.log(array)
 
 
     let sortedArray: IFileFrontend[] = []
@@ -177,43 +159,42 @@ const Home = () => {
     const selectedSorting = sorting ? sorting : sortingTypes.by_last_modified //if no sorting is selected, defaults to sort by last modified
 
     if (selectedSorting === sortingTypes.by_last_modified) {
-      sortedArray = array.sort(
+      sortedArray = files.sort(
         (a, b) =>
           new Date(b.last_edited_at).getTime() -
           new Date(a.last_edited_at).getTime()
       );
     } else if (selectedSorting === sortingTypes.by_name_ascending) {
-      sortedArray = [...array].sort((a, b) =>
+      sortedArray = [...files].sort((a, b) =>
         a.filename.localeCompare(b.filename)
       );
 
     } else if (selectedSorting === sortingTypes.by_name_descending) {
-      sortedArray = [...array].sort((a, b) =>
+      sortedArray = [...files].sort((a, b) =>
         b.filename.localeCompare(a.filename)
       );
     } else if (selectedSorting === sortingTypes.by_user_ascending) {
-      sortedArray = [...array].sort((a, b) =>
+      sortedArray = [...files].sort((a, b) =>
         a.created_by.localeCompare(b.created_by)
       );
 
     } else if (selectedSorting === sortingTypes.by_user_descending) {
-      sortedArray = [...array].sort((a, b) =>
+      sortedArray = [...files].sort((a, b) =>
         b.created_by.localeCompare(a.created_by)
       );
     }
-    setSortedFilteredData(sortedArray)
     return sortedArray
   }
 
   const matchSearch = (data: IFileFrontend[], keyword?: string) => {
 
     //show all results if no keyword is given
-    if (!keyword) return data
+    if (!keyword || keyword === "") return data
 
 
     return data.filter((file) => {
       const filename = file.filename.toLowerCase();
-      const creator = file.created_by.toLowerCase();
+      const creator = file.content.toLowerCase();
 
       const matchesFilename = filename.includes(keyword);
       const matchesCreator = creator.includes(keyword);
@@ -250,7 +231,8 @@ const Home = () => {
   }
 
   const applyFilters = (files: IFileFrontend[], passedFilters: Filters = filters) => {
-
+    // First, determine if we're showing archives
+  const isShowingArchives = passedFilters.status === statusEnum.ARCHIVED;
 
     const filteredFiles = files.filter(file => {
       const fileTypeMatch =
@@ -284,13 +266,10 @@ const Home = () => {
           dateMatch = true
       }
 
-      const statusMatch =
-        passedFilters.status === file.status
+      const statusMatch = passedFilters.status === file.status
 
       console.log(file.filename)
       console.log(file.status)
-
-      setShowingArchives(passedFilters.status === statusEnum.ARCHIVED)
 
       return fileTypeMatch && creatorMatch && dateMatch && statusMatch
     })
@@ -299,6 +278,22 @@ const Home = () => {
     return filteredFiles
   }
 
+  const sortedFilteredData = useMemo(() => {
+    if (!files || files.length === 0) return [];
+
+    console.log('🔄 Recalculating sorted/filtered data...');
+    console.log("Search keyword:", searchKeyword)
+    const searched = matchSearch(files, searchKeyword);
+    console.log('✅ Search:', searched.length, 'items');
+    console.log(searched.toString())
+    const searchedFiltered = applyFilters(searched, filters);
+    console.log('✅ After filtering:', searchedFiltered.length, 'items');
+    const sorted = sortTable(searchedFiltered, selectedSorting);
+
+    console.log('✅ Result:', sorted.length, 'items');
+    return sorted;
+  }, [files, filters, searchKeyword, selectedSorting]);
+
   const handleCreateNewClick = () => {
     console.log("Create new button clicked")
 
@@ -306,6 +301,7 @@ const Home = () => {
     navigate(`/${user?.username}/${DEFAULT_FILE_NAME}`)
 
   }
+  
 
   const handleRowClick = () => {
     setClicked(true) //file-scoped menu appears now
@@ -313,7 +309,6 @@ const Home = () => {
 
   const handleChangeSorting = (sorting: string) => {
     setSelectedSorting(sorting)
-    sortTable(searchKeyword, sorting, filters)
   }
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -327,7 +322,7 @@ const Home = () => {
 
     // Set a new timeout to call sortTable after 300ms
     const timeout = setTimeout(() => {
-      sortTable(value); // pass the latest value
+      //sortTable(files, value); // pass the latest value
     }, 300);
 
     setDebounceTimeout(timeout);
@@ -359,7 +354,6 @@ const Home = () => {
           onChange={
             (newFilters: Filters) => {
               setFilters(newFilters)
-              sortTable()
               console.log("sorttable called in filtering")
             }}
         />
