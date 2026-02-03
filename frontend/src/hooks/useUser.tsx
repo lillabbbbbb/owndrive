@@ -14,6 +14,7 @@ type UseUserReturn = {
 };
 
 export function useUser(): UseUserReturn {
+
   const [user, setUser] = useState<IUserFrontend | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -94,18 +95,11 @@ export function useUser(): UseUserReturn {
 
   // Logout user
   const logout = useCallback(async () => {
-    setUser(null);
-    setLoading(true);
-    setError(null);
-    try {
-      await axios.post("/api/auth/logout");
-      //?????
-    } catch (err) {
-      handleError(err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    localStorage.removeItem("token")
+
+    console.log("User successfully logged out.")
+    return
+  }, [localStorage.getItem("token")]);
 
   return {
     user,

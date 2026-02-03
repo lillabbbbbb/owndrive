@@ -70,6 +70,8 @@ const Home = () => {
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
   const [showingArchives, setShowingArchives] = useState<boolean>(false)
 
+  console.log(localStorage.getItem("token"))
+
   useEffect(() => {
     setSortedFilteredData(files);
     console.log(files)

@@ -10,13 +10,23 @@ export function useFiles() {
 
   //Automatically add the Bearer token to each request
   axios.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token"); // or from context
-    if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  });
-
+  console.log('🔄 Interceptor triggered for:', config.url);
+  console.log('📦 Headers before:', config.headers);
+  
+  const token = localStorage.getItem("token");
+  console.log('🔑 Token from localStorage:', token ? `[${token.substring(0, 20)}...]` : 'NULL');
+  
+  if (token && token.trim() && token !== "null" && token !== "undefined") {
+    config.headers = config.headers || {};
+    config.headers.Authorization = `Bearer ${token.trim()}`;
+    console.log('✅ Header added:', config.headers.Authorization?.substring(0, 50) + '...');
+  } else {
+    console.log('❌ No valid token found');
+  }
+  
+  console.log('📦 Headers after:', config.headers);
+  return config;
+});
   //General error handler, manually called with each API request
   const handleError = (err: unknown) => {
     if (axios.isAxiosError(err)) setError(err.response?.data?.message || "Server error");

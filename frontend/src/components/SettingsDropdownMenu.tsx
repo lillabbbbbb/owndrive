@@ -17,14 +17,7 @@ function SettingsDropdownMenu() {
   const [openProfilePicDialog, setOpenProfilePicDialog] = useState<boolean>(false)
 
   const handleLogout = () => {
-    console.log("Logout clicked")
-
-    localStorage.removeItem("token")
-    localStorage.removeItem("logged_in")
     logout()
-
-    console.log("User successfully logged out.")
-
     navigate("/login")
   }
 
