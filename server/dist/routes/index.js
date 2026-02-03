@@ -11,8 +11,10 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const User_1 = require("../models/User");
 const inputValidation_1 = require("../validators/inputValidation");
+const dotenv_1 = __importDefault(require("dotenv"));
 //import { validateToken} from "../middleware/validateToken"
 const router = (0, express_1.Router)();
+dotenv_1.default.config();
 //route to anything else: handled in frontend
 //Handle login requests
 router.post("/login", 
@@ -32,7 +34,7 @@ router.post("/login",
                 _id: user._id
             };
             //tokenize the data
-            const token = jsonwebtoken_1.default.sign(jwtPayload, process.env.SECRET, { expiresIn: "2m" });
+            const token = jsonwebtoken_1.default.sign(jwtPayload, process.env.SECRET, { expiresIn: "20m" });
             console.log(token);
             return res.status(200).json({ success: true, token });
         }

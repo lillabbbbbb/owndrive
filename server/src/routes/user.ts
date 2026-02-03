@@ -91,6 +91,7 @@ userRouter.get("/:userId/profile_picture", async (req: Request, res: Response) =
         if (!req.user) return res.status(401).json({ message: "Unauthorized" })
         const userId = customReq.user?._id
 
+        
         //find the right user
         const user = await User
             .findOne({ _id: userId })

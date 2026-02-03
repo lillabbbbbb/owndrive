@@ -19,6 +19,7 @@ export interface AppContextType {
   refreshUser: () => Promise<void>;
   updateUser: (changes: Partial<IUserFrontend>) => Promise<IUserFrontend | null>;
   updateProfilePic: (file: File, description?: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<{token: string}>;
   logout: () => Promise<void>;
 
   // File actions
@@ -71,6 +72,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     refreshUser: userHook.refreshUser,
     updateUser: userHook.updateUser,
     updateProfilePic: userHook.updateProfilePic,
+    login: userHook.login,
     logout: userHook.logout,
 
     // File actions

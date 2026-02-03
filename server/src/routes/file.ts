@@ -21,6 +21,7 @@ fileRouter.get("/", async (req: Request, res: Response) => {
     try {
 
         const customReq = req as CustomRequest;
+
         if (!req.user) return res.status(401).json({ message: "Unauthorized" })
         const userId = customReq.user?._id
 

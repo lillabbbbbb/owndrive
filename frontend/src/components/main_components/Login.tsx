@@ -1,12 +1,14 @@
 import { useEffect, useState, type FormEvent } from "react";
 import React from 'react'
-import {Link, useNavigate} from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import AppleNotAvailablePopup from "../popups/AppleNotAvailablePopup";
+import { useAppContext } from "../context/globalContext";
 
 
 const Login = () => {
 
     const navigate = useNavigate()
+    const { login } = useAppContext()
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -17,30 +19,17 @@ const Login = () => {
         e.preventDefault();
         console.log({ email, password });
 
-        const response = await fetch("/api/auth/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                email: email,
-                password: password
-            })
+        const token = await login(
+            email,
+            password)
 
-        })
-
-        if (response.ok) {
-            const data = await response.json()
-            localStorage.setItem("token", data.token)
-
-
-            navigate("/home")
-
-            //display loading while localStorage.getItem("token") is not found
-
-        }else{
-            console.log("Login failed.")
+        if (!token) {
+            // Handle error - don't navigate!
+            return;
         }
+        navigate("/home")
+
+        //display loading while localStorage.getItem("token") is not found
     };
 
     const handleGoogleClick = () => {
@@ -53,7 +42,7 @@ const Login = () => {
 
     return (
         <div>
-             {/*
+            {/*
             Login
             //email
             //password
@@ -107,26 +96,26 @@ const Login = () => {
                     <button
                         type="submit"
                         className="w-full bg-blue-500 text-white py-2 rounded-md font-semibold hover:bg-blue-600 transition"
-                        
+
                     >Log in
                     </button>
                 </form>
 
                 {/* Additional buttons outside of the form*/}
-                    <div className="flex justify-between gap-2">
-                        <button
-                            type="button"
-                            className="flex-1 border border-gray-300 py-2 rounded-md hover:bg-gray-100 transition"
-                            onClick={() => handleGoogleClick()}
-                        >
-                            Google
-                        </button>
-                        <AppleNotAvailablePopup />
-                        
-                        <p><Link to="/register">Or register here</Link>
-                            
-                        </p>
-                    </div>
+                <div className="flex justify-between gap-2">
+                    <button
+                        type="button"
+                        className="flex-1 border border-gray-300 py-2 rounded-md hover:bg-gray-100 transition"
+                        onClick={() => handleGoogleClick()}
+                    >
+                        Google
+                    </button>
+                    <AppleNotAvailablePopup />
+
+                    <p><Link to="/register">Or register here</Link>
+
+                    </p>
+                </div>
             </div>
         </div>
     )

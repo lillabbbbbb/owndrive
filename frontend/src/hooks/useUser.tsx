@@ -10,6 +10,7 @@ type UseUserReturn = {
   refreshUser: () => Promise<void>;
   updateUser: (changes: Partial<IUserFrontend>) => Promise<IUserFrontend | null>;
   updateProfilePic: (file: File, description?: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<string | null>;
   logout: () => Promise<void>;
 };
 
@@ -101,6 +102,27 @@ export function useUser(): UseUserReturn {
     return
   }, [localStorage.getItem("token")]);
 
+
+  const login = useCallback(async (email: string, password: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.post<{ success: boolean, token: string }>("/api/auth/login", {
+        email: email,
+        password: password
+      });
+      console.log(response)
+      localStorage.setItem("token", response.data.token);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+      return response.data.token
+    } catch (err) {
+      handleError(err);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   return {
     user,
     loading,
@@ -108,6 +130,7 @@ export function useUser(): UseUserReturn {
     refreshUser,
     updateUser,
     updateProfilePic,
+    login,
     logout,
   };
 }

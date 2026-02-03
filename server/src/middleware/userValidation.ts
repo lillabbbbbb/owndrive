@@ -15,11 +15,15 @@ export const validateUserToken = (
     res: Response,
     next: NextFunction
 ) => {
+
+    console.log('Headers received:', req.headers);
+        console.log('Auth header:', req.headers.authorization);
+
     const token: string | undefined = req.header("authorization")?.split(" ")[1];
     if (!token) return res.status(401).json({ message: "Token not found." });
 
     try {
-        const verified = jwt.verify(token, process.env.JWT_SECRET as string) as { _id: string }
+        const verified = jwt.verify(token, process.env.SECRET as string) as { _id: string }
 
         if (!verified) return res.status(401).json({ message: "User not found" });
 
