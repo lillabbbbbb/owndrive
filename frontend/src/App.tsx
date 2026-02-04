@@ -7,8 +7,6 @@ import {IUser} from "../../server/src/models/User"
 import { statusEnum } from './components/main_components/Home'
 import { AppProvider } from './components/context/globalContext'
 
-
-
 //tailwind css class hardcoded variables can come here
 
 

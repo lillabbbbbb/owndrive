@@ -1,3 +1,21 @@
+export const SUPPORTED_TEXT_TYPES = {
+    'text/plain': '.txt',
+    'text/markdown': '.md',
+    'text/html': '.html',
+    'application/json': '.json',
+    'application/pdf': '.pdf',
+    'application/msword': '.doc',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '.docx',
+} as const;
+
+export const SUPPORTED_IMAGE_TYPES = {
+    'image/jpeg': '.jpg',
+    'image/png': '.png',
+    'image/gif': '.gif',
+    'image/webp': '.webp',
+    'image/svg+xml': '.svg',
+} as const;
+
 export interface IFileFrontend {
     _id: string
     created_at: Date,

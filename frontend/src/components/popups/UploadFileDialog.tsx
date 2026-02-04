@@ -9,26 +9,86 @@ import '@mantine/dropzone/styles.css';
 import { useFiles } from '../../hooks/useFiles';
 import { useAppContext } from "../context/globalContext";
 import CustomDialog from '../popups/CustomDialog';
-
+import { SUPPORTED_TEXT_TYPES, SUPPORTED_IMAGE_TYPES } from "../../types/File"
+import { useNavigate } from 'react-router-dom';
 import { useDropzone } from "react-dropzone";
 
-const UploadFileDialog = ()  => {
 
-  const {createFile, filesLoading, filesError} = useAppContext()
+const UploadFileDialog = () => {
 
-  const handleFileUpload = (file : File) => {
+  const navigate = useNavigate()
+  const { user, setCurrentFileId, createFile, filesLoading, filesError } = useAppContext()
 
-    //handle text-based file upload
-    createFile()
+  const handleFileUpload = async (file: File) => {
 
+    if(!user) return
 
-    //handle image upload
+    // Check if file is valid
+    if (!file || !file.name) {
+      throw new Error("Invalid file");
+    }
 
+    // Extract filename without extension for safety
+    const originalFilename = file.name.split('.').slice(0, -1).join('.');
+    const fileExtension = file.name.split('.').pop() || '';
 
+    let content = '';
+    let uploadedFile;
 
-    //POST to DB
-    //Route: 
-    createFile()
+    try {
+      // Handle text-based file upload
+      if (SUPPORTED_TEXT_TYPES[file.type as keyof typeof SUPPORTED_TEXT_TYPES]) {
+        console.log("attempting text file upload")
+        // Read text content
+        content = await file.text();
+
+        uploadedFile = await createFile({
+          created_by: user._id,
+          filename: `${originalFilename}`,
+          file_type: `.${fileExtension}`,
+          content: content,
+          inUse: true,
+          usedBy: user._id
+        });
+      }
+      // Handle image upload
+      else if (SUPPORTED_IMAGE_TYPES[file.type as keyof typeof SUPPORTED_IMAGE_TYPES]) {
+        console.log("attempting image upload")
+        // For images, store as base64
+        const reader = new FileReader();
+        const imageContent = await new Promise<string>((resolve, reject) => {
+          reader.onload = (e) => resolve(e.target?.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+
+        uploadedFile = await createFile({
+          created_by: user._id,
+          filename: `${originalFilename}`,
+          file_type: `.${fileExtension}`,
+          content: imageContent, // Base64 encoded image
+          inUse: true,
+          usedBy: user._id
+        });
+      }
+      // Unsupported file type
+      else {
+        throw new Error(`Unsupported file type: ${file.type}`);
+      }
+
+      // Navigate to the uploaded file's page
+      if (uploadedFile && uploadedFile._id) {
+        setCurrentFileId(uploadedFile._id)
+        navigate(`/${uploadedFile._id}`);
+      } else {
+        throw new Error("File upload failed - no ID returned");
+      }
+
+    } catch (error) {
+      console.error("File upload error:", error);
+      // Handle error (show notification, etc.)
+      throw error;
+    }
   }
 
   const { getInputProps, open } = useDropzone({

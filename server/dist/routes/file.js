@@ -209,7 +209,7 @@ fileRouter.patch("/:fileId", async (req, res) => {
 });
 fileRouter.patch("/:fileId/lock", async (req, res) => {
     try {
-        const fileId = req.params.id;
+        const fileId = req.params.fileId;
         const customReq = req;
         if (!req.user)
             return res.status(401).json({ message: "Unauthorized" });
@@ -230,7 +230,7 @@ fileRouter.patch("/:fileId/lock", async (req, res) => {
 });
 fileRouter.patch("/:fileId/unlock", async (req, res) => {
     try {
-        const fileId = req.params.id;
+        const fileId = req.params.fileId;
         const customReq = req;
         if (!req.user)
             return res.status(401).json({ message: "Unauthorized" });
