@@ -20,6 +20,17 @@ export function useUser(): UseUserReturn {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const isTokenValid = (token: string | null) =>  {
+  if (!token) return false;
+
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    const now = Math.floor(Date.now() / 1000);
+    return payload.exp && payload.exp > now;
+  } catch {
+    return false;
+  }
+}
 
   //Automatically add the Bearer token to each request
   axios.interceptors.request.use((config) => {
@@ -100,7 +111,12 @@ export function useUser(): UseUserReturn {
 
     console.log("User successfully logged out.")
     return
-  }, [localStorage.getItem("token")]);
+  },[]);
+
+  const token = localStorage.getItem("token")
+  if(!isTokenValid(token)){
+    logout()
+  }
 
 
   const login = useCallback(async (email: string, password: string) => {

@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import axios from "axios";
 import { IFileFrontend } from "../types/File";
+import { statusEnum } from "../components/main_components/Home";
 
 export function useFiles() {
   const [files, setFiles] = useState<IFileFrontend[] | []>([])
@@ -10,21 +11,21 @@ export function useFiles() {
 
   //Automatically add the Bearer token to each request
   axios.interceptors.request.use((config) => {
-  console.log('🔄 Interceptor triggered for:', config.url);
-  console.log('📦 Headers before:', config.headers);
+  //console.log('🔄 Interceptor triggered for:', config.url);
+  //console.log('📦 Headers before:', config.headers);
   
   const token = localStorage.getItem("token");
-  console.log('🔑 Token from localStorage:', token ? `[${token.substring(0, 20)}...]` : 'NULL');
+  //console.log('🔑 Token from localStorage:', token ? `[${token.substring(0, 20)}...]` : 'NULL');
   
   if (token && token.trim() && token !== "null" && token !== "undefined") {
     config.headers = config.headers || {};
     config.headers.Authorization = `Bearer ${token.trim()}`;
-    console.log('✅ Header added:', config.headers.Authorization?.substring(0, 50) + '...');
+    //console.log('✅ Header added:', config.headers.Authorization?.substring(0, 50) + '...');
   } else {
-    console.log('❌ No valid token found');
+    //console.log('❌ No valid token found');
   }
   
-  console.log('📦 Headers after:', config.headers);
+  //console.log('📦 Headers after:', config.headers);
   return config;
 });
   //General error handler, manually called with each API request
@@ -81,6 +82,21 @@ export function useFiles() {
   }, []);
 
 
+  const batchUpdateFiles = useCallback(async (filters: Partial<IFileFrontend>, updates: Partial<IFileFrontend>) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.patch<IFileFrontend>(`/api/files/`, {filters, updates});
+      console.log("Files successfully updated")
+      return res.data;
+    } catch (err) {
+      handleError(err);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   const updateFile = useCallback(async (id: string, updates: Partial<IFileFrontend>) => {
     setLoading(true);
     setError(null);
@@ -95,6 +111,40 @@ export function useFiles() {
       setLoading(false);
     }
   }, []);
+
+  const restoreAllArchived = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+
+      const filters = {status: statusEnum.ARCHIVED};
+      const updates = {status: statusEnum.ACTIVE}
+
+      const res = await batchUpdateFiles(filters, updates)
+      console.log("Archives successfully restored")
+      return res;
+    } catch (err) {
+      handleError(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [])
+
+  const deleteAllArchived = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const filters = {status: statusEnum.ARCHIVED};
+
+      const res = await axios.delete("api/files/", {data: filters})
+      console.log("Archives successfully deleted")
+      return res;
+    } catch (err) {
+      handleError(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [])
   
   const lockFile = useCallback(async (id: string, lockedById: string ) => {
     setLoading(true);
@@ -163,6 +213,9 @@ export function useFiles() {
     getFiles,
     createFile,
     updateFile,
+    batchUpdateFiles,
+    restoreAllArchived,
+    deleteAllArchived,
     lockFile,
     unlockFile,
     getLockStatus,

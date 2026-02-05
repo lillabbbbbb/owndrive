@@ -61,7 +61,7 @@ enum datesEnum {
 const Home = () => {
 
   const navigate = useNavigate()
-  const { user, files = [], getFiles, getFile, updateFile, userLoading, userError, filesLoading, filesError } = useAppContext()
+  const { user, files = [], getFiles, getFile, updateFile, restoreAllArchived, deleteAllArchived, userLoading, userError, filesLoading, filesError } = useAppContext()
 
   const [isClicked, setClicked] = useState(false)
   const [selectedSorting, setSelectedSorting] = useState(sortingTypes.by_last_modified)
@@ -232,7 +232,7 @@ const Home = () => {
 
   const applyFilters = (files: IFileFrontend[], passedFilters: Filters = filters) => {
     // First, determine if we're showing archives
-  const isShowingArchives = passedFilters.status === statusEnum.ARCHIVED;
+    setShowingArchives(passedFilters.status === statusEnum.ARCHIVED)
 
     const filteredFiles = files.filter(file => {
       const fileTypeMatch =
@@ -301,7 +301,7 @@ const Home = () => {
     navigate(`/${user?.username}/${DEFAULT_FILE_NAME}`)
 
   }
-  
+
 
   const handleRowClick = () => {
     setClicked(true) //file-scoped menu appears now
@@ -328,6 +328,14 @@ const Home = () => {
     setDebounceTimeout(timeout);
   }
 
+  const handleRestoreAll = () => {
+    restoreAllArchived()
+  }
+
+  const handleDeleteAll = () => {
+    deleteAllArchived()
+  }
+
 
 
   return (
@@ -342,12 +350,6 @@ const Home = () => {
       />
 
       <div>
-        {!showingArchives &&
-          <>
-            <Button onClick={() => handleCreateNewClick()}>Create new</Button>
-            <UploadFileDialog />
-          </>
-        }
         <SortingDropdown value={selectedSorting} onChange={(value) => handleChangeSorting(value)} />
 
         <ControlledFilterDialog filters={filterConfigs}
@@ -358,6 +360,19 @@ const Home = () => {
             }}
         />
       </div>
+      {!showingArchives &&
+          <>
+            <Button onClick={() => handleCreateNewClick()}>Create new</Button>
+            <UploadFileDialog />
+          </>
+        }
+        {
+          showingArchives &&
+          <>
+            <Button onClick={() => handleRestoreAll()}>Restore all</Button>
+            <Button onClick={() => handleDeleteAll()}>Delete all</Button>
+          </>
+        }
 
       {userError && <CustomDialog text={userError} />}
       {userError && <p>Loading...</p>}

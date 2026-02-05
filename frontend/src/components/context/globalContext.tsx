@@ -27,6 +27,9 @@ export interface AppContextType {
   getFile: (id: string) => Promise<IFileFrontend | null>;
   createFile: (fileData: Partial<IFileFrontend>) => Promise<IFileFrontend | null>;
   updateFile: (id: string, updates: Partial<IFileFrontend>) => Promise<IFileFrontend | null>;
+  batchUpdateFiles: (filters: Partial<IFileFrontend>, updates: Partial<IFileFrontend>) => Promise<IFileFrontend | null>;
+  restoreAllArchived: () => Promise<void>;
+  deleteAllArchived: () => Promise<void>;
   lockFile: (id: string, lockedById: string) => Promise<IFileFrontend | null>;
   unlockFile: (id: string) => Promise<IFileFrontend | null>;
   deleteFile: (id: string) => Promise<boolean>;
@@ -78,10 +81,13 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     // File actions
     getFile: filesHook.getFile,
     getFiles: filesHook.getFiles,
+    restoreAllArchived: filesHook.restoreAllArchived,
+    deleteAllArchived: filesHook.deleteAllArchived,
     lockFile: filesHook.lockFile,
     unlockFile: filesHook.unlockFile,
     createFile: filesHook.createFile,
     updateFile: filesHook.updateFile,
+    batchUpdateFiles: filesHook.batchUpdateFiles,
     deleteFile: filesHook.deleteFile,
 
     setCurrentFileId: setCurrentFileId,

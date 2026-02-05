@@ -117,6 +117,53 @@ fileRouter.post("/",
         }
     })
 
+fileRouter.patch("/",
+    async (req: Request, res: Response) => {
+        try {
+
+            const customReq = req as CustomRequest;
+            if (!req.user) return res.status(401).json({ message: "Unauthorized" })
+            const userId = customReq.user?._id
+
+            if (!req.body.filters) {
+                return res.status(400).json({ message: "No filters provided" });
+            }
+
+            const result = await File.updateMany(
+                req.body.filters,
+                { $set: req.body.updates }
+            );
+
+            return res.status(200).json({
+                matchedCount: result.matchedCount,
+                modifiedCount: result.modifiedCount,
+            });
+        } catch (error: any) {
+            console.log(error)
+            return res.status(500).json({ "message": "Failed to batch update files." })
+        }
+    })
+
+    //Delete many instances based on filter
+fileRouter.delete("/", async (req: Request, res: Response) => {
+
+    const customReq = req as CustomRequest;
+            if (!req.user) return res.status(401).json({ message: "Unauthorized" })
+            const userId = customReq.user?._id
+
+            
+    const { filters } = req.body;
+    if (!filters || Object.keys(filters).length === 0) {
+        return res.status(400).json({ message: "Filters cannot be empty" });
+    }
+
+    try {
+        const result = await File.deleteMany(filters);
+        res.json({ deletedCount: result.deletedCount });
+    } catch (err) {
+        res.status(500).json({ message: "Failed to delete files" });
+    }
+});
 
 //DELETE delete file
 //params: username: string, token: string, filedata: JSON

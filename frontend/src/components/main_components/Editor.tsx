@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import { usePDF } from 'react-to-pdf';
 import EditorButtons from '../EditorButtons'
 import EditorField from "../EditorField"
 import { ControlledFilterDialog } from '../popups/FilterPopup';
@@ -25,7 +26,7 @@ const Editor = () => {
 
     const [guestDialogOpen, setGuestDialogOpen] = useState<boolean>(true)
     const jwt = localStorage.getItem("token")
-
+    
     const [file, setFile] = useState<IFileFrontend | null>(null)
     const [filename, setFilename] = useState<string>("New file")
     const [beingUsed, setBeingUsed] = useState<boolean>(false)
@@ -36,6 +37,15 @@ const Editor = () => {
     const [visibleToGuest, setVisibleToGuest] = useState<boolean>(false)
     const [isPrivate, setIsPrivate] = useState<boolean>(false)
     const [editable, setEditable] = useState<boolean>(false) //turn this into useEffect
+
+ // PDF hook
+  const { toPDF, targetRef } = usePDF({
+    filename: filename,
+    page: { margin: 20 }
+  });
+
+  // Use this ref to forward to EditorField
+  const editorRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         setEditable(!beingUsed)
@@ -48,7 +58,7 @@ const Editor = () => {
         if (!currentFileId) return;
 
         const loadFile = async () => {
-            const f = await getFile(currentFileId); // await the Promise
+            const f = await getFile(currentFileId);
             setFile(f);
         };
 
@@ -154,11 +164,11 @@ const Editor = () => {
             {beingUsed && <ConcurrentEditingPopup />}
 
             <Button onClick={() => handleSave()}>Save</Button>
-            {<div>
-                <EditorButtons />
+            {<div ref={targetRef}>
+                <EditorButtons toPDF={toPDF} targetRef={targetRef} />
                 <EditableText value={file?.filename || filename} onSave={handleSaveFileName} />
                 <div>
-                    <EditorField content={file?.content || "Write here..."} setContent={setContent} editable={editable} />
+                    <EditorField ref={editorRef} content={file?.content || "Write here..."} setContent={setContent} editable={editable} />
                     <div>Word count</div>
                 </div>
 

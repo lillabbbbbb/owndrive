@@ -3,8 +3,9 @@ import '../editor.scss'
 import { TextStyleKit } from '@tiptap/extension-text-style'
 import type { Editor } from '@tiptap/react'
 import { EditorContent, useEditor, useEditorState } from '@tiptap/react'
+import { usePDF } from 'react-to-pdf';
 import StarterKit from '@tiptap/starter-kit'
-import { useEffect } from 'react'
+import { useEffect, forwardRef  } from 'react'
 import { Button } from '@headlessui/react'
 import clsx from 'clsx';
 
@@ -241,8 +242,7 @@ type EditorFieldProps = {
   setContent: (content: string) => void,
   editable: boolean
 }
-
-const EditorField =  ({ content, setContent, editable} : EditorFieldProps) => {
+const EditorField =  forwardRef<HTMLDivElement, EditorFieldProps>(({ content, setContent, editable}, ref ) => {
 
 
   const editor = useEditor({
@@ -253,6 +253,7 @@ onUpdate: ({ editor }) => {
       setContent(editor.getHTML()); // save the current content as HTML
     },
   })
+
 
   useEffect(() => {
     if (!editor) {
@@ -270,9 +271,11 @@ onUpdate: ({ editor }) => {
   return (
     <div>
       <EditorMenu editor={editor}/>
-      <EditorContent editor={editor} className="tiptap-editor prose prose-slate dark:prose-invert"/>
+      <div ref={ref}>
+        <EditorContent editor={editor} className="tiptap-editor prose prose-slate dark:prose-invert"/>
+      </div>
     </div>
   )
-}
+})
 
 export default EditorField

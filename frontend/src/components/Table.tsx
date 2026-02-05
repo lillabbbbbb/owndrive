@@ -26,12 +26,12 @@ const COLUMN_NAMES = ["filename", "file_type", "created_by", "last_edited_at", "
 
 export default function FilesTable({ onRowClick, sortedFilteredData }: TableProps) {
 
-  console.log('📊 TABLE RECEIVED:', sortedFilteredData?.length, 'items');
-  console.log('Table data:', sortedFilteredData);
+  //console.log('📊 TABLE RECEIVED:', sortedFilteredData?.length, 'items');
+  //console.log('Table data:', sortedFilteredData);
 
 
   useEffect(() => {
-    console.log('Data changed:', sortedFilteredData);
+    //console.log('Data changed:', sortedFilteredData);
   }, [sortedFilteredData])
 
   const navigate = useNavigate()
@@ -62,15 +62,7 @@ export default function FilesTable({ onRowClick, sortedFilteredData }: TableProp
     (currentPage - 1) * ROWS_PER_PAGE,
     currentPage * ROWS_PER_PAGE
   );
-
-  console.log('=== PAGINATION DEBUG ===');
-  console.log('sortedFilteredData length:', sortedFilteredData?.length);
-  console.log('ROWS_PER_PAGE:', ROWS_PER_PAGE);
-  console.log('totalPages:', totalPages);
-  console.log('currentPage:', currentPage);
-  console.log('currentRows length:', currentRows?.length);
-  console.log('currentRows files:', currentRows?.map(f => f.filename));
-
+  
   return (
     <div className="space-y-4">
       {/* Column selectors */}

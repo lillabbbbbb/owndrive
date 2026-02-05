@@ -1,9 +1,10 @@
-import React, { ReactElement, useState } from 'react'
+import React, { ReactElement, useState, RefObject } from 'react'
 import { Tooltip, TooltipTrigger, TooltipContent } from "../components/ui/tooltip"
 import { HiShare } from "react-icons/hi2";
 import SharePopup from './popups/SharePopup';
 import { ClonePopup } from './popups/ClonePopup';
 import { useFiles } from '../hooks/useFiles'
+import { usePDF } from 'react-to-pdf';
 import { useAppContext } from "./context/globalContext";
 import CustomDialog from './popups/CustomDialog';
 import {
@@ -16,11 +17,18 @@ import {
 import { Label } from "./ui/label"
 import { Button } from "./ui/button"
 
-const EditorButtons = () => {
+interface EditorButtonsProps {
+  toPDF : () => void,
+  targetRef: RefObject<HTMLDivElement>;
+}
 
-  const [PDFDialogOpen, setPDFDialogOpen] = useState<boolean>(false)
+const EditorButtons = ({toPDF, targetRef}: EditorButtonsProps) => {
+
+  
   const {currentFileId, createFile, updateFile, filesLoading, filesError} = useAppContext()
+  const [PDFDialogOpen, setPDFDialogOpen] = useState<boolean>(false)
 
+  console.log(currentFileId)
 
   const handleCloneButtonClick = () => {
     console.log("Clone button clicked, clone window should pop up")
@@ -30,17 +38,16 @@ const EditorButtons = () => {
   const handlePDFButtonClick = () => {
     console.log("PDF button clicked, cool sonner banner should appear after successful download")
 
-    setPDFDialogOpen(true)
+    //setPDFDialogOpen(true)
 
     //Handle PDF download logic
-
+    toPDF()
 
     //display sonner
 
   }
   const handleDeleteButtonClick = () => {
     console.log("Delete button clicked, reassuring window should pop up")
-
     //set file's status to "archived"
     updateFile(currentFileId, {status: "archived"})
   }
@@ -74,7 +81,7 @@ const EditorButtons = () => {
       <Tooltip>
         <TooltipTrigger asChild>
           <button
-            onClick={() => setPDFDialogOpen(true)}
+            onClick={() => handlePDFButtonClick()}
             className={
               "rounded bg-sky-600 px-4 py-2 text-sm text-white data-active:bg-sky-700 data-hover:bg-sky-500"}
           >
