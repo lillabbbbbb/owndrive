@@ -40,6 +40,7 @@ export function useFiles() {
     try {
       const res = await axios.get<IFileFrontend[]>("/api/files/");
       const data = res.data
+      console.log("Fetched files IDs:", data.map(f => f._id));
       setFiles(data)
       console.log("Files:")
       console.log(data)
@@ -122,7 +123,7 @@ export function useFiles() {
 
       const res = await batchUpdateFiles(filters, updates)
       console.log("Archives successfully restored")
-      return res;
+      return;
     } catch (err) {
       handleError(err);
     } finally {
@@ -138,7 +139,7 @@ export function useFiles() {
 
       const res = await axios.delete("api/files/", {data: filters})
       console.log("Archives successfully deleted")
-      return res;
+      return;
     } catch (err) {
       handleError(err);
     } finally {

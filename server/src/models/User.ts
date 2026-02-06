@@ -20,7 +20,7 @@ const userSchema = new Schema({
     //googleId: {type: String, required: false},
     email: {type: String, required: true, unique: true},
     password_hash: {type: String, required: false},
-    files: [{ type: Schema.Types.ObjectId, ref: 'File' }], // array of references
+    files: [{ type: Schema.Types.ObjectId, ref: 'File', unique: true}], // array of references
     session: { type: Schema.Types.ObjectId, ref: 'Session' }, // session schema
     profile_pic: { type: Schema.Types.ObjectId, ref: 'Image', required: false },
     language: {type: String, required: true, default: "en"},

@@ -16,10 +16,11 @@ export interface AppContextType {
   currentFileId: string;
 
   // User actions
+  setUser: (user: IUserFrontend | null) => void;
   refreshUser: () => Promise<void>;
   updateUser: (changes: Partial<IUserFrontend>) => Promise<IUserFrontend | null>;
   updateProfilePic: (file: File, description?: string) => Promise<boolean>;
-  login: (email: string, password: string) => Promise<string | null>;
+  login: (email: string, password: string) => Promise<IUserFrontend | null>;
   logout: () => Promise<void>;
 
   // File actions
@@ -56,10 +57,23 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   const userHook = useUser();
   const filesHook = useFiles();
   const [currentFileId, setCurrentFileId] = useState<string>("")
+  const [user, setUser] = useState<IUserFrontend | null>(null);
+
+  const login = async (email: string, password: string) => {
+    const userFromHook = await userHook.login(email, password);
+    if (userFromHook) setUser(userFromHook); // propagate state to provider
+    return userFromHook;
+  };
+
+  const logout = async () => {
+    await userHook.logout();
+    setUser(null); // propagate state
+  };
+
 
   const value = {
     // User state
-    user: userHook.user,
+    user: user,
     userLoading: userHook.loading,
     userError: userHook.error,
 
@@ -72,11 +86,12 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     files: filesHook.files,
 
     // User actions
+    setUser: setUser,
     refreshUser: userHook.refreshUser,
     updateUser: userHook.updateUser,
     updateProfilePic: userHook.updateProfilePic,
-    login: userHook.login,
-    logout: userHook.logout,
+    login: login,
+    logout: logout,
 
     // File actions
     getFile: filesHook.getFile,

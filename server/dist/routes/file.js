@@ -254,7 +254,7 @@ fileRouter.patch("/:fileId/lock", async (req, res) => {
         const userId = customReq.user?._id;
         // 1️⃣ Find the file and make sure the user owns it
         const file = await File_1.File.findOne({ _id: fileId, created_by: userId });
-        const canEdit = await File_1.File.findOne({ _id: fileId, canEdit: userId });
+        const canEdit = await File_1.File.findOne({ _id: fileId, canEdit: userId }) || File_1.File.findOne({ _id: fileId, created_by: userId });
         if (!file || !canEdit) {
             return res.status(404).json({ message: "File not found or access denied" });
         }
@@ -275,8 +275,7 @@ fileRouter.patch("/:fileId/unlock", async (req, res) => {
         const userId = customReq.user?._id;
         // 1️⃣ Find the file and make sure the user owns it
         const file = await File_1.File.findOne({ _id: fileId, created_by: userId });
-        const canEdit = await File_1.File.findOne({ _id: fileId, canEdit: userId });
-        if (!file || !canEdit) {
+        if (!file) {
             return res.status(404).json({ message: "File not found or access denied" });
         }
         await File_1.File.findByIdAndUpdate(userId, { inUse: false, usedBy: null });

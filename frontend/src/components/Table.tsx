@@ -27,12 +27,7 @@ const COLUMN_NAMES = ["filename", "file_type", "created_by", "last_edited_at", "
 export default function FilesTable({ onRowClick, sortedFilteredData }: TableProps) {
 
   //console.log('📊 TABLE RECEIVED:', sortedFilteredData?.length, 'items');
-  //console.log('Table data:', sortedFilteredData);
-
-
-  useEffect(() => {
-    //console.log('Data changed:', sortedFilteredData);
-  }, [sortedFilteredData])
+  console.log('Table data:', sortedFilteredData);
 
   const navigate = useNavigate()
   const { setCurrentFileId } = useAppContext()
@@ -111,7 +106,7 @@ export default function FilesTable({ onRowClick, sortedFilteredData }: TableProp
             {(currentRows || []).map((file) => (
               
               <TableRow className="text-left w-auto whitespace-nowrap px-4 py-2" key={file._id} onClick={() => onRowClick(file)} onDoubleClick={() => handleRowDoubleClick(file)}>
-                {columns.includes(COLUMN_NAMES[0]) && <TableCell className="whitespace-nowrap pr-16 py-2">{file.filename}</TableCell>}
+                {columns.includes(COLUMN_NAMES[0]) && <TableCell className="whitespace-nowrap pr-16 py-2">{`${file.filename} (${file._id})`}</TableCell>}
                 {columns.includes(COLUMN_NAMES[1]) && <TableCell className="whitespace-nowrap pr-16 py-2">{file.file_type}</TableCell>}
                 {columns.includes(COLUMN_NAMES[3]) && <TableCell className="whitespace-nowrap pr-16 py-2">{file.created_by}</TableCell>}
                 {columns.includes(COLUMN_NAMES[2]) && <TableCell className="whitespace-nowrap pr-16 py-2">{new Date(file.last_edited_at).toLocaleDateString()}</TableCell>}

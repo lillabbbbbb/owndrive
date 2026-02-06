@@ -163,7 +163,7 @@ const Editor = () => {
             {/* Render this if user is logged in */}
             {beingUsed && <ConcurrentEditingPopup />}
 
-            <Button onClick={() => handleSave()}>Save</Button>
+            <Button  onClick={() => handleSave()}>Save</Button>
             {<div ref={targetRef}>
                 <EditorButtons toPDF={toPDF} targetRef={targetRef} />
                 <EditableText value={file?.filename || filename} onSave={handleSaveFileName} />
