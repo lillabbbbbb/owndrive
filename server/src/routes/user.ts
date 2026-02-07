@@ -13,6 +13,23 @@ userRouter.use(validateUserToken)
 
 //route to anything else: handled in frontend
 
+userRouter.get("/me", async (req: Request, res: Response) => {
+    try {
+
+        const customReq = req as CustomRequest;
+        if (!req.user) return res.status(401).json({ message: "Unauthorized" })
+        const userId = customReq.user?._id
+
+        const existingUser = await User.findById({_id: userId})
+
+        return res.json(existingUser)
+    }
+    catch(error: any){
+        console.log(error)
+        return res.status(500).json({"message": "Internal Server Error"})
+    }
+})
+
 
 //UPDATE Upload or change profile picture
 userRouter.patch("/:userId/profile_pic", upload.single("image"), async (req: Request, res: Response) => {
@@ -91,7 +108,7 @@ userRouter.get("/:userId/profile_picture", async (req: Request, res: Response) =
         if (!req.user) return res.status(401).json({ message: "Unauthorized" })
         const userId = customReq.user?._id
 
-        
+
         //find the right user
         const user = await User
             .findOne({ _id: userId })

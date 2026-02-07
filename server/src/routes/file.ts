@@ -69,31 +69,30 @@ fileRouter.post("/",
 
             // 1️⃣ Check if a file with this name already exists for this user
             let file = await File.findOne({ filename, created_by: userId });
-
-
-            if (!file) {
-                // 2️⃣ Create new file
-                const now = new Date();
-
-                file = await File.create({
-                    created_at: now,
-                    created_by: userId,
-                    last_edited_at: now,
-                    file_type,
-                    filename,
-                    content,
-                    inUse,
-                    usedBy,
-                    status,
-                    visibleToGuests,
-                    showsInHomeShared,
-                    private: isPrivate,
-                    canView: [userId],
-                    canEdit: [userId],
-                });
-
+            if (file) {
+                return res.status(401).json({ "message": "File already exists" });
             }
 
+
+            // 2️⃣ Create new file
+            const now = new Date();
+
+            file = await File.create({
+                created_at: now,
+                created_by: userId,
+                last_edited_at: now,
+                file_type,
+                filename,
+                content,
+                inUse,
+                usedBy,
+                status,
+                visibleToGuests,
+                showsInHomeShared,
+                private: isPrivate,
+                canView: [userId],
+                canEdit: [userId],
+            });
             // 3️⃣ Push reference to user's files array
             await User.findByIdAndUpdate(userId, { $push: { files: file._id } });
             /*store new reference in the user record
@@ -144,14 +143,14 @@ fileRouter.patch("/",
         }
     })
 
-    //Delete many instances based on filter
+//Delete many instances based on filter
 fileRouter.delete("/", async (req: Request, res: Response) => {
 
     const customReq = req as CustomRequest;
-            if (!req.user) return res.status(401).json({ message: "Unauthorized" })
-            const userId = customReq.user?._id
+    if (!req.user) return res.status(401).json({ message: "Unauthorized" })
+    const userId = customReq.user?._id
 
-            
+
     const { filters } = req.body;
     if (!filters || Object.keys(filters).length === 0) {
         return res.status(400).json({ message: "Filters cannot be empty" });
@@ -321,6 +320,7 @@ fileRouter.patch("/:fileId", async (req: Request, res: Response) => {
 
         // 5️⃣ Save changes
         const updatedFile = await file.save();
+        console.log(updatedFile)
 
         return res.status(200).json()
     } catch (error: any) {
@@ -340,7 +340,7 @@ fileRouter.patch("/:fileId/lock", async (req: Request, res: Response) => {
 
         // 1️⃣ Find the file and make sure the user owns it
         const file = await File.findOne({ _id: fileId, created_by: userId });
-        const canEdit = await File.findOne({ _id: fileId, canEdit: userId }) || File.findOne({_id: fileId, created_by: userId })
+        const canEdit = await File.findOne({ _id: fileId, canEdit: userId }) || File.findOne({ _id: fileId, created_by: userId })
         if (!file || !canEdit) {
             return res.status(404).json({ message: "File not found or access denied" });
         }

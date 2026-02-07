@@ -7,9 +7,9 @@ type UseUserReturn = {
   loading: boolean;
   error: string | null;
 
-  refreshUser: () => Promise<void>;
+  getUser: () => Promise<IUserFrontend | null>;
   updateUser: (changes: Partial<IUserFrontend>) => Promise<IUserFrontend | null>;
-  updateProfilePic: (file: File, description?: string) => Promise<boolean>;
+  updateProfilePic: (id: string, file: File, description?: string) => Promise<boolean>;
   login: (email: string, password: string) => Promise<IUserFrontend | null>;
   logout: () => Promise<void>;
 };
@@ -19,6 +19,7 @@ export function useUser(): UseUserReturn {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
 
   const isTokenValid = (token: string | null) => {
     if (!token) return false;
@@ -52,13 +53,15 @@ export function useUser(): UseUserReturn {
   };
 
   // Fetch latest user data from server
-  const refreshUser = useCallback(async () => {
+  const getUser = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.get<IUserFrontend>(`api/users/userId`);
+      const res = await axios.get<IUserFrontend>(`api/users/me`);
+      return res.data
     } catch (err) {
       handleError(err);
+      return null
     } finally {
       setLoading(false);
     }
@@ -80,7 +83,7 @@ export function useUser(): UseUserReturn {
   }, []);
 
   // Update user profile picture
-  const updateProfilePic = useCallback(async (file: File, description?: string) => {
+  const updateProfilePic = useCallback(async (id: string, file: File, description?: string) => {
     setLoading(true);
     setError(null);
     try {
@@ -93,7 +96,7 @@ export function useUser(): UseUserReturn {
       });
 
       // Refresh user to get new profile_pic populated
-      await refreshUser();
+      await getUser();
       return true;
     } catch (err) {
       handleError(err);
@@ -101,7 +104,7 @@ export function useUser(): UseUserReturn {
     } finally {
       setLoading(false);
     }
-  }, [refreshUser]);
+  }, [getUser]);
 
   // Logout user
   const logout = useCallback(async () => {
@@ -143,10 +146,10 @@ export function useUser(): UseUserReturn {
   return {
     loading,
     error,
-    refreshUser,
+    getUser,
     updateUser,
     updateProfilePic,
     login,
-    logout,
+    logout
   };
 }

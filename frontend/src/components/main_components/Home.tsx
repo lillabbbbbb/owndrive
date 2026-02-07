@@ -88,12 +88,6 @@ const Home = () => {
     status: statusEnum.ACTIVE
   })
 
-  console.log(Array.from(filters.fileTypes))
-  console.log(filters.owners)
-  console.log(filters.date)
-  console.log(filters.status)
-
-
   const fileTypeFilter: Filter<customOption> = {
     label: "By file type:",
     options: fileTypes.map(fileType => ({      // fileTypes = [...new Set(data.map(d => d.file_type))]

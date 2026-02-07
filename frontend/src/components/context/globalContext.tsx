@@ -1,5 +1,5 @@
 
-import { createContext, useContext, ReactNode, useState } from "react";
+import { createContext, useContext, ReactNode, useState, useEffect } from "react";
 import { useUser } from "../../hooks/useUser";
 import { useFiles } from "../../hooks/useFiles";
 import { IUserFrontend } from "../../types/User";
@@ -12,18 +12,20 @@ export interface AppContextType {
   filesLoading: boolean;
   filesError: string | null;
   files: IFileFrontend[] | [];
+  currentFile: IFileFrontend | null;
 
   currentFileId: string;
 
   // User actions
   setUser: (user: IUserFrontend | null) => void;
-  refreshUser: () => Promise<void>;
+  getUser: () => Promise<IUserFrontend | null>;
   updateUser: (changes: Partial<IUserFrontend>) => Promise<IUserFrontend | null>;
-  updateProfilePic: (file: File, description?: string) => Promise<boolean>;
+  updateProfilePic: (id: string, file: File, description?: string) => Promise<boolean>;
   login: (email: string, password: string) => Promise<IUserFrontend | null>;
   logout: () => Promise<void>;
 
   // File actions
+  getCurrentFile: (currentFileId: string) => Promise<IFileFrontend | null>
   getFiles: () => Promise<IFileFrontend[] | null>;
   getFile: (id: string) => Promise<IFileFrontend | null>;
   createFile: (fileData: Partial<IFileFrontend>) => Promise<IFileFrontend | null>;
@@ -56,12 +58,55 @@ interface AppProviderProps {
 export const AppProvider = ({ children }: AppProviderProps) => {
   const userHook = useUser();
   const filesHook = useFiles();
+  const [currentFile, setCurrentFile] = useState<IFileFrontend | null>(null)
   const [currentFileId, setCurrentFileId] = useState<string>("")
-  const [user, setUser] = useState<IUserFrontend | null>(null);
+  const [user, setUser] = useState<IUserFrontend | null>(null)
+
+  const getCurrentFile = async () => {
+  if (!currentFileId) return null;
+  const file = await filesHook.getFile(currentFileId);
+  setCurrentFile(file || null);
+  return file;
+};
+
+  const getUserIdFromToken = (token: string | null) => {
+    if (!token) {
+      console.log("token not found")
+      return null
+    }
+
+    try {
+      const payload = token.split(".")[1];
+      const decoded = JSON.parse(atob(payload));
+      return decoded._id || null;
+    } catch {
+      return null;
+    }
+
+  }
+
+  useEffect(() => {
+    const loadUser = async () => {
+      const token = localStorage.getItem("token")
+      const id = getUserIdFromToken(token)
+      if (!id) return;
+
+      const isUser = await userHook.getUser();
+      if (isUser) {
+        setUser(isUser);
+      }
+    };
+
+    loadUser();
+  }, []);
+
 
   const login = async (email: string, password: string) => {
     const userFromHook = await userHook.login(email, password);
-    if (userFromHook) setUser(userFromHook); // propagate state to provider
+    if (userFromHook) {
+      sessionStorage.setItem("id", userFromHook._id);
+      setUser(userFromHook); // propagate state to provider
+    }
     return userFromHook;
   };
 
@@ -84,16 +129,18 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     filesLoading: filesHook.loading,
     filesError: filesHook.error,
     files: filesHook.files,
+    currentFile: currentFile,
 
     // User actions
     setUser: setUser,
-    refreshUser: userHook.refreshUser,
+    getUser: userHook.getUser,
     updateUser: userHook.updateUser,
     updateProfilePic: userHook.updateProfilePic,
     login: login,
     logout: logout,
 
     // File actions
+    getCurrentFile: getCurrentFile,
     getFile: filesHook.getFile,
     getFiles: filesHook.getFiles,
     restoreAllArchived: filesHook.restoreAllArchived,

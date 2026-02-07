@@ -26,11 +26,11 @@ const Editor = () => {
 
     const [guestDialogOpen, setGuestDialogOpen] = useState<boolean>(true)
     const jwt = localStorage.getItem("token")
-    
+
     const [file, setFile] = useState<IFileFrontend | null>(null)
     const [filename, setFilename] = useState<string>("New file")
     const [beingUsed, setBeingUsed] = useState<boolean>(false)
-    const [content, setContent] = useState<string>("")
+    const [content, setContent] = useState<string>("Write here...")
     const [lastEditedAt, setLastEditedAt] = useState<string>("")
     const [canView, setCanView] = useState<string[]>([])
     const [canEdit, setCanEdit] = useState<string[]>([])
@@ -38,39 +38,56 @@ const Editor = () => {
     const [isPrivate, setIsPrivate] = useState<boolean>(false)
     const [editable, setEditable] = useState<boolean>(false) //turn this into useEffect
 
- // PDF hook
-  const { toPDF, targetRef } = usePDF({
-    filename: filename,
-    page: { margin: 20 }
-  });
 
-  // Use this ref to forward to EditorField
-  const editorRef = useRef<HTMLDivElement>(null);
+
+    // PDF hook
+    const { toPDF, targetRef } = usePDF({
+        filename: filename,
+        page: { margin: 20 }
+    });
+
+    // Use this ref to forward to EditorField
+    const editorRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         setEditable(!beingUsed)
     }, [beingUsed])
 
+
     const navigate = useNavigate()
-    const { user, currentFileId, getFile, createFile, updateFile, lockFile, userLoading, userError, filesLoading, filesError } = useAppContext()
+    const { user, currentFileId, getCurrentFile, getFile, createFile, updateFile, lockFile, userLoading, userError, filesLoading, filesError } = useAppContext()
+
 
     useEffect(() => {
-        if (!currentFileId) return;
-
+        if (!currentFileId) return
         const loadFile = async () => {
-            const f = await getFile(currentFileId);
-            setFile(f);
-        };
+            const fetchedFile = await getCurrentFile(currentFileId)
+            setFile(fetchedFile)
+            console.log(fetchedFile?.content)
+            console.log(fetchedFile)
+        }
+        loadFile()
+    }, [currentFileId])
 
-        loadFile();
-    }, [currentFileId, getFile]);
+    useEffect(() => {
+        console.log("Current file updated:", file);
+    }, [file]);
 
+    // Update local content when file changes
+    useEffect(() => {
+        if (file) {
+            setContent(file.content ?? ""); // empty string fallback
+        }
+        console.log(`Content set to ${content}`)
+    }, [file]);
+
+    console.log(user)
+    console.log(file)
 
     const username = user?.username || user?.email
 
 
-    console.log(`File content is now:`)
-    console.log(content)
+    console.log(`File content is now: ${content}`)
 
     useEffect(() => {
         if (currentFileId && user) {
@@ -87,38 +104,46 @@ const Editor = () => {
         return true
     }
 
-    const isExistingFile = (filename: string) => {
-        return file?.filename == filename;
+    const isExistingFile = async (id: string) => {
+        console.log(currentFileId)
+        return !!(await getFile(id))
     }
 
-    const handleSave = () => {
+    const handleSave = async () => {
         console.log("Save button is clicked")
         console.log(user)
         if (!user) return
 
+        console.log(filename)
         if (!isValidFilename(filename)) return
 
-        if (isExistingFile(filename)) {
+        const isExisting: boolean = await isExistingFile(currentFileId)
+        console.log(isExisting)
+        if (isExisting) {
             //if this file exists, but the content has been modified
             updateFile(currentFileId, {
                 last_edited_at: new Date(),
+                content: content,
                 inUse: true,
                 usedBy: user._id,
                 status: "active",
             })
+            console.log("File updated")
             return
         }
-
         //if a file with this name doesnt exist in the user's drive (go through userData.files array in search of a match)
         //create new file record and append it to the user
-        createFile({
-            created_by: user._id,
-            filename: filename,
-            file_type: ".docx",
-            content: content,
-            inUse: true,
-            usedBy: user._id
-        })
+        else {
+            createFile({
+                created_by: user._id,
+                filename: filename,
+                file_type: ".docx",
+                content: content,
+                inUse: true,
+                usedBy: user._id
+            })
+            console.log("File created")
+        }
 
     }
 
@@ -163,13 +188,13 @@ const Editor = () => {
             {/* Render this if user is logged in */}
             {beingUsed && <ConcurrentEditingPopup />}
 
-            <Button  onClick={() => handleSave()}>Save</Button>
+            <Button onClick={() => handleSave()}>Save</Button>
             {<div ref={targetRef}>
                 <EditorButtons toPDF={toPDF} targetRef={targetRef} />
-                <EditableText value={file?.filename || filename} onSave={handleSaveFileName} />
+                <EditableText value={file?.filename ?? filename} onSave={handleSaveFileName} />
                 <div>
-                    <EditorField ref={editorRef} content={file?.content || "Write here..."} setContent={setContent} editable={editable} />
-                    <div>Word count</div>
+                    <EditorField ref={editorRef} content={file?.content ? content : content} setContent={setContent} editable={editable} />
+                    <div>Word count: {content ? content.trim().split(/\s+/).filter(Boolean).length : 0}</div>
                 </div>
 
 

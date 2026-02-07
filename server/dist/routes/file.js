@@ -42,26 +42,27 @@ fileRouter.post("/", async (req, res) => {
         }
         // 1️⃣ Check if a file with this name already exists for this user
         let file = await File_1.File.findOne({ filename, created_by: userId });
-        if (!file) {
-            // 2️⃣ Create new file
-            const now = new Date();
-            file = await File_1.File.create({
-                created_at: now,
-                created_by: userId,
-                last_edited_at: now,
-                file_type,
-                filename,
-                content,
-                inUse,
-                usedBy,
-                status,
-                visibleToGuests,
-                showsInHomeShared,
-                private: isPrivate,
-                canView: [userId],
-                canEdit: [userId],
-            });
+        if (file) {
+            return res.status(401).json({ "message": "File already exists" });
         }
+        // 2️⃣ Create new file
+        const now = new Date();
+        file = await File_1.File.create({
+            created_at: now,
+            created_by: userId,
+            last_edited_at: now,
+            file_type,
+            filename,
+            content,
+            inUse,
+            usedBy,
+            status,
+            visibleToGuests,
+            showsInHomeShared,
+            private: isPrivate,
+            canView: [userId],
+            canEdit: [userId],
+        });
         // 3️⃣ Push reference to user's files array
         await User_1.User.findByIdAndUpdate(userId, { $push: { files: file._id } });
         /*store new reference in the user record
@@ -238,6 +239,7 @@ fileRouter.patch("/:fileId", async (req, res) => {
         }
         // 5️⃣ Save changes
         const updatedFile = await file.save();
+        console.log(updatedFile);
         return res.status(200).json();
     }
     catch (error) {

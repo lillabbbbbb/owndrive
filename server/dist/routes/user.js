@@ -12,6 +12,20 @@ const userValidation_1 = require("../middleware/userValidation");
 const userRouter = (0, express_1.Router)();
 userRouter.use(userValidation_1.validateUserToken);
 //route to anything else: handled in frontend
+userRouter.get("/me", async (req, res) => {
+    try {
+        const customReq = req;
+        if (!req.user)
+            return res.status(401).json({ message: "Unauthorized" });
+        const userId = customReq.user?._id;
+        const existingUser = await User_1.User.findById({ _id: userId });
+        return res.json(existingUser);
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ "message": "Internal Server Error" });
+    }
+});
 //UPDATE Upload or change profile picture
 userRouter.patch("/:userId/profile_pic", multer_config_1.default.single("image"), async (req, res) => {
     try {

@@ -57,8 +57,8 @@ export function useFiles() {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.get<IFileFrontend>(`/api/files/${id}`);
-      return res.data;
+      const res = await axios.get<{file: IFileFrontend, permissions: string}>(`/api/files/${id}`);
+      return res.data.file;
     } catch (err) {
       handleError(err);
       return null;

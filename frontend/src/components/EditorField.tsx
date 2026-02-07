@@ -5,7 +5,7 @@ import type { Editor } from '@tiptap/react'
 import { EditorContent, useEditor, useEditorState } from '@tiptap/react'
 import { usePDF } from 'react-to-pdf';
 import StarterKit from '@tiptap/starter-kit'
-import { useEffect, forwardRef  } from 'react'
+import { useEffect, forwardRef } from 'react'
 import { Button } from '@headlessui/react'
 import clsx from 'clsx';
 
@@ -15,9 +15,9 @@ const DISABLED_BUTTON = "opacity-50 cursor-not-allowed"
 
 const extensions = [TextStyleKit, StarterKit]
 
-function EditorMenu({ editor}: { editor: Editor }) {
+function EditorMenu({ editor }: { editor: Editor }) {
 
-const jwt = localStorage.getItem("token")
+  const jwt = localStorage.getItem("token")
 
   const editorState = useEditorState({
     editor,
@@ -50,16 +50,16 @@ const jwt = localStorage.getItem("token")
     },
   })
 
-  
+
 
   return (
     <div className="control-group">
       <div className="button-group">
         <Button className={clsx(
-    BRIGHT_BUTTON_CLASS,
-    !editor?.isEditable && DISABLED_BUTTON,
-    editorState.isBold && 'is-active'
-  )}
+          BRIGHT_BUTTON_CLASS,
+          !editor?.isEditable && DISABLED_BUTTON,
+          editorState.isBold && 'is-active'
+        )}
           onClick={() => editor.chain().focus().toggleBold().run()}
           disabled={!editor?.isEditable}
         >
@@ -69,10 +69,10 @@ const jwt = localStorage.getItem("token")
           onClick={() => editor.chain().focus().toggleItalic().run()}
           disabled={!editor?.isEditable}
           className={clsx(
-    BRIGHT_BUTTON_CLASS,
-    !editor?.isEditable && DISABLED_BUTTON,
-    editorState.isItalic && 'is-active'
-  )}
+            BRIGHT_BUTTON_CLASS,
+            !editor?.isEditable && DISABLED_BUTTON,
+            editorState.isItalic && 'is-active'
+          )}
         >
           Italic
         </Button>
@@ -80,12 +80,12 @@ const jwt = localStorage.getItem("token")
           onClick={() => editor.chain().focus().toggleStrike().run()}
           disabled={!editor?.isEditable}
           className={clsx(
-    BRIGHT_BUTTON_CLASS,
-    !editor?.isEditable && DISABLED_BUTTON,
-    editorState.isStrike && 'is-active'
-  )}
-          
-          
+            BRIGHT_BUTTON_CLASS,
+            !editor?.isEditable && DISABLED_BUTTON,
+            editorState.isStrike && 'is-active'
+          )}
+
+
         >
           Strike
         </Button>
@@ -93,11 +93,11 @@ const jwt = localStorage.getItem("token")
           onClick={() => editor.chain().focus().toggleCode().run()}
           disabled={!editor?.isEditable}
           className={clsx(
-    BRIGHT_BUTTON_CLASS,
-    !editor?.isEditable && DISABLED_BUTTON,
-    editorState.isCode && 'is-active'
-  )}
-          
+            BRIGHT_BUTTON_CLASS,
+            !editor?.isEditable && DISABLED_BUTTON,
+            editorState.isCode && 'is-active'
+          )}
+
         >
           Code
         </Button>
@@ -107,10 +107,10 @@ const jwt = localStorage.getItem("token")
           onClick={() => editor.chain().focus().setParagraph().run()}
           disabled={!editor?.isEditable}
           className={clsx(
-    BRIGHT_BUTTON_CLASS,
-    !editor?.isEditable && DISABLED_BUTTON,
-    editorState.isParagraph && 'is-active'
-  )}
+            BRIGHT_BUTTON_CLASS,
+            !editor?.isEditable && DISABLED_BUTTON,
+            editorState.isParagraph && 'is-active'
+          )}
         >
           Paragraph
         </button>
@@ -118,10 +118,10 @@ const jwt = localStorage.getItem("token")
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
           disabled={!editor?.isEditable}
           className={clsx(
-    BRIGHT_BUTTON_CLASS,
-    !editor?.isEditable && DISABLED_BUTTON,
-    editorState.isHeading1 && 'is-active'
-  )}
+            BRIGHT_BUTTON_CLASS,
+            !editor?.isEditable && DISABLED_BUTTON,
+            editorState.isHeading1 && 'is-active'
+          )}
         >
           H1
         </button>
@@ -129,10 +129,10 @@ const jwt = localStorage.getItem("token")
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           disabled={!editor?.isEditable}
           className={clsx(
-    BRIGHT_BUTTON_CLASS,
-    !editor?.isEditable && DISABLED_BUTTON,
-    editorState.isHeading2 && 'is-active'
-  )}
+            BRIGHT_BUTTON_CLASS,
+            !editor?.isEditable && DISABLED_BUTTON,
+            editorState.isHeading2 && 'is-active'
+          )}
         >
           H2
         </button>
@@ -140,10 +140,10 @@ const jwt = localStorage.getItem("token")
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
           disabled={!editor?.isEditable}
           className={clsx(
-    BRIGHT_BUTTON_CLASS,
-    !editor?.isEditable && DISABLED_BUTTON,
-    editorState.isHeading3 && 'is-active'
-  )}
+            BRIGHT_BUTTON_CLASS,
+            !editor?.isEditable && DISABLED_BUTTON,
+            editorState.isHeading3 && 'is-active'
+          )}
         >
           H3
         </button>
@@ -151,10 +151,10 @@ const jwt = localStorage.getItem("token")
           onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
           disabled={!editor?.isEditable}
           className={clsx(
-    BRIGHT_BUTTON_CLASS,
-    !editor?.isEditable && DISABLED_BUTTON,
-    editorState.isHeading4 && 'is-active'
-  )}
+            BRIGHT_BUTTON_CLASS,
+            !editor?.isEditable && DISABLED_BUTTON,
+            editorState.isHeading4 && 'is-active'
+          )}
         >
           H4
         </button>
@@ -162,10 +162,10 @@ const jwt = localStorage.getItem("token")
           onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()}
           disabled={!editor?.isEditable}
           className={clsx(
-    BRIGHT_BUTTON_CLASS,
-    !editor?.isEditable && DISABLED_BUTTON,
-    editorState.isHeading5 && 'is-active'
-  )}
+            BRIGHT_BUTTON_CLASS,
+            !editor?.isEditable && DISABLED_BUTTON,
+            editorState.isHeading5 && 'is-active'
+          )}
         >
           H5
         </button>
@@ -173,10 +173,10 @@ const jwt = localStorage.getItem("token")
           onClick={() => editor.chain().focus().toggleHeading({ level: 6 }).run()}
           disabled={!editor?.isEditable}
           className={clsx(
-    BRIGHT_BUTTON_CLASS,
-    !editor?.isEditable && DISABLED_BUTTON,
-    editorState.isHeading6 && 'is-active'
-  )}
+            BRIGHT_BUTTON_CLASS,
+            !editor?.isEditable && DISABLED_BUTTON,
+            editorState.isHeading6 && 'is-active'
+          )}
         >
           H6
         </button>
@@ -184,10 +184,10 @@ const jwt = localStorage.getItem("token")
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           disabled={!editor?.isEditable}
           className={clsx(
-    BRIGHT_BUTTON_CLASS,
-    !editor?.isEditable && DISABLED_BUTTON,
-    editorState.isBulletList && 'is-active'
-  )}
+            BRIGHT_BUTTON_CLASS,
+            !editor?.isEditable && DISABLED_BUTTON,
+            editorState.isBulletList && 'is-active'
+          )}
         >
           Bullet list
         </button>
@@ -195,10 +195,10 @@ const jwt = localStorage.getItem("token")
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           disabled={!editor?.isEditable}
           className={clsx(
-    BRIGHT_BUTTON_CLASS,
-    !editor?.isEditable && DISABLED_BUTTON,
-    editorState.isOrderedList && 'is-active'
-  )}
+            BRIGHT_BUTTON_CLASS,
+            !editor?.isEditable && DISABLED_BUTTON,
+            editorState.isOrderedList && 'is-active'
+          )}
         >
           Ordered list
         </button>
@@ -206,10 +206,10 @@ const jwt = localStorage.getItem("token")
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
           disabled={!editor?.isEditable}
           className={clsx(
-    BRIGHT_BUTTON_CLASS,
-    !editor?.isEditable && DISABLED_BUTTON,
-    editorState.isCodeBlock && 'is-active'
-  )}
+            BRIGHT_BUTTON_CLASS,
+            !editor?.isEditable && DISABLED_BUTTON,
+            editorState.isCodeBlock && 'is-active'
+          )}
         >
           Code block
         </button>
@@ -217,10 +217,10 @@ const jwt = localStorage.getItem("token")
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           disabled={!editor?.isEditable}
           className={clsx(
-    BRIGHT_BUTTON_CLASS,
-    !editor?.isEditable && DISABLED_BUTTON,
-    editorState.isBlockquote && 'is-active'
-  )}
+            BRIGHT_BUTTON_CLASS,
+            !editor?.isEditable && DISABLED_BUTTON,
+            editorState.isBlockquote && 'is-active'
+          )}
         >
           Blockquote
         </button>
@@ -242,17 +242,27 @@ type EditorFieldProps = {
   setContent: (content: string) => void,
   editable: boolean
 }
-const EditorField =  forwardRef<HTMLDivElement, EditorFieldProps>(({ content, setContent, editable}, ref ) => {
+const EditorField = forwardRef<HTMLDivElement, EditorFieldProps>(({ content, setContent, editable }, ref) => {
 
 
   const editor = useEditor({
     extensions,
     editable,
     content: content,
-onUpdate: ({ editor }) => {
+    onUpdate: ({ editor }) => {
       setContent(editor.getHTML()); // save the current content as HTML
     },
   })
+
+  //Manually rerender when content is changed
+  useEffect(() => {
+    if (!editor) return;
+
+    // Only update if editor content is different
+    if (content !== editor.getHTML()) {
+      editor.commands.setContent(content);
+    }
+  }, [content, editor]);
 
 
   useEffect(() => {
@@ -270,9 +280,9 @@ onUpdate: ({ editor }) => {
 
   return (
     <div>
-      <EditorMenu editor={editor}/>
+      <EditorMenu editor={editor} />
       <div ref={ref}>
-        <EditorContent editor={editor} className="tiptap-editor prose prose-slate dark:prose-invert"/>
+        <EditorContent editor={editor} className="tiptap-editor prose prose-slate dark:prose-invert" />
       </div>
     </div>
   )
