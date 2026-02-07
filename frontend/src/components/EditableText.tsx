@@ -79,7 +79,7 @@ export function EditableText(
             setDraft(value)
             setIsValid(true)
             setEditing(false)
-            updateFile(currentFileId, 
+            updateFile(currentFileId!, 
               {filename: value}
             )
           }

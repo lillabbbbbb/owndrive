@@ -9,9 +9,11 @@ import Editor from './Editor'
 import {IFile} from "../../../../server/src/models/File"
 import {IUser} from "../../../../server/src/models/User"
 import {IUserTest, IFileTest} from "../../App"
+import { useTranslation } from 'react-i18next'
 
 
 const Body = () => {
+  const {t} = useTranslation()
   const jwt = localStorage.getItem("token")
 
   return (
@@ -23,7 +25,7 @@ const Body = () => {
             <Route path="/register" element={<Register />} ></Route>
             <Route path="/home" element={ <Home  />} ></Route>
             <Route path="/:user/:file" element={<Editor />} ></Route>
-            <Route path="*" element={<div>Not found!</div>} />
+            <Route path="*" element={<div>{t("home.not-found")!}</div>} />
 
         </Routes>
     </div>

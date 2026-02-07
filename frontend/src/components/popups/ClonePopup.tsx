@@ -28,6 +28,8 @@ import {
 import { useAppContext } from "../context/globalContext";
 import { useFiles } from '../../hooks/useFiles';
 import CustomDialog from '../popups/CustomDialog';
+import { isValidFileName } from '../../validators/validateFilename';
+import { useTranslation } from 'react-i18next';
 
 export type customOption = {
     label: string
@@ -42,72 +44,91 @@ type ClonePopupProps = {
 const fileName = "testFileNameNotreal"
 
 export function ClonePopup() {
+  const {t} = useTranslation()
+  const { currentFileId, user, files, getFile, createFile, filesLoading, filesError } = useAppContext();
 
-    const { currentFileId, user, files, getFile, createFile, filesLoading, filesError } = useAppContext()
+  const [open, setOpen] = useState(false);
+  const [input, setInput] = useState("");
+  const [isInvalidName, setIsInvalidName] = useState(false);
 
-    const [open, setOpen] = useState<boolean>(false)
-    const [changed, setChanged] = useState<boolean>(false);
-    const [isInvalidName, setIsInvalidName] = useState<boolean>(false)
-    const [newName, setNewName] = useState("New document")
+  // Check if the input is valid & unique
+  const isValidAndUnique = (): boolean => {
+    if (!input) return false;
+    if (!isValidFileName(input)) return false;
+    // check uniqueness
+    const existingNames = files?.map(f => f.filename) || [];
+    return !existingNames.includes(input);
+  };
 
+  const handleSave = async () => {
+    if (!user || !currentFileId) return;
 
-    const handleSave = async () => {
-        if (!user) return
-
-        const originalFile = await getFile(currentFileId)
-
-        if (!originalFile) return
-
-        createFile({
-            created_by: user._id,
-            filename: newName,
-            file_type: originalFile.file_type,
-            content: originalFile.content
-        })
-    };
-
-    const isValidFilename = () => {
-        //check if special characters are used like "/", etc.
-
-        //check if a file with this name in the user's drive already exists
-        files
-        setIsInvalidName(true)
+    if (!isValidAndUnique()) {
+      setIsInvalidName(true);
+      return;
     }
 
-    return (
-        <>
-            <Button onClick={() => setOpen(true)}>Clone</Button>
+    const originalFile = await getFile(currentFileId);
+    if (!originalFile) return;
 
-            <Dialog open={open} onOpenChange={setOpen}>
-                <DialogContent>
+    await createFile({
+      created_by: user._id,
+      filename: input,
+      file_type: originalFile.file_type,
+      content: originalFile.content
+    });
 
-                    <div className="flex flex-col gap-4">
-                        <form>
-                            <FieldGroup>
-                                <Field>
-                                    <FieldDescription>
-                                        The new document will be saved in your Drive.
-                                    </FieldDescription>
-                                    <FieldLabel htmlFor="checkout-7j9-cvv">Name: </FieldLabel>
-                                    <Input id="checkout-7j9-cvv" placeholder="123" required />
-                                    {isInvalidName && <FieldError>Invalid file name / File with this name already exists</FieldError>}
+    setOpen(false); // close dialog
+    setInput("");   // reset input
+    setIsInvalidName(false);
+  };
 
-                                </Field>
-                            </FieldGroup>
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>{t("dialog.clone.clone-action")}</Button>
 
-                            <Button onClick={() => handleSave()}>Save copy</Button>
-                        </form>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <div className="flex flex-col gap-4">
+            <form onSubmit={e => { e.preventDefault(); handleSave(); }}>
+              <FieldGroup>
+                <Field>
+                  <FieldDescription>
+                    {t("dialog.clone.description")}
+                  </FieldDescription>
+                  <FieldLabel htmlFor="file-name-input">{t("dialog.clone.name")}: </FieldLabel>
+                  <Input
+                    id="file-name-input"
+                    placeholder="New file"
+                    required
+                    value={input}
+                    onChange={e => {
+                      setInput(e.target.value);
+                      setIsInvalidName(false); // reset error while typing
+                    }}
+                  />
+                  {isInvalidName && (
+                    <FieldError>
+                      {t("dialog.clone.error")}
+                    </FieldError>
+                  )}
+                </Field>
+              </FieldGroup>
 
-                    </div>
+              <Button
+                type="submit"
+                disabled={!isValidAndUnique()}
+                className={!isValidAndUnique() ? "opacity-50 cursor-not-allowed" : ""}
+              >
+                {t("dialog.clone.save-copy")}
+              </Button>
+            </form>
+          </div>
 
-                    {filesError && <CustomDialog heading="Error" text={filesError} />}
-                    {filesLoading && <p>Loading...</p>}
-
-
-                </DialogContent>
-            </Dialog >
-        </>
-    )
+          {filesError && <CustomDialog heading="Error" text={filesError} />}
+          {filesLoading && <p>{("Loading...")}</p>}
+        </DialogContent>
+      </Dialog>
+    </>
+  );
 }
-
-export default ClonePopup

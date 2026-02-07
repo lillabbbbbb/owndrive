@@ -11,23 +11,23 @@ export function useFiles() {
 
   //Automatically add the Bearer token to each request
   axios.interceptors.request.use((config) => {
-  //console.log('🔄 Interceptor triggered for:', config.url);
-  //console.log('📦 Headers before:', config.headers);
-  
-  const token = localStorage.getItem("token");
-  //console.log('🔑 Token from localStorage:', token ? `[${token.substring(0, 20)}...]` : 'NULL');
-  
-  if (token && token.trim() && token !== "null" && token !== "undefined") {
-    config.headers = config.headers || {};
-    config.headers.Authorization = `Bearer ${token.trim()}`;
-    //console.log('✅ Header added:', config.headers.Authorization?.substring(0, 50) + '...');
-  } else {
-    //console.log('❌ No valid token found');
-  }
-  
-  //console.log('📦 Headers after:', config.headers);
-  return config;
-});
+    //console.log('🔄 Interceptor triggered for:', config.url);
+    //console.log('📦 Headers before:', config.headers);
+
+    const token = localStorage.getItem("token");
+    //console.log('🔑 Token from localStorage:', token ? `[${token.substring(0, 20)}...]` : 'NULL');
+
+    if (token && token.trim() && token !== "null" && token !== "undefined") {
+      config.headers = config.headers || {};
+      config.headers.Authorization = `Bearer ${token.trim()}`;
+      //console.log('✅ Header added:', config.headers.Authorization?.substring(0, 50) + '...');
+    } else {
+      //console.log('❌ No valid token found');
+    }
+
+    //console.log('📦 Headers after:', config.headers);
+    return config;
+  });
   //General error handler, manually called with each API request
   const handleError = (err: unknown) => {
     if (axios.isAxiosError(err)) setError(err.response?.data?.message || "Server error");
@@ -57,7 +57,7 @@ export function useFiles() {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.get<{file: IFileFrontend, permissions: string}>(`/api/files/${id}`);
+      const res = await axios.get<{ file: IFileFrontend, permissions: string }>(`/api/files/${id}`);
       return res.data.file;
     } catch (err) {
       handleError(err);
@@ -72,7 +72,6 @@ export function useFiles() {
     setError(null);
     try {
       const res = await axios.post<IFileFrontend>("/api/files", fileData);
-      console.log("File successfully created")
       return res.data;
     } catch (err) {
       handleError(err);
@@ -87,7 +86,7 @@ export function useFiles() {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.patch<IFileFrontend>(`/api/files/`, {filters, updates});
+      const res = await axios.patch<IFileFrontend>(`/api/files/`, { filters, updates });
       console.log("Files successfully updated")
       return res.data;
     } catch (err) {
@@ -118,8 +117,8 @@ export function useFiles() {
     setError(null);
     try {
 
-      const filters = {status: statusEnum.ARCHIVED};
-      const updates = {status: statusEnum.ACTIVE}
+      const filters = { status: statusEnum.ARCHIVED };
+      const updates = { status: statusEnum.ACTIVE }
 
       const res = await batchUpdateFiles(filters, updates)
       console.log("Archives successfully restored")
@@ -135,9 +134,9 @@ export function useFiles() {
     setLoading(true);
     setError(null);
     try {
-      const filters = {status: statusEnum.ARCHIVED};
+      const filters = { status: statusEnum.ARCHIVED };
 
-      const res = await axios.delete("api/files/", {data: filters})
+      const res = await axios.delete("api/files/", { data: filters })
       console.log("Archives successfully deleted")
       return;
     } catch (err) {
@@ -146,8 +145,8 @@ export function useFiles() {
       setLoading(false);
     }
   }, [])
-  
-  const lockFile = useCallback(async (id: string, lockedById: string ) => {
+
+  const lockFile = useCallback(async (id: string, lockedById: string) => {
     setLoading(true);
     setError(null);
     try {
@@ -204,6 +203,23 @@ export function useFiles() {
     }
   }, []);
 
+  const downloadPDF = useCallback(async (html: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res= await axios.post("/api/pdf",
+        { html },
+        { responseType: "blob" }
+      );
+      console.log(res)
+      return res
+    } catch (err) {
+      console.error("PDF generation failed:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   //Some day: attach image to a file 
 
   return {
@@ -221,5 +237,6 @@ export function useFiles() {
     unlockFile,
     getLockStatus,
     deleteFile,
+    downloadPDF,
   };
 }

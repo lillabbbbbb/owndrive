@@ -1,8 +1,10 @@
 import { useState, type FormEvent } from 'react';
 import { Link } from "react-router-dom"
+import { useTranslation } from 'react-i18next';
 
 const Register = () => {
 
+    const {t} = useTranslation()
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -69,7 +71,7 @@ const Register = () => {
                         htmlFor="name"
                         className="absolute left-3 top-2.5 text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base peer-focus:top-2.5 peer-focus:text-sm peer-focus:text-blue-500"
                     >
-                        Email
+                        {t("register.email")}
                     </label>
                 </div>
 
@@ -87,7 +89,7 @@ const Register = () => {
                         htmlFor="name"
                         className="absolute left-3 top-2.5 text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base peer-focus:top-2.5 peer-focus:text-sm peer-focus:text-blue-500"
                     >
-                        Username
+                        {t("register.username")}
                     </label>
                 </div>
 
@@ -106,7 +108,7 @@ const Register = () => {
                         htmlFor="password"
                         className="absolute left-3 top-2.5 text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base peer-focus:top-2.5 peer-focus:text-sm peer-focus:text-blue-500"
                     >
-                        Password
+                        {t("register.password")}
                     </label>
                 </div>
 
@@ -115,7 +117,7 @@ const Register = () => {
                     type="submit"
                     className="w-full bg-blue-500 text-white py-2 rounded-md font-semibold hover:bg-blue-600 transition"
 
-                >Register
+                >{t("register.register")}
                 </button>
             </form>
 
@@ -135,7 +137,7 @@ const Register = () => {
                 >
                     Apple
                 </button>
-                <p><Link to="/login">Or log in here</Link>
+                <p><Link to="/login">{t("register.or-login-here")}</Link>
 
                 </p>
             </div>

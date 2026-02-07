@@ -6,10 +6,17 @@ import {
     SelectTrigger,
     SelectValue
 } from "./ui/select";
+import { changeLanguage } from "i18next"
+import { useTranslation } from 'react-i18next';
 
-const languageOptions = ["en", "fi"]
+const languageOptions = ["en", "fi", "hu"]
 
 const LanguageDropdown = () => {
+
+    const {i18n} = useTranslation()
+    const changeLanguage = (lang: string) => {
+        i18n.changeLanguage(lang)
+    }
 
     //Note: language choice should be stored in browser's local storage
 
@@ -27,8 +34,9 @@ const LanguageDropdown = () => {
     return (
         <div>
             <Select value={selected} onValueChange={(lang) => {
-                setSelected
-                //i18n.changeLanguage(lang)
+                setSelected(lang)
+                changeLanguage(lang.toLocaleLowerCase())
+                console.log(lang.toLowerCase())
                 }} >
                 <SelectTrigger ref={triggerRef} className="flex [&>svg]:hidden">
                     <SelectValue placeholder={selected} />

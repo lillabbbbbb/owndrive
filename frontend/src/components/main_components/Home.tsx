@@ -17,7 +17,7 @@ import { useAppContext } from "../context/globalContext";
 import CustomDialog from '../popups/CustomDialog';
 import { config } from 'process';
 import { IFileFrontend } from '../../types/File';
-
+import {useTranslation} from 'react-i18next'
 
 export const sortingTypes = {
   by_last_modified: "Last modified",
@@ -60,8 +60,9 @@ enum datesEnum {
 
 const Home = () => {
 
+  const {t} = useTranslation()
   const navigate = useNavigate()
-  const { user, files = [], getFiles, getFile, updateFile, restoreAllArchived, deleteAllArchived, userLoading, userError, filesLoading, filesError } = useAppContext()
+  const { user, files = [], getFiles, getFile, updateFile, setCurrentFileId, restoreAllArchived, deleteAllArchived, userLoading, userError, filesLoading, filesError } = useAppContext()
 
   const [isClicked, setClicked] = useState(false)
   const [selectedSorting, setSelectedSorting] = useState(sortingTypes.by_last_modified)
@@ -73,13 +74,14 @@ const Home = () => {
 
   useEffect(() => {
     getFiles();
+    setCurrentFileId(null)
   }, []); // empty deps → runs once
 
   const fileTypes = [...new Set((files || []).map((file: IFileFrontend) => file.file_type))]
   const ownerNames = [...new Set((files || []).map((file: IFileFrontend) => file.created_by))]
-  console.log(fileTypes)
-  console.log(ownerNames)
-  console.log(files.toLocaleString)
+  //console.log(fileTypes)
+  //console.log(ownerNames)
+  //console.log(files.toLocaleString)
 
   const [filters, setFilters] = useState<Filters>({
     fileTypes: new Set(),
@@ -142,7 +144,7 @@ const Home = () => {
   }
   const filterConfigs = [fileTypeFilter, ownerFilter, dateFilter, statusFilter]
 
-  console.log(selectedSorting)
+  //console.log(selectedSorting)
   //apply sorting to the table data and set the sortedData's new state
   const sortTable = (files: IFileFrontend[], sorting?: string) => {
     console.log("sorting the data in progress..")
@@ -275,16 +277,16 @@ const Home = () => {
   const sortedFilteredData = useMemo(() => {
     if (!files || files.length === 0) return [];
 
-    console.log('🔄 Recalculating sorted/filtered data...');
-    console.log("Search keyword:", searchKeyword)
+    //console.log('🔄 Recalculating sorted/filtered data...');
+    //console.log("Search keyword:", searchKeyword)
     const searched = matchSearch(files, searchKeyword);
-    console.log('✅ Search:', searched.length, 'items');
-    console.log(searched.toString())
+    //console.log('✅ Search:', searched.length, 'items');
+    //console.log(searched.toString())
     const searchedFiltered = applyFilters(searched, filters);
-    console.log('✅ After filtering:', searchedFiltered.length, 'items');
+    //console.log('✅ After filtering:', searchedFiltered.length, 'items');
     const sorted = sortTable(searchedFiltered, selectedSorting);
 
-    console.log('✅ Result:', sorted.length, 'items');
+    //console.log('✅ Result:', sorted.length, 'items');
     return sorted;
   }, [files, filters, searchKeyword, selectedSorting]);
 
@@ -308,7 +310,7 @@ const Home = () => {
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.trim()
     setSearchKeyword(value)
-    console.log("Keyword changed to " + value)
+    //console.log("Keyword changed to " + value)
 
     // Clear previous timeout if user keeps typing
     if (debounceTimeout) clearTimeout(debounceTimeout);
@@ -337,7 +339,7 @@ const Home = () => {
 
       <Input
         type="text"
-        placeholder="Search files..."
+        placeholder={t("home.search-placeholder")}
         value={searchKeyword}
         onChange={(e) => { handleSearchChange(e) }}
         className="w-full"
@@ -356,22 +358,22 @@ const Home = () => {
       </div>
       {!showingArchives &&
           <>
-            <Button onClick={() => handleCreateNewClick()}>Create new</Button>
+            <Button onClick={() => handleCreateNewClick()}>{t("home.create-new")}</Button>
             <UploadFileDialog />
           </>
         }
         {
           showingArchives &&
           <>
-            <Button onClick={() => handleRestoreAll()}>Restore all</Button>
-            <Button onClick={() => handleDeleteAll()}>Delete all</Button>
+            <Button onClick={() => handleRestoreAll()}>{t("restore-all")}</Button>
+            <Button onClick={() => handleDeleteAll()}>{t("delete-all")}</Button>
           </>
         }
 
       {userError && <CustomDialog text={userError} />}
-      {userError && <p>Loading...</p>}
+      {userError && <p>{t("Loading...")}</p>}
       {filesError && <CustomDialog heading="Error" text={filesError} />}
-      {filesLoading && <p>Loading...</p>}
+      {filesLoading && <p>{t("Loading...")}</p>}
 
       {/*
       {!showingArchives && isClicked && <EditorButtons canView={canView} setCanView={setCanView} canEdit={canEdit} setCanEdit={setCanEdit} visibleToGuest={visibleToGuest} setVisibleToGuest={setVisibleToGuest} isPrivate={isPrivate} setIsPrivate={setIsPrivate} />}

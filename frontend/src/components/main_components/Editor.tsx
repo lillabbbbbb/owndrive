@@ -21,9 +21,12 @@ import { useAppContext } from "../context/globalContext";
 import { useFiles } from '../../hooks/useFiles';
 import { useUser } from '../../hooks/useUser';
 import { IFileFrontend } from '../../types/File';
+import Login from './Login';
+import { useTranslation } from 'react-i18next';
 
 const Editor = () => {
 
+    const {t} = useTranslation()
     const [guestDialogOpen, setGuestDialogOpen] = useState<boolean>(true)
     const jwt = localStorage.getItem("token")
 
@@ -31,7 +34,7 @@ const Editor = () => {
     const [filename, setFilename] = useState<string>("New file")
     const [beingUsed, setBeingUsed] = useState<boolean>(false)
     const [content, setContent] = useState<string>("Write here...")
-    const [lastEditedAt, setLastEditedAt] = useState<string>("")
+    //const [lastEditedAt, setLastEditedAt] = useState<string>("")
     const [canView, setCanView] = useState<string[]>([])
     const [canEdit, setCanEdit] = useState<string[]>([])
     const [visibleToGuest, setVisibleToGuest] = useState<boolean>(false)
@@ -62,9 +65,16 @@ const Editor = () => {
         if (!currentFileId) return
         const loadFile = async () => {
             const fetchedFile = await getCurrentFile(currentFileId)
-            setFile(fetchedFile)
-            console.log(fetchedFile?.content)
-            console.log(fetchedFile)
+            if (fetchedFile) {
+                setFile(fetchedFile)
+                setVisibleToGuest(fetchedFile.visibleToGuests)
+                setCanEdit(fetchedFile.canEdit)
+                setCanView(fetchedFile.canView)
+                setIsPrivate(fetchedFile.private)
+
+                console.log(fetchedFile.content)
+                console.log(fetchedFile)
+            }
         }
         loadFile()
     }, [currentFileId])
@@ -104,7 +114,8 @@ const Editor = () => {
         return true
     }
 
-    const isExistingFile = async (id: string) => {
+    const isExistingFile = async (id: string | null) => {
+        if(!id) return false
         console.log(currentFileId)
         return !!(await getFile(id))
     }
@@ -119,7 +130,7 @@ const Editor = () => {
 
         const isExisting: boolean = await isExistingFile(currentFileId)
         console.log(isExisting)
-        if (isExisting) {
+        if (isExisting && currentFileId) {
             //if this file exists, but the content has been modified
             updateFile(currentFileId, {
                 last_edited_at: new Date(),
@@ -154,30 +165,36 @@ const Editor = () => {
         //check if filename is valid and unique,
         if (!isValidFilename(filename)) return
 
-        //if a file with this name doesnt exist in the user's drive (go through userData.files array in search of a match)
-        //create new file record and append it to the user
-        createFile({
-            created_by: user._id,
-            filename: "default",
-            file_type: "default",
-            content: content,
-            inUse: true,
-            usedBy: user._id
-        })
+        if (!currentFileId) {
+            //if a file with this name doesnt exist in the user's drive (go through userData.files array in search of a match)
+            //create new file record and append it to the user
 
-        //if so, save the new name of the file in the DB (PATCH call)
-        updateFile(currentFileId, {
-            last_edited_at: new Date(),
-            filename: newFileName,
-            inUse: true,
-            usedBy: user._id,
-            status: "active",
-        })
+            createFile({
+                created_by: user._id,
+                filename:  "default",
+                file_type: "default",
+                content: content,
+                inUse: true,
+                usedBy: user._id
+            })
+            return
+        }
+
+        else {
+            //if so, save the new name of the file in the DB (PATCH call)
+            updateFile(currentFileId, {
+                last_edited_at: new Date(),
+                filename: newFileName,
+                inUse: true,
+                usedBy: user._id,
+                status: "active",
+            })
+        }
 
         //and display the new one
         //needs state or sum?
         //refresh URL with correct new filename
-        navigate(`/${username}/${newFileName}`, { replace: true })
+        navigate(`/${username}/${currentFileId}`, { replace: true })
 
         //if not valid, set the value to be the previous file name
     }
@@ -185,51 +202,59 @@ const Editor = () => {
 
     return (
         <>
-            {/* Render this if user is logged in */}
-            {beingUsed && <ConcurrentEditingPopup />}
-
-            <Button onClick={() => handleSave()}>Save</Button>
-            {<div ref={targetRef}>
-                <EditorButtons toPDF={toPDF} targetRef={targetRef} />
-                <EditableText value={file?.filename ?? filename} onSave={handleSaveFileName} />
-                <div>
-                    <EditorField ref={editorRef} content={file?.content ? content : content} setContent={setContent} editable={editable} />
-                    <div>Word count: {content ? content.trim().split(/\s+/).filter(Boolean).length : 0}</div>
-                </div>
-
-
-            </div>
-            }
-
-            {/* Render this if user is NOT logged in */}
-            {!jwt &&
+            {!(jwt || visibleToGuest) &&
                 <>
-
-                    <Dialog open={guestDialogOpen} onOpenChange={setGuestDialogOpen}>
-                        <DialogContent>
-
-                            <div className="flex flex-col gap-4">
-
-                                <Label>You are not logged in, you are in view-only guest mode.</Label>
-
-                                <Label>
-                                    Log in or sign up to access more features.</Label>
-
-                            </div>
-                            <DialogClose asChild>
-                                <Button variant="outline">Maybe later</Button>
-                            </DialogClose>
-                            <Button>Let's do it!</Button>
-
-                        </DialogContent>
-                    </Dialog>
+                    <Login />
                 </>
             }
-            {userError && <CustomDialog text={userError} />}
-            {userLoading && <p>Loading...</p>}
-            {filesError && <CustomDialog heading="Error" text={filesError} />}
-            {filesLoading && <p>Loading...</p>}
 
+            {(jwt || visibleToGuest) && <>
+                {/* Render this if user is logged in */}
+                {beingUsed && <ConcurrentEditingPopup />}
+
+                <Button onClick={() => handleSave()}>Save</Button>
+                {<div ref={targetRef}>
+                    <EditorButtons htmlContent={content}/>
+                    <EditableText value={file?.filename ?? filename} onSave={handleSaveFileName} />
+                    <div>
+                        <EditorField ref={editorRef} content={file?.content ? content : content} setContent={setContent} editable={editable} />
+                        <div>Word count: {content ? content.trim().split(/\s+/).filter(Boolean).length : 0}</div>
+                    </div>
+
+
+                </div>
+                }
+
+                {/* Render this if user is NOT logged in */}
+                {!jwt &&
+                    <>
+
+                        <Dialog open={guestDialogOpen} onOpenChange={setGuestDialogOpen}>
+                            <DialogContent>
+
+                                <div className="flex flex-col gap-4">
+
+                                    <Label>{t("guest-dialog.heading")}</Label>
+
+                                    <Label>
+                                        {t("guest-dialog.prompt")}</Label>
+
+                                </div>
+                                <DialogClose asChild>
+                                    <Button variant="outline">{t("guest-dialog.no-button")}</Button>
+                                </DialogClose>
+                                <Button>{t("guest-dialog.yes-button")}</Button>
+
+                            </DialogContent>
+                        </Dialog>
+                    </>
+                }
+                {userError && <CustomDialog text={userError} />}
+                {userLoading && <p>{("Loading...")}</p>}
+                {filesError && <CustomDialog heading="Error" text={filesError} />}
+                {filesLoading && <p>{("Loading...")}</p>}
+
+            </>}
         </>
     )
 }

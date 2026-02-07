@@ -12,10 +12,12 @@ import CustomDialog from '../popups/CustomDialog';
 import { SUPPORTED_TEXT_TYPES, SUPPORTED_IMAGE_TYPES } from "../../types/File"
 import { useNavigate } from 'react-router-dom';
 import { useDropzone } from "react-dropzone";
+import { useTranslation } from 'react-i18next';
 
 
 const UploadFileDialog = () => {
 
+  const {t} = useTranslation()
   const navigate = useNavigate()
   const { user, setCurrentFileId, createFile, filesLoading, filesError } = useAppContext()
 
@@ -109,11 +111,11 @@ const UploadFileDialog = () => {
       <input {...getInputProps()} />
 
       <Button type="button" onClick={open}>
-        Upload...
+        {t("home.upload-button")}
       </Button>
 
       {filesError && <CustomDialog heading="Error" text={filesError} />}
-      {filesLoading && <p>Loading...</p>}
+      {filesLoading && <p>{t("Loading...")}</p>}
     </>
   );
 }

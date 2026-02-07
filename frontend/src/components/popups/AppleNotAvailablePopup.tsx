@@ -12,10 +12,12 @@ import {
 import { Label } from "../ui/label"
 import { Switch } from "../ui/switch"
 import { Button } from "../ui/button"
+import { useTranslation } from 'react-i18next';
+
 
 const AppleNotAvailablePopup = () => {
 
-  
+  const {t} = useTranslation()
   const [open, setOpen] = useState<boolean>(false)
 
   return (
@@ -30,12 +32,10 @@ const AppleNotAvailablePopup = () => {
 
           <div className="flex flex-col gap-4">
 
-            <Label>This feature is not available yet.</Label>
+            <Label>{("This feature is not available yet.")}</Label>
             
             <Label>
-Maybe one day.
-
-Wondering why? This feature would cost $99.</Label>
+{("Maybe one day.\nWondering why? This feature would cost $99.")}</Label>
           
           </div>
             <DialogClose asChild>

@@ -13,6 +13,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "./context/globalContext";
 import { IFileFrontend } from "../types/File";
+import { useTranslation } from "react-i18next";
 
 
 type TableProps = {
@@ -26,11 +27,13 @@ const COLUMN_NAMES = ["filename", "file_type", "created_by", "last_edited_at", "
 
 export default function FilesTable({ onRowClick, sortedFilteredData }: TableProps) {
 
+  const {t} = useTranslation()
+
   //console.log('📊 TABLE RECEIVED:', sortedFilteredData?.length, 'items');
   console.log('Table data:', sortedFilteredData);
 
   const navigate = useNavigate()
-  const { setCurrentFileId } = useAppContext()
+  const { setCurrentFileId, user } = useAppContext()
 
   const [columns, setColumns] = useState<string[]>(COLUMN_NAMES);
   const [currentPage, setCurrentPage] = useState(1);
@@ -79,10 +82,10 @@ export default function FilesTable({ onRowClick, sortedFilteredData }: TableProp
       <div className="flex justify-between items-center px-1">
         <div className="text-sm text-gray-600">
           {currentRows.length === 0 ? (
-            "No files found"
+            t("home.no-results")
           ) : (
             <>
-              Showing {currentRows.length} of {sortedFilteredData.length} file{currentRows.length !== 1 ? 's' : ''}
+              {t("home.results-num") + sortedFilteredData.length}
             </>
           )}
         </div>
@@ -94,11 +97,11 @@ export default function FilesTable({ onRowClick, sortedFilteredData }: TableProp
           <TableHeader>
             <TableRow >
               
-              {columns.includes(COLUMN_NAMES[0]) && <TableHead>{COLUMN_NAMES[0]}</TableHead>}
-              {columns.includes(COLUMN_NAMES[1]) && <TableHead>{COLUMN_NAMES[1]}</TableHead>}
-              {columns.includes(COLUMN_NAMES[2]) && <TableHead>{COLUMN_NAMES[2]}</TableHead>}
-              {columns.includes(COLUMN_NAMES[3]) && <TableHead>{COLUMN_NAMES[3]}</TableHead>}
-              {columns.includes(COLUMN_NAMES[4]) && <TableHead className="text-right">{COLUMN_NAMES[4]}</TableHead>}
+              {columns.includes(COLUMN_NAMES[0]) && <TableHead>{t(COLUMN_NAMES[0])}</TableHead>}
+              {columns.includes(COLUMN_NAMES[1]) && <TableHead>{t(COLUMN_NAMES[1])}</TableHead>}
+              {columns.includes(COLUMN_NAMES[2]) && <TableHead>{t(COLUMN_NAMES[2])}</TableHead>}
+              {columns.includes(COLUMN_NAMES[3]) && <TableHead>{t(COLUMN_NAMES[3])}</TableHead>}
+              {columns.includes(COLUMN_NAMES[4]) && <TableHead className="text-right">{t(COLUMN_NAMES[4])}</TableHead>}
             </TableRow>
           </TableHeader>
 
@@ -108,7 +111,7 @@ export default function FilesTable({ onRowClick, sortedFilteredData }: TableProp
               <TableRow className="text-left w-auto whitespace-nowrap px-4 py-2" key={file._id} onClick={() => onRowClick(file)} onDoubleClick={() => handleRowDoubleClick(file)}>
                 {columns.includes(COLUMN_NAMES[0]) && <TableCell className="whitespace-nowrap pr-16 py-2">{`${file.filename} (${file._id})`}</TableCell>}
                 {columns.includes(COLUMN_NAMES[1]) && <TableCell className="whitespace-nowrap pr-16 py-2">{file.file_type}</TableCell>}
-                {columns.includes(COLUMN_NAMES[3]) && <TableCell className="whitespace-nowrap pr-16 py-2">{file.created_by}</TableCell>}
+                {columns.includes(COLUMN_NAMES[3]) && <TableCell className="whitespace-nowrap pr-16 py-2">{user?.username}</TableCell>}
                 {columns.includes(COLUMN_NAMES[2]) && <TableCell className="whitespace-nowrap pr-16 py-2">{new Date(file.last_edited_at).toLocaleDateString()}</TableCell>}
                 {columns.includes(COLUMN_NAMES[4]) && <TableCell className="whitespace-nowrap pl-16 py-2">{new Date(file.created_at).toLocaleDateString()}</TableCell>}
               </TableRow>
@@ -124,17 +127,17 @@ export default function FilesTable({ onRowClick, sortedFilteredData }: TableProp
           disabled={currentPage === 1}
           onClick={() => setCurrentPage((p) => p - 1)}
         >
-          Previous
+          t(Previous)
         </button>
         <span>
-          Page {currentPage} of {totalPages}
+          t(Page) {currentPage}/{totalPages}
         </span>
         <button
           className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
           disabled={currentPage === totalPages}
           onClick={() => setCurrentPage((p) => p + 1)}
         >
-          Next
+          t(Next)
         </button>
       </div>
     </div>

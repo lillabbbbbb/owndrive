@@ -3,10 +3,12 @@ import React from 'react'
 import { Link, useNavigate } from "react-router-dom"
 import AppleNotAvailablePopup from "../popups/AppleNotAvailablePopup";
 import { useAppContext } from "../context/globalContext";
+import { useTranslation } from "react-i18next";
 
 
 const Login = () => {
 
+    const { t } = useTranslation()
     const navigate = useNavigate()
     const { login } = useAppContext()
 
@@ -53,7 +55,7 @@ const Login = () => {
 
             <div className="min-h-screen flex items-center justify-center bg-gray-50">
                 <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl shadow-lg w-96 flex flex-col gap-6">
-                    <h2 className="text-2xl font-bold text-gray-800 text-center">Log in</h2>
+                    <h2 className="text-2xl font-bold text-gray-800 text-center">{t('login.log-in')}</h2>
 
                     <div className="relative">
                         <input
@@ -69,7 +71,7 @@ const Login = () => {
                             htmlFor="name"
                             className="absolute left-3 top-2.5 text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base peer-focus:top-2.5 peer-focus:text-sm peer-focus:text-blue-500"
                         >
-                            Email
+                            {t("login.email")}
                         </label>
                     </div>
 
@@ -88,7 +90,7 @@ const Login = () => {
                             htmlFor="password"
                             className="absolute left-3 top-2.5 text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base peer-focus:top-2.5 peer-focus:text-sm peer-focus:text-blue-500"
                         >
-                            Password
+                            {t("login.password")}
                         </label>
                     </div>
 
@@ -97,7 +99,7 @@ const Login = () => {
                         type="submit"
                         className="w-full bg-blue-500 text-white py-2 rounded-md font-semibold hover:bg-blue-600 transition"
 
-                    >Log in
+                    >{t("login.log-in")}
                     </button>
                 </form>
 
@@ -112,7 +114,7 @@ const Login = () => {
                     </button>
                     <AppleNotAvailablePopup />
 
-                    <p><Link to="/register">Or register here</Link>
+                    <p><Link to="/register">{t("Or register here")}</Link>
 
                     </p>
                 </div>

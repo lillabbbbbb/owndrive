@@ -1,0 +1,123 @@
+{
+    "home": {
+        "home": "Koti",
+        "create-new": "Luo uusi",
+        "search-placeholder": "Kirjoita hakusana tähän",
+        "search-button": "Hae",
+        "results-num": "tiedostot",
+        "no-results": "Ei tuloksia",
+        "not-found": "Ei löydy!",
+        "upload-button": "Lataa",
+        "sort-option": {
+            "last-modified": "Viimeksi muokattu",
+            "by-name-ascending": "Nimen mukaan (A-Z)",
+            "by-name-descending": "Nimen mukaan (Z-A)",
+            "by-creator-ascending": "Tekijän mukaan (A-Z)",
+            "by-creator-descending": "Tekijän mukaan (Z-A)"
+        },
+        "filter-button": "Suodata",
+        "table-header": {
+            "doc-name": "Tiedoston nimi",
+            "file-type": "Tyyppi",
+            "created-by": "Luonut",
+            "last-edited-at": "Viimeksi muokattu",
+            "created-at": "Luotu"
+        },
+        "pagination": {
+            "previous": "Edellinen",
+            "next": "Seuraava",
+            "page": "Sivu"
+        }
+    },
+    "editor": {
+        "word-count": "Sanojen määrä"
+    },
+    "clone-window": {},
+    "settings": {
+        "profile-picture": "Vaihda profiilikuva",
+        "dark-mode": "Tumma tila",
+        "light-mode": "Vaalea tila",
+        "archives": "Arkistot",
+        "log-out": "Kirjaudu ulos"
+    },
+    "login": {
+        "log-in": "Kirjaudu sisään",
+        "email": "Sähköposti",
+        "email-placeholder": "Sähköpostiosoitteesi",
+        "password": "Salasana",
+        "password-placeholder": "Kirjoita salasanasi tähän...",
+        "or-register-here": "tai rekisteröidy tästä"
+    },
+    "registration": {
+        "register": "Rekisteröidy",
+        "email": "Sähköposti",
+        "email-placeholder": "Sähköpostiosoitteesi",
+        "username": "Käyttäjätunnus",
+        "username-placeholder": "Kirjoita käyttäjätunnuksesi tähän...",
+        "password": "Salasana",
+        "password-placeholder": "Kirjoita salasanasi tähän...",
+        "or-login-here": "tai kirjaudu tästä"
+    },
+    "archive": {
+        "delete-all": "Poista kaikki",
+        "delete": "Poista",
+        "restore": "Palauta",
+        "restore-all": "Palauta kaikki"
+    },
+    "editor-buttons": {
+        "share_button": "Jaa",
+        "download_PDF": "Lataa PDF",
+        "generate_shareable_link": "Luo jaettava linkki",
+        "invite_others": "Kutsu muita",
+        "clone_button": "Kloonaa",
+        "rename": "Nimeä uudelleen",
+        "edit_permissions": "Muokkaa käyttöoikeuksia",
+        "make_private": "Tee yksityiseksi (Piilota tiedosto vierailta ja kaikilta jaetuilta käyttäjiltä)",
+        "delete": "Poista"
+    },
+    "share": {
+        "copy_link": "Kopioi linkki",
+        "show_for_guests:toggle": "Näytä vieraille (Salli vieraiden nähdä tiedosto)",
+        "or_add_by_username": "Tai lisää käyttäjätunnuksen mukaan",
+        "type_username_placeholder": "Kirjoita käyttäjätunnus...",
+        "add_user_button": "Lisää käyttäjä"
+    },
+    "change-profile-pic": {},
+    "filter-options": {
+        "by-file-type": "Tiedostotyypin mukaan",
+        "by-owner": "Omistajan mukaan",
+        "by-date": "Päivämäärän mukaan",
+        "date-options": {},
+        "by-status": "Tilanteen mukaan",
+        "status": {
+            "active": "Aktiivinen",
+            "archived": "Arkistoitu"
+        }
+    },
+    "guest-dialog": {
+        "heading": "Et ole kirjautunut, olet vain katselijana vierastilassa.",
+        "prompt": "Kirjaudu sisään tai rekisteröidy saadaksesi lisää ominaisuuksia.",
+        "yes-button": "Tehdään se!",
+        "no-button": "Ehkä myöhemmin"
+    },
+    "dialog": {
+        "clone": {
+            "clone-action": "Kloonaa",
+            "description": "Uusi asiakirja tallennetaan Driveesi.",
+            "name": "Nimi",
+            "error": "Virheellinen tiedostonimi / Tiedosto tällä nimellä on jo olemassa",
+            "save-copy": "Tallenna kopio"
+        },
+        "concurrent-editing": {
+            "heading": "Hups, joku muu muokkaa tätä tiedostoa juuri nyt!",
+            "refresh-button": "Päivitä"
+        },
+        "unavailable": {
+            "heading": "Tämä ominaisuus ei ole vielä käytettävissä.",
+            "description": "..."
+        },
+        "change-profile-pic": {
+            "upload-image": "Lataa kuva"
+        }
+    }
+}

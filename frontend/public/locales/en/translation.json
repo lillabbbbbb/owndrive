@@ -1,0 +1,123 @@
+{
+    "home": {
+        "home": "Home",
+        "create-new": "Create new",
+        "search-placeholder": "Type your search term here",
+        "search-button": "Search",
+        "results-num": "files",
+        "no-results": "No results",
+        "not-found": "Not found!",
+        "upload-button": "Upload",
+        "sort-option": {
+            "last-modified": "Last modified",
+            "by-name-ascending": "Name (A-Z)",
+            "by-name-descending": "Name (Z-A)",
+            "by-creator-ascending": "Creator (A-Z)",
+            "by-creator-descending": "Creator (Z-A)"
+        },
+        "filter-button": "Filter",
+        "table-header": {
+            "doc-name": "File name",
+            "file-type": "Type",
+            "created-by": "Created by",
+            "last-edited-at": "Last edited at",
+            "created-at": "Created at"
+        },
+        "pagination": {
+            "previous": "Previous",
+            "next": "Next",
+            "page": "Page"
+        }
+    },
+    "editor": {
+        "word-count": "Word count"
+    },
+    "clone-window": {},
+    "settings": {
+        "profile-picture": "Change profile picture",
+        "dark-mode": "Dark mode",
+        "light-mode": "Light mode",
+        "archives": "Archives",
+        "log-out": "Log out"
+    },
+    "login": {
+        "log-in": "Log in",
+        "email": "Email",
+        "email-placeholder": "Your email",
+        "password": "Password",
+        "password-placeholder": "Type your password here...",
+        "or-register-here": "or register here"
+    },
+    "registration": {
+        "register": "Register",
+        "email": "Email",
+        "email-placeholder": "Your email",
+        "username": "Username",
+        "username-placeholder": "Type your username here...",
+        "password": "Password",
+        "password-placeholder": "Type your password here...",
+        "or-login-here": "or log in here"
+    },
+    "archive": {
+        "delete-all": "Delete all",
+        "delete": "Delete",
+        "restore": "Restore",
+        "restore-all": "Restore all"
+    },
+    "editor-buttons": {
+        "share_button": "Share",
+        "download_PDF": "Download PDF",
+        "generate_shareable_link": "Generate shareable link",
+        "invite_others": "Invite others",
+        "clone_button": "Clone",
+        "rename": "Rename",
+        "edit_permissions": "Edit permissions",
+        "make_private": "Make private (Hide file from guests and all shared users)",
+        "delete": "Delete"
+    },
+    "share": {
+        "copy_link": "Copy link",
+        "show_for_guests:toggle": "Show to guests (Allow guests to see file)",
+        "or_add_by_username": "Or add by username",
+        "type_username_placeholder": "Type the username...",
+        "add_user_button": "Add user"
+    },
+    "change-profile-pic": {},
+    "filter-options": {
+        "by-file-type": "By file type",
+        "by-owner": "By owner",
+        "by-date": "By date",
+        "date-options": {},
+        "by-status": "By status",
+        "status": {
+            "active": "Active",
+            "archived": "Archived"
+        }
+    },
+    "guest-dialog": {
+        "heading": "You are not logged in, you are in view-only guest mode.",
+        "prompt": "Log in or sign up to access more features.",
+        "yes-button": "Let's do it!",
+        "no-button": "Maybe later"
+    },
+    "dialog": {
+        "clone": {
+            "clone-action": "Clone",
+            "description": "The new document will be saved in your Drive.",
+            "name": "Name",
+            "error": "Invalid file name / File with this name already exists",
+            "save-copy": "Save a copy"
+        },
+        "concurrent-editing": {
+            "heading": "Oops, someone else is editing this file right now!",
+            "refresh-button": "Refresh"
+        },
+        "unavailable": {
+            "heading": "This feature is not available yet.",
+            "description": "..."
+        },
+        "change-profile-pic": {
+            "upload-image": "Upload image"
+        }
+    }
+}

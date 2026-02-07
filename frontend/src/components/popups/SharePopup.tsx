@@ -27,6 +27,8 @@ import { useFiles } from '../../hooks/useFiles';
 import { useAppContext } from "../context/globalContext";
 import CustomDialog from '../popups/CustomDialog';
 import { IFileFrontend } from '../../types/File';
+import { useTranslation } from 'react-i18next';
+
 
 export type customOption = {
   label: string
@@ -44,6 +46,7 @@ const allUsers = usernames.map((u) => ({
 
 export function SharePopup() {
 
+  const { t } = useTranslation()
   const { currentFileId, getFile, updateFile, filesLoading, filesError } = useAppContext()
 
   const [file, setFile] = useState<IFileFrontend | null>(null)
@@ -101,18 +104,18 @@ export function SharePopup() {
               <FieldContent>
                 <FieldLabel htmlFor="copy-link-text">{shortUrl}</FieldLabel>
               </FieldContent>
-              <Button onClick={() => handleCopy()}>Copy link</Button>
+              <Button onClick={() => handleCopy()}>{t("share.copy_link")}</Button>
             </Field>
 
             <Field orientation="horizontal">
               <FieldContent>
-                <FieldLabel htmlFor="visible-to-guests">Allow guests to see file</FieldLabel>
+                <FieldLabel htmlFor="visible-to-guests">{t("share.show_for_guests:toggle")}</FieldLabel>
                 <FieldDescription>
                   ...
                 </FieldDescription>
               </FieldContent>
 
-              <Switch id="visible-to-guest" onCheckedChange={(c) => updateFile(currentFileId, { visibleToGuests: !c })} /> //visible to guest
+              <Switch id="visible-to-guest" onCheckedChange={(c) => updateFile(currentFileId!, { visibleToGuests: !c })} /> //visible to guest
             </Field>
 
 
@@ -131,7 +134,7 @@ export function SharePopup() {
               }}
               value={(file.canEdit || []).map(user => ({ value: user, label: user }))} // controlled component
               onChange={(newValue: MultiValue<customOption>, actionMeta: ActionMeta<customOption>) => {
-                updateFile(currentFileId, { canEdit: newValue.map((v: customOption) => v.value) }); // back to string[] //set who can edit
+                updateFile(currentFileId!, { canEdit: newValue.map((v: customOption) => v.value) }); // back to string[] //set who can edit
               }}
 
               menuIsOpen={addUsersMenuOpen}
@@ -141,19 +144,19 @@ export function SharePopup() {
 
           <Field orientation="horizontal">
             <FieldContent>
-              <FieldLabel htmlFor="is-private">Make private</FieldLabel>
+              <FieldLabel htmlFor="is-private">{t("editor-buttons.make_private")}</FieldLabel>
               <FieldDescription>
-                Hide file from guests and all shared users.
+                {t("editor-buttons.make_private")}
               </FieldDescription>
             </FieldContent>
             <Switch
               id="is-private"
               checked={file.private}
-              onCheckedChange={(c) => { updateFile(currentFileId, { private: c }) }} //set is private
+              onCheckedChange={(c) => { updateFile(currentFileId!, { private: c }) }} //set is private
             />
           </Field>
           {filesError && <CustomDialog heading="Error" text={filesError} />}
-          {filesLoading && <p>Loading...</p>}
+          {filesLoading && <p>{("Loading...")}</p>}
 
 
         </DialogContent>

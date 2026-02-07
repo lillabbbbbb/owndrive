@@ -9,6 +9,7 @@ import { IUser, User } from "../models/User"
 import { validateEmail, validatePassword, validateUsername } from "../validators/inputValidation"
 import { validateUserToken } from "../middleware/userValidation"
 import dotenv from "dotenv"
+import puppeteer from "puppeteer";
 //import { validateToken} from "../middleware/validateToken"
 
 
@@ -21,7 +22,7 @@ dotenv.config()
 
 
 //Handle login requests
-router.post("/login",
+router.post("/auth/login",
     //sanithize user input (check for injection)
     [validateEmail,
         validatePassword],
@@ -58,7 +59,7 @@ router.post("/login",
 
 //Note: entire code was pasted, needs modification
 //Handle register requests
-router.post("/register",
+router.post("/auth/register",
     //sanithize user input (check for injection)
     [validateEmail,
         validatePassword,
@@ -104,7 +105,7 @@ router.post("/register",
         }
     })
 
-router.post("/login/google", passport.authenticate("google", { scope: ['profile'] }))
+router.post("/auth/login/google", passport.authenticate("google", { scope: ['profile'] }))
 
 /*router.get("/auth/google/callback", passport.authenticate("google", {
     session:false,
@@ -151,5 +152,57 @@ router.post("/login/google", passport.authenticate("google", { scope: ['profile'
 
     
 })*/
+
+
+router.post("/pdf", async (req: Request, res: Response) => {
+    try {
+        const { html } = req.body;
+
+        const browser = await puppeteer.launch({
+            headless: true // modern mode
+        });
+
+        const page = await browser.newPage();
+
+        await page.setContent(`
+  <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; padding: 40px; }
+        h1, h2, h3 { margin-bottom: 10px; }
+        p { margin-bottom: 8px; }
+        img { max-width: 100%; height: auto; }
+      </style>
+    </head>
+    <body>
+      ${html}
+    </body>
+  </html>
+`, { waitUntil: "networkidle0" });
+
+        const pdf = await page.pdf({
+            format: "A4",
+            printBackground: true,
+            margin: {
+                top: "20mm",
+                bottom: "20mm",
+                left: "15mm",
+                right: "15mm",
+            },
+        });
+
+        await browser.close();
+
+        res.set({
+            "Content-Type": "application/pdf",
+            "Content-Length": pdf.length,
+        });
+
+        res.send(pdf);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error generating PDF");
+    }
+});
 
 export default router

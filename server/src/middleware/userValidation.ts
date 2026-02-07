@@ -16,8 +16,8 @@ export const validateUserToken = (
     next: NextFunction
 ) => {
 
-    console.log('Headers received:', req.headers);
-        console.log('Auth header:', req.headers.authorization);
+    //console.log('Headers received:', req.headers);
+    //console.log('Auth header:', req.headers.authorization);
 
     const token: string | undefined = req.header("authorization")?.split(" ")[1];
     if (!token) return res.status(401).json({ message: "Token not found." });

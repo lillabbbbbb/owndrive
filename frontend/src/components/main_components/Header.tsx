@@ -9,11 +9,19 @@ import { IUser } from "../../../../server/src/models/User"
 import { IUserTest, IFileTest } from "../../App"
 import SettingsDropdownMenu from "../SettingsDropdownMenu"
 import LanguageDropdown from "../LanguageDropdown"
+import { useEffect } from "react"
+import { useTranslation } from "react-i18next"
 
 const Header = () => {
 
+
+    const { t } = useTranslation()
     const navigate = useNavigate()
     const jwt = localStorage.getItem("token")
+
+    useEffect(() => {
+        console.log("jwt changed")
+    }, [jwt])
 
     const handleHomeClick = () => {
         console.log("Home button clicked")
@@ -31,22 +39,22 @@ const Header = () => {
             <div className=" md:flex items-center gap-6">
                 <nav className="flex gap-4">
                     {!jwt &&
-                    <button><Link to="/login">Login</Link></button>
-                }
-                {jwt &&
-                    <>
-                        <button onClick={() => handleHomeClick()}>Home</button>
-                    </>
+                        <button><Link to="/login">{t("login.log-in")}</Link></button>
+                    }
+                    {jwt &&
+                        <>
+                            <button onClick={() => handleHomeClick()}>{t("home.home")}</button>
+                        </>
 
-                }
+                    }
                 </nav>
             </div>
 
             {/* Right */}
             <div className="flex items-center justify-between gap-6">
                 <LanguageDropdown />
-            {jwt && <SettingsDropdownMenu />}
-            
+                {jwt && <SettingsDropdownMenu />}
+
             </div>
         </header>
     )

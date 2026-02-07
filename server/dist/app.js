@@ -11,10 +11,12 @@ const express_1 = __importDefault(require("express"));
 const path_1 = __importDefault(require("path"));
 const index_1 = __importDefault(require("./routes/index"));
 const user_1 = __importDefault(require("./routes/user"));
+const image_1 = __importDefault(require("./routes/image"));
 const morgan_1 = __importDefault(require("morgan"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const cors_1 = __importDefault(require("cors"));
 const file_1 = __importDefault(require("./routes/file"));
+const body_parser_1 = __importDefault(require("body-parser"));
 console.log("🔥 ENTRY FILE LOADED");
 //backbone of the backend
 //Configure environment variables
@@ -39,10 +41,14 @@ app.use(google_passport_config_1.default.initialize());
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
 app.use((0, morgan_1.default)("dev"));
+app.use((0, cors_1.default)());
+app.use(body_parser_1.default.json({ limit: "10mb" }));
+app.use('/images', express_1.default.static(path_1.default.join(__dirname, 'public/images')));
 app.use(express_1.default.static(path_1.default.join(__dirname, "../public")));
-app.use("/api/auth", index_1.default);
+app.use("/api/", index_1.default);
 app.use("/api/users/", user_1.default);
 app.use("/api/files/", file_1.default);
+app.use("/api/images/", image_1.default);
 //Server listens to port
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);

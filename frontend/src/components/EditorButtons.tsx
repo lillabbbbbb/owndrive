@@ -16,32 +16,28 @@ import {
 } from "./ui/dialog"
 import { Label } from "./ui/label"
 import { Button } from "./ui/button"
+import { useTranslation } from 'react-i18next';
 
 interface EditorButtonsProps {
-  toPDF : () => void,
-  targetRef: RefObject<HTMLDivElement>;
+  htmlContent: string
 }
 
-const EditorButtons = ({toPDF, targetRef}: EditorButtonsProps) => {
+const EditorButtons = ({htmlContent}: EditorButtonsProps) => {
 
-  
-  const {currentFileId, createFile, updateFile, filesLoading, filesError} = useAppContext()
+  const {t} = useTranslation()
+  const {downloadPDF, currentFileId, createFile, updateFile, filesLoading, filesError} = useAppContext()
   const [PDFDialogOpen, setPDFDialogOpen] = useState<boolean>(false)
 
   console.log(currentFileId)
 
-  const handleCloneButtonClick = () => {
-    console.log("Clone button clicked, clone window should pop up")
-
-
-  }
   const handlePDFButtonClick = () => {
     console.log("PDF button clicked, cool sonner banner should appear after successful download")
 
     //setPDFDialogOpen(true)
 
     //Handle PDF download logic
-    toPDF()
+    console.log(htmlContent)
+    downloadPDF(htmlContent)
 
     //display sonner
 
@@ -49,7 +45,7 @@ const EditorButtons = ({toPDF, targetRef}: EditorButtonsProps) => {
   const handleDeleteButtonClick = () => {
     console.log("Delete button clicked, reassuring window should pop up")
     //set file's status to "archived"
-    updateFile(currentFileId, {status: "archived"})
+    updateFile(currentFileId!, {status: "archived"})
   }
 
 
@@ -57,7 +53,7 @@ const EditorButtons = ({toPDF, targetRef}: EditorButtonsProps) => {
     <div>
       
       {filesError && <CustomDialog heading="Error" text={filesError} />}
-      {filesLoading && <p>Loading...</p>}
+      {filesLoading && <p>{("Loading...")}</p>}
 
       <Tooltip>
         <TooltipTrigger asChild>
@@ -65,7 +61,7 @@ const EditorButtons = ({toPDF, targetRef}: EditorButtonsProps) => {
           
         </TooltipTrigger>
         <TooltipContent side="top">
-          Share
+          {t("editor-buttons.share")}
         </TooltipContent>
       </Tooltip>
 
@@ -74,7 +70,7 @@ const EditorButtons = ({toPDF, targetRef}: EditorButtonsProps) => {
           <ClonePopup />
         </TooltipTrigger>
         <TooltipContent side="top">
-          Clone
+          {t("editor-buttons.clone")}
         </TooltipContent>
       </Tooltip>
 
@@ -85,11 +81,11 @@ const EditorButtons = ({toPDF, targetRef}: EditorButtonsProps) => {
             className={
               "rounded bg-sky-600 px-4 py-2 text-sm text-white data-active:bg-sky-700 data-hover:bg-sky-500"}
           >
-            PDF
+            {("PDF")}
           </button>
         </TooltipTrigger>
         <TooltipContent side="top">
-          Download PDF
+          {t("editor-buttons.download-PDF")}
         </TooltipContent>
       </Tooltip>
 
@@ -101,7 +97,7 @@ const EditorButtons = ({toPDF, targetRef}: EditorButtonsProps) => {
 
                     <div className="flex flex-col gap-4">
 
-                        <Label>This feature is not available yet.</Label>
+                        <Label>{("This feature is not available yet.")}</Label>
 
                         <Label>
                             ...</Label>
@@ -125,7 +121,7 @@ const EditorButtons = ({toPDF, targetRef}: EditorButtonsProps) => {
           </button>
         </TooltipTrigger>
         <TooltipContent side="top">
-          Delete
+          {t("archive.delete")}
         </TooltipContent>
       </Tooltip>
 

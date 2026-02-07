@@ -5,9 +5,12 @@ type DialogProps = {
     heading?: string,
   text: string;
 };
+import { useTranslation } from "react-i18next";
+
 
 const CustomDialog = ({ heading, text}: DialogProps) => {
 
+  const {t} = useTranslation()
     const [open, setOpen] = useState(true)
 
   return (
@@ -20,7 +23,7 @@ const CustomDialog = ({ heading, text}: DialogProps) => {
             className="mt-4 px-4 py-2 bg-red-500 text-white rounded"
             onClick={() => setOpen(false)}
           >
-            Close
+            {t("close")}
           </button>
         </HeadlessDialog.Panel>
       </div>

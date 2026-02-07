@@ -1,0 +1,123 @@
+{
+    "home": {
+        "home": "Kezdőlap",
+        "create-new": "Új létrehozása",
+        "search-placeholder": "Ide írd a keresőszót",
+        "search-button": "Keresés",
+        "results-num": "fájlok",
+        "no-results": "Nincs találat",
+        "not-found": "Nem található!",
+        "upload-button": "Feltöltés",
+        "sort-option": {
+            "last-modified": "Utoljára módosított",
+            "by-name-ascending": "Név szerint (A-Z)",
+            "by-name-descending": "Név szerint (Z-A)",
+            "by-creator-ascending": "Létrehozó szerint (A-Z)",
+            "by-creator-descending": "Létrehozó szerint (Z-A)"
+        },
+        "filter-button": "Szűrés",
+        "table-header": {
+            "doc-name": "Fájlnév",
+            "file-type": "Típus",
+            "created-by": "Létrehozta",
+            "last-edited-at": "Utolsó módosítás dátuma",
+            "created-at": "Létrehozás dátuma"
+        },
+        "pagination": {
+            "previous": "Előző",
+            "next": "Következő",
+            "page": "Oldal"
+        }
+    },
+    "editor": {
+        "word-count": "Szavak száma"
+    },
+    "clone-window": {},
+    "settings": {
+        "profile-picture": "Profilkép módosítása",
+        "dark-mode": "Sötét mód",
+        "light-mode": "Világos mód",
+        "archives": "Archívumok",
+        "log-out": "Kijelentkezés"
+    },
+    "login": {
+        "log-in": "Jelentkezés",
+        "email": "Email",
+        "email-placeholder": "Az email címed",
+        "password": "Jelszó",
+        "password-placeholder": "Ide írd a jelszavad...",
+        "or-register-here": "vagy regisztrálj ide kattintva"
+    },
+    "registration": {
+        "register": "Regisztráció",
+        "email": "Email",
+        "email-placeholder": "Az email címed",
+        "username": "Felhasználónév",
+        "username-placeholder": "Ide írd a felhasználóneved...",
+        "password": "Jelszó",
+        "password-placeholder": "Ide írd a jelszavad...",
+        "or-login-here": "vagy jelentkezz be ide kattintva"
+    },
+    "archive": {
+        "delete-all": "Összes törlése",
+        "delete": "Törlés",
+        "restore": "Visszaállítás",
+        "restore-all": "Összes visszaállítása"
+    },
+    "editor-buttons": {
+        "share_button": "Megosztás",
+        "download_PDF": "PDF letöltése",
+        "generate_shareable_link": "Megosztható link generálása",
+        "invite_others": "Mások meghívása",
+        "clone_button": "Klónozás",
+        "rename": "Átnevezés",
+        "edit_permissions": "Jogosultságok szerkesztése",
+        "make_private": "Priváttá tétel (Rejtett a vendégek és minden megosztott felhasználó elől)",
+        "delete": "Törlés"
+    },
+    "share": {
+        "copy_link": "Link másolása",
+        "show_for_guests:toggle": "Vendégeknek mutatás (A vendégek láthatják a fájlt)",
+        "or_add_by_username": "Vagy adj hozzá felhasználónév alapján",
+        "type_username_placeholder": "Írd be a felhasználónevet...",
+        "add_user_button": "Felhasználó hozzáadása"
+    },
+    "change-profile-pic": {},
+    "filter-options": {
+        "by-file-type": "Fájl típus szerint",
+        "by-owner": "Tulajdonos szerint",
+        "by-date": "Dátum szerint",
+        "date-options": {},
+        "by-status": "Állapot szerint",
+        "status": {
+            "active": "Aktív",
+            "archived": "Archivált"
+        }
+    },
+    "guest-dialog": {
+        "heading": "Nem vagy bejelentkezve, csak vendég megtekintési módban vagy.",
+        "prompt": "Jelentkezz be vagy regisztrálj a további funkciók eléréséhez.",
+        "yes-button": "Csináljuk!",
+        "no-button": "Talán később"
+    },
+    "dialog": {
+        "clone": {
+            "clone-action": "Klónozás",
+            "description": "Az új dokumentum a Drive-odba kerül mentésre.",
+            "name": "Név",
+            "error": "Érvénytelen fájlnév / Már létezik ilyen nevű fájl",
+            "save-copy": "Másolat mentése"
+        },
+        "concurrent-editing": {
+            "heading": "Hoppá, valaki éppen szerkeszti ezt a fájlt!",
+            "refresh-button": "Frissítés"
+        },
+        "unavailable": {
+            "heading": "Ez a funkció még nem elérhető.",
+            "description": "..."
+        },
+        "change-profile-pic": {
+            "upload-image": "Kép feltöltése"
+        }
+    }
+}

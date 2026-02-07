@@ -2,9 +2,11 @@ import React, { useState } from 'react'
 import { Button } from "./ui/button"
 import { IFileFrontend } from '../types/File'
 import { useAppContext } from './context/globalContext'
+import { useTranslation } from 'react-i18next'
 
 const ArchivedMenubar = () => {
 
+  const {t} = useTranslation()
     const {updateFile, deleteFile, currentFileId} = useAppContext()
 
     const handleDelete = () => {
@@ -34,22 +36,22 @@ const ArchivedMenubar = () => {
         <Button 
       onClick={() => handleRestore()}
       disabled={!currentFileId}
-      >Restore all</Button>
+      >{t("archive.restore-all")}</Button>
 
         <Button 
       onClick={() => handleRestore()}
       disabled={!currentFileId}
-      >Restore</Button>
+      >{t("archive.restore")}</Button>
 
       <Button 
       onClick={() => handleDelete()}
       disabled={!currentFileId}
-      >Delete</Button>
+      >{t("archive.delete")}</Button>
 
       <Button 
       onClick={() => handleRestore()}
       disabled={!currentFileId}
-      >Delete all</Button>
+      >{t("archive.delete-all")}</Button>
 
     </div>
   )

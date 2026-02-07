@@ -8,6 +8,7 @@ import StarterKit from '@tiptap/starter-kit'
 import { useEffect, forwardRef } from 'react'
 import { Button } from '@headlessui/react'
 import clsx from 'clsx';
+import { useTranslation } from 'react-i18next';
 
 const BRIGHT_BUTTON_CLASS = "rounded bg-sky-600 px-4 py-2 text-sm text-white data-active:bg-sky-700 data-hover:bg-sky-500"
 const DISABLED_BUTTON = "opacity-50 cursor-not-allowed"
@@ -17,6 +18,7 @@ const extensions = [TextStyleKit, StarterKit]
 
 function EditorMenu({ editor }: { editor: Editor }) {
 
+  const {t} = useTranslation()
   const jwt = localStorage.getItem("token")
 
   const editorState = useEditorState({

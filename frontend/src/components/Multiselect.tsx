@@ -12,7 +12,7 @@ import {
   CommandItem,
 } from "./ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
-
+import { useTranslation } from "react-i18next"
 
 
 interface MultiSelectProps {
@@ -23,6 +23,7 @@ interface MultiSelectProps {
 
 export function MultiSelect({ options, value, onChange }: MultiSelectProps) {
   
+  const {t} = useTranslation()
     const toggle = (val: string) => {
   const next = new Set(value) // copy the current Set from props
   if (next.has(val)) next.delete(val) // remove if already selected
@@ -47,17 +48,17 @@ export function MultiSelect({ options, value, onChange }: MultiSelectProps) {
 
       <PopoverContent className="w-48 p-0">
         <Command>
-          <CommandEmpty>No results.</CommandEmpty>
+          <CommandEmpty>{t("home.no-results")}</CommandEmpty>
           <CommandGroup>
             {Array.from(options).map(option => (
               <CommandItem
                 key={option.value}
-                onSelect={() => toggle(option.value)}
+                onSelect={() => toggle(option.value!)}
               >
                 <Check
                   className={cn(
                     "mr-2 h-4 w-4",
-                    value.has(option.value)
+                    value.has(option.value!)
                       ? "opacity-100"
                       : "opacity-0"
                   )}

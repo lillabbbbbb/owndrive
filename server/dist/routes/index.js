@@ -12,12 +12,13 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const User_1 = require("../models/User");
 const inputValidation_1 = require("../validators/inputValidation");
 const dotenv_1 = __importDefault(require("dotenv"));
+const puppeteer_1 = __importDefault(require("puppeteer"));
 //import { validateToken} from "../middleware/validateToken"
 const router = (0, express_1.Router)();
 dotenv_1.default.config();
 //route to anything else: handled in frontend
 //Handle login requests
-router.post("/login", 
+router.post("/auth/login", 
 //sanithize user input (check for injection)
 [inputValidation_1.validateEmail,
     inputValidation_1.validatePassword], async (req, res) => {
@@ -48,7 +49,7 @@ router.post("/login",
 });
 //Note: entire code was pasted, needs modification
 //Handle register requests
-router.post("/register", 
+router.post("/auth/register", 
 //sanithize user input (check for injection)
 [inputValidation_1.validateEmail,
     inputValidation_1.validatePassword,
@@ -85,7 +86,7 @@ router.post("/register",
         return res.status(500).json({ error: "Internal Server Error" });
     }
 });
-router.post("/login/google", google_passport_config_1.default.authenticate("google", { scope: ['profile'] }));
+router.post("/auth/login/google", google_passport_config_1.default.authenticate("google", { scope: ['profile'] }));
 /*router.get("/auth/google/callback", passport.authenticate("google", {
     session:false,
     failureRedirect: "/login"
@@ -131,5 +132,49 @@ router.post("/login/google", google_passport_config_1.default.authenticate("goog
 
     
 })*/
+router.post("/pdf", async (req, res) => {
+    try {
+        const { html } = req.body;
+        const browser = await puppeteer_1.default.launch({
+            headless: true // modern mode
+        });
+        const page = await browser.newPage();
+        await page.setContent(`
+  <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; padding: 40px; }
+        h1, h2, h3 { margin-bottom: 10px; }
+        p { margin-bottom: 8px; }
+        img { max-width: 100%; height: auto; }
+      </style>
+    </head>
+    <body>
+      ${html}
+    </body>
+  </html>
+`, { waitUntil: "networkidle0" });
+        const pdf = await page.pdf({
+            format: "A4",
+            printBackground: true,
+            margin: {
+                top: "20mm",
+                bottom: "20mm",
+                left: "15mm",
+                right: "15mm",
+            },
+        });
+        await browser.close();
+        res.set({
+            "Content-Type": "application/pdf",
+            "Content-Length": pdf.length,
+        });
+        res.send(pdf);
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).send("Error generating PDF");
+    }
+});
 exports.default = router;
 //# sourceMappingURL=index.js.map

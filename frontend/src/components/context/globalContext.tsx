@@ -4,6 +4,7 @@ import { useUser } from "../../hooks/useUser";
 import { useFiles } from "../../hooks/useFiles";
 import { IUserFrontend } from "../../types/User";
 import { IFileFrontend } from "../../types/File";
+import { IImageFrontend } from "../../types/Image";
 
 export interface AppContextType {
   user: IUserFrontend | null;
@@ -14,13 +15,14 @@ export interface AppContextType {
   files: IFileFrontend[] | [];
   currentFile: IFileFrontend | null;
 
-  currentFileId: string;
+  currentFileId: string | null;
 
   // User actions
   setUser: (user: IUserFrontend | null) => void;
   getUser: () => Promise<IUserFrontend | null>;
+  getProfilePic: () => Promise<IImageFrontend | null>;
   updateUser: (changes: Partial<IUserFrontend>) => Promise<IUserFrontend | null>;
-  updateProfilePic: (id: string, file: File, description?: string) => Promise<boolean>;
+  updateProfilePic: (file: File, description?: string) => Promise<IImageFrontend | null>;
   login: (email: string, password: string) => Promise<IUserFrontend | null>;
   logout: () => Promise<void>;
 
@@ -37,7 +39,9 @@ export interface AppContextType {
   unlockFile: (id: string) => Promise<IFileFrontend | null>;
   deleteFile: (id: string) => Promise<boolean>;
 
-  setCurrentFileId: (id: string) => void;
+  downloadPDF: (html: string) => Promise<void>
+  setCurrentFileId: (id: string | null) => void;
+  isUniqueFilename: (filename: string) => Promise<boolean>
 }
 
 
@@ -59,15 +63,15 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   const userHook = useUser();
   const filesHook = useFiles();
   const [currentFile, setCurrentFile] = useState<IFileFrontend | null>(null)
-  const [currentFileId, setCurrentFileId] = useState<string>("")
+  const [currentFileId, setCurrentFileId] = useState<string | null>(null)
   const [user, setUser] = useState<IUserFrontend | null>(null)
 
   const getCurrentFile = async () => {
-  if (!currentFileId) return null;
-  const file = await filesHook.getFile(currentFileId);
-  setCurrentFile(file || null);
-  return file;
-};
+    if (!currentFileId) return null;
+    const file = await filesHook.getFile(currentFileId);
+    setCurrentFile(file || null);
+    return file;
+  };
 
   const getUserIdFromToken = (token: string | null) => {
     if (!token) {
@@ -115,6 +119,48 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     setUser(null); // propagate state
   };
 
+  const createFile = async (fileData: Partial<IFileFrontend>) => {
+    const createdUserFromHook = await filesHook.createFile(fileData)
+    if (createdUserFromHook) {
+      console.log("File successfully created")
+      setCurrentFileId(createdUserFromHook._id)
+    }
+  }
+
+  const updateProfilePic = async (file: File) => {
+
+    const res = await userHook.updateProfilePic(file)
+    if (res) {
+      console.log("Profile picture successfully updated")
+      // Refresh user to get new profile_pic populated
+      const updatedUser = await userHook.getUser();
+      if (updatedUser) setUser(updatedUser)
+    }
+    return res
+  }
+
+  const isUniqueFilename = async (filename: string) => {
+    const files: IFileFrontend[] | null = await filesHook.getFiles()
+    const existingFilenames = files?.map((f) => f.filename)
+
+    return !existingFilenames?.includes(filename)
+  }
+
+  const downloadPDF = async (html: string) => {
+    const response = await filesHook.downloadPDF(html)
+    if(!response){
+      console.log("Failed PDF download")
+      return
+    }
+    const url = window.URL.createObjectURL(new Blob([response.data], { type: "application/pdf" }));
+    
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = currentFile!.filename;
+    a.click();
+    window.URL.revokeObjectURL(url);
+    
+  }
 
   const value = {
     // User state
@@ -134,8 +180,9 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     // User actions
     setUser: setUser,
     getUser: userHook.getUser,
+    getProfilePic: userHook.getProfilePic,
     updateUser: userHook.updateUser,
-    updateProfilePic: userHook.updateProfilePic,
+    updateProfilePic: updateProfilePic,
     login: login,
     logout: logout,
 
@@ -152,7 +199,9 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     batchUpdateFiles: filesHook.batchUpdateFiles,
     deleteFile: filesHook.deleteFile,
 
+    downloadPDF: downloadPDF,
     setCurrentFileId: setCurrentFileId,
+    isUniqueFilename: isUniqueFilename
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

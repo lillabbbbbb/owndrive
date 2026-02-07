@@ -7,10 +7,13 @@ import { Request, Response } from "express";
 import path from "path"
 import router from "./routes/index"
 import userRouter from "./routes/user"
+import imageRouter from "./routes/image";
 import morgan from "morgan"
 import mongoose, { Connection } from 'mongoose'
 import cors, {CorsOptions} from 'cors'
 import fileRouter from "./routes/file";
+import fs from 'fs'
+import bodyParser from "body-parser";
 
 console.log("🔥 ENTRY FILE LOADED");
 
@@ -48,11 +51,16 @@ app.use(express.json())
 app.use(express.urlencoded({extended: false}))
 app.use(morgan("dev"))
 
+app.use(cors());
+app.use(bodyParser.json({ limit: "10mb" }));
 
+
+app.use('/images', express.static(path.join(__dirname, 'public/images')))
 app.use(express.static(path.join(__dirname, "../public")))
-app.use("/api/auth", router)
+app.use("/api/", router)
 app.use("/api/users/", userRouter)
 app.use("/api/files/", fileRouter)
+app.use("/api/images/", imageRouter)
 
 
 

@@ -11,10 +11,11 @@ import {
 } from "../ui/dialog"
 import { Label } from "../ui/label"
 import { Button } from "../ui/button"
+import { useTranslation } from 'react-i18next';
 
 const NotAvailablePopup = () => {
 
-
+const {t} = useTranslation()
     const [open, setOpen] = useState<boolean>(false)
 
     return (
@@ -26,10 +27,10 @@ const NotAvailablePopup = () => {
 
                     <div className="flex flex-col gap-4">
 
-                        <Label>This feature is not available yet.</Label>
+                        <Label>{t("dialog.unavailable.heading")}</Label>
 
                         <Label>
-                            ...</Label>
+                            {t("dialog.unavailable.description")}</Label>
 
                     </div>
                     <DialogClose asChild>

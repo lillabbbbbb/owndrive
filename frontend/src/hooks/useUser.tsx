@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import axios from "axios";
 import { IUserFrontend } from "../types/User";
+import { IImageFrontend } from "../types/Image";
 import { useAppContext } from "../components/context/globalContext";
 
 type UseUserReturn = {
@@ -8,8 +9,9 @@ type UseUserReturn = {
   error: string | null;
 
   getUser: () => Promise<IUserFrontend | null>;
+  getProfilePic: () => Promise<IImageFrontend | null>;
   updateUser: (changes: Partial<IUserFrontend>) => Promise<IUserFrontend | null>;
-  updateProfilePic: (id: string, file: File, description?: string) => Promise<boolean>;
+  updateProfilePic: (file: File, description?: string) => Promise<IImageFrontend | null>;
   login: (email: string, password: string) => Promise<IUserFrontend | null>;
   logout: () => Promise<void>;
 };
@@ -67,6 +69,21 @@ export function useUser(): UseUserReturn {
     }
   }, []);
 
+  // Fetch latest user data from server
+  const getProfilePic = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.get<IImageFrontend>(`/api/images/`)
+      return res.data
+    } catch (err) {
+      handleError(err);
+      return null
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   // Update user fields (name, email, etc.)
   const updateUser = useCallback(async (changes: Partial<IUserFrontend>) => {
     setLoading(true);
@@ -83,28 +100,29 @@ export function useUser(): UseUserReturn {
   }, []);
 
   // Update user profile picture
-  const updateProfilePic = useCallback(async (id: string, file: File, description?: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const formData = new FormData();
-      formData.append("image", file);
-      if (description) formData.append("description", description);
+  const updateProfilePic = useCallback(async (file: File, description?: string) => {
+  console.log("🚀 updateProfilePic called with file:", file?.name)
+  setLoading(true);
+  setError(null);
+  try {
+    const formData = new FormData();
+    formData.append("image", file);
+    if (description) formData.append("description", description);
 
-      await axios.patch("/api/users/profile_pic/change", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      // Refresh user to get new profile_pic populated
-      await getUser();
-      return true;
-    } catch (err) {
-      handleError(err);
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  }, [getUser]);
+    console.log("📤 Sending PATCH request to /api/users/me")
+    const res = await axios.patch<IImageFrontend>("/api/users/me", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    console.log("✅ Response received:", res.data)
+    return res.data;
+  } catch (err) {
+    console.error("❌ Error in updateProfilePic:", err)
+    handleError(err);
+    return null;
+  } finally {
+    setLoading(false);
+  }
+}, [getUser]);
 
   // Logout user
   const logout = useCallback(async () => {
@@ -149,6 +167,7 @@ export function useUser(): UseUserReturn {
     getUser,
     updateUser,
     updateProfilePic,
+    getProfilePic,
     login,
     logout
   };

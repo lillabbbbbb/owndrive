@@ -19,6 +19,7 @@ import { Button } from "../ui/button"
 import { MultiSelect } from '../Multiselect'
 import { Filter, Filters } from '../main_components/Home';
 import { Text } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export type customOption = {
   label: string | null
@@ -42,13 +43,14 @@ type FilterDialogProps = {
 
 export function ControlledFilterDialog({ filters, onChange }: FilterDialogProps) {
 
-  //Note: active filters could be stored in local storage
+  //Note: active filters could be stored in session storage
 
+  const {t} = useTranslation()
   const [open, setOpen] = useState<boolean>(false)
 
   return (
     <>
-      <Button onClick={() => setOpen(true)}>Filter</Button>
+      <Button onClick={() => setOpen(true)}>{t("home.filter-button")}</Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
@@ -60,7 +62,7 @@ export function ControlledFilterDialog({ filters, onChange }: FilterDialogProps)
             {filters.map((filter) => {
               return (
                 <div key={filter.label} className="flex flex-col gap-2">
-                  <Label>{filter.label}</Label>
+                  <Label>{t(filter.label)}</Label>
                   {filter.type === "multi" ? (
                     <MultiSelect
                       options={filter.options}
@@ -78,7 +80,7 @@ export function ControlledFilterDialog({ filters, onChange }: FilterDialogProps)
                       <SelectContent position='popper'>
                         {filter.options.map((option) => (
                           <SelectItem key={option.value} value={option.value as string}>
-                            {option.label}
+                            {t(option.label!)}
                           </SelectItem>
                         ))}
                       </SelectContent>

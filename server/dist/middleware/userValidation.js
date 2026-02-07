@@ -8,8 +8,8 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const validateUserToken = (req, res, next) => {
-    console.log('Headers received:', req.headers);
-    console.log('Auth header:', req.headers.authorization);
+    //console.log('Headers received:', req.headers);
+    //console.log('Auth header:', req.headers.authorization);
     const token = req.header("authorization")?.split(" ")[1];
     if (!token)
         return res.status(401).json({ message: "Token not found." });

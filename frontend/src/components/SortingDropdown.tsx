@@ -7,6 +7,7 @@ import {
   SelectValue
 } from "../components/ui/select";
 import { sortingTypes } from "./main_components/Home";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   value: string;
@@ -14,6 +15,8 @@ type Props = {
 };
 
 export default function SortingDropdown({ value, onChange }: Props) {
+
+  const {t} = useTranslation()
 
 
   return (
@@ -24,7 +27,7 @@ export default function SortingDropdown({ value, onChange }: Props) {
       <SelectContent>
         {Object.entries(sortingTypes).map(([key, value]) => (
           <SelectItem key={key} value={value}>
-            {value}
+            {t(value)}
           </SelectItem>
         ))}
       </SelectContent>

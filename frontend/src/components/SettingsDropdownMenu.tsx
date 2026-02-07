@@ -4,17 +4,33 @@ import { LucideMenu, LucideLogOut, LucideSettings, LucideUser } from "lucide-rea
 import { IUserTest, IFileTest } from "../App"
 import { useNavigate } from "react-router-dom"
 import ProfilePicDialog from "./popups/ProfilePicDialog"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useUser } from "../hooks/useUser"
 import { useAppContext } from "./context/globalContext";
 import CustomDialog from './popups/CustomDialog';
+import { useTranslation } from "react-i18next"
 
 
 function SettingsDropdownMenu() {
 
+  const {t} = useTranslation()
   const navigate = useNavigate()
-  const {logout, userLoading, userError} = useAppContext()
+  
+  const { getProfilePic, logout, user, userLoading, userError } = useAppContext()
   const [openProfilePicDialog, setOpenProfilePicDialog] = useState<boolean>(false)
+  const [profilePic, setProfilePic] = useState<string | null>(null)
+
+  useEffect(() => {
+    const loadProfilePic = async () => {
+      const pic = await getProfilePic()
+      console.log(pic)
+      if (pic) {
+        setProfilePic(`http://localhost:8000${pic.path}`)
+      }
+    }
+
+    loadProfilePic()
+  }, [user])
 
   const handleLogout = () => {
     logout()
@@ -41,20 +57,31 @@ function SettingsDropdownMenu() {
 
   }
 
+  useEffect(() => {
+    console.log(`User changed:`)
+    console.log(user)
+  }, [user])
+
+  useEffect(() => {
+    console.log(`Profile pic changed: ${profilePic}`)
+  }, [user, profilePic])
+
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar className="cursor-pointer">
-            <AvatarImage src="https://i.pravatar.cc/150?img=1" />
-            <AvatarFallback>A</AvatarFallback>
+            <AvatarImage
+              src={profilePic ?? undefined}
+            />
+            <AvatarFallback>{user?.email[0].toUpperCase()}</AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="bg-white text-black">
-          <DropdownMenuItem onSelect={(e) => handleProfilePic(e)}><LucideUser className="mr-2" /> Change profile picture</DropdownMenuItem>
+          <DropdownMenuItem onSelect={(e) => handleProfilePic(e)}><LucideUser className="mr-2" /> {t("settings.profile-picture")}</DropdownMenuItem>
           <ProfilePicDialog open={openProfilePicDialog} setOpen={setOpenProfilePicDialog} />
-          <DropdownMenuItem onClick={() => handleModeChange()}><LucideSettings className="mr-2" /> Dark mode</DropdownMenuItem>
-          <DropdownMenuItem onClick={() => handleLogout()}><LucideLogOut className="mr-2" /> Logout</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => handleModeChange()}><LucideSettings className="mr-2" /> {t("settings.dark-mode") || t("settings.light-mode")}</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => handleLogout()}><LucideLogOut className="mr-2" /> {t("settings.log-out")}</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 
