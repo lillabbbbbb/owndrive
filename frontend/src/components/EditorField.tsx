@@ -9,6 +9,11 @@ import { useEffect, forwardRef } from 'react'
 import { Button } from '@headlessui/react'
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
+import { useAppContext } from './context/globalContext';
+import { getFileCategory, FILE_CATEGORIES } from "../utils/fileTypes"
+import React, { useState } from "react";
+import { Document, Page, pdfjs } from "react-pdf";
+import * as mammoth from "mammoth";
 
 const BRIGHT_BUTTON_CLASS = "rounded bg-sky-600 px-4 py-2 text-sm text-white data-active:bg-sky-700 data-hover:bg-sky-500"
 const DISABLED_BUTTON = "opacity-50 cursor-not-allowed"
@@ -18,7 +23,7 @@ const extensions = [TextStyleKit, StarterKit]
 
 function EditorMenu({ editor }: { editor: Editor }) {
 
-  const {t} = useTranslation()
+  const { t } = useTranslation()
   const jwt = localStorage.getItem("token")
 
   const editorState = useEditorState({
@@ -246,6 +251,8 @@ type EditorFieldProps = {
 }
 const EditorField = forwardRef<HTMLDivElement, EditorFieldProps>(({ content, setContent, editable }, ref) => {
 
+  const { currentFile } = useAppContext()
+  console.log(currentFile)
 
   const editor = useEditor({
     extensions,
@@ -279,14 +286,115 @@ const EditorField = forwardRef<HTMLDivElement, EditorFieldProps>(({ content, set
     return null
   }
 
+  pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+
+  const [numPages, setNumPages] = useState<number>(0);
+
+  useEffect(() => {
+    if (!currentFile) return;
+    const category = getFileCategory(currentFile);
+    async function loadFile() {
+      switch (category) {
+        case "editable":
+          if (currentFile?.file_type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+            const content: string = "<your string>";
+            const encoder = new TextEncoder();
+            const buffer = encoder.encode(content); // Uint8Array
+            const arrayBuffer = buffer.buffer; // ✅ Now you have ArrayBuffer
+            const { value: html } = await mammoth.convertToHtml({ arrayBuffer });
+            setContent(html);
+          } else {
+            const text = currentFile?.content;
+            setContent(text!);
+          }
+          break;
+
+        case "images":
+          if (currentFile!.data) {
+            const blob = new Blob([new Uint8Array(currentFile!.data)], { type: currentFile?.mime_type });
+            const url = URL.createObjectURL(blob);
+            setContent(url)
+          }
+          break;
+
+        case "viewOnly":
+          if (currentFile!.content) {
+            const blob = new Blob([currentFile!.content], { type: currentFile!.mime_type });
+            const url = URL.createObjectURL(blob);
+            setContent(url)
+          }
+          break;
+
+        default:
+          const blob = new Blob([currentFile!.content!], { type: currentFile!.mime_type });
+            const url = URL.createObjectURL(blob);
+            setContent(url)
+          break;
+      }
+    }
+
+    loadFile();
+
+    // Cleanup blob URLs for images/view-only files
+    return () => {
+      if (content && (category === "images" || category === "viewOnly")) {
+        URL.revokeObjectURL(content);
+      }
+    };
+  }, [currentFile]);
+
+  if (!currentFile) return <div>No file selected</div>;
+  const category = getFileCategory(currentFile);
+
+  switch (category) {
+    case "editable":
+      if (currentFile.mime_type === "application/json") {
+        setContent(currentFile.content!)
+        return (
+          <div>
+            <EditorMenu editor={editor} />
+            <div ref={ref}>
+              <EditorContent editor={editor} className="tiptap-editor prose prose-slate dark:prose-invert" />
+            </div>
+          </div>
+        );
+      }
+      break;
+
+    case "images":
+      return <img src={content || ""} alt={currentFile.filename} style={{ maxWidth: "100%" }} />;
+
+    case "viewOnly":
+      if (currentFile.file_type === "application/pdf") {
+        return (
+          <Document file={content} onLoadSuccess={({ numPages: string }) => setNumPages(numPages)}>
+            {Array.from(new Array(numPages), (_, index) => (
+              <Page key={index} pageNumber={index + 1} />
+            ))}
+          </Document>
+        );
+      } else {
+        return (
+          <a href={content || ""} target="_blank" rel="noopener noreferrer">
+            View / Download {currentFile.filename}
+          </a>
+        );
+      }
+
+    default:
+      return (
+        <a href={content || ""} target="_blank" rel="noopener noreferrer">
+          Download {currentFile.filename}
+        </a>
+      );
+
+
+  }
 
   return (
-    <div>
-      <EditorMenu editor={editor} />
-      <div ref={ref}>
-        <EditorContent editor={editor} className="tiptap-editor prose prose-slate dark:prose-invert" />
-      </div>
-    </div>
+    <>
+
+    </>
   )
 })
 

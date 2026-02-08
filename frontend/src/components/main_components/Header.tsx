@@ -32,7 +32,7 @@ const Header = () => {
         <header className="flex items-center justify-between fixed top-0 left-0 w-full z-50 p-4 bg-linear-to-r from-indigo-600 to-black-600 shadow-lg text-white">
             {/* Left: Logo / Menu */}
             <div className="flex items-center gap-4">
-                <span className="text-2xl font-bold tracking-tight">MyApp</span>
+                <span className="text-2xl font-bold tracking-tight">OwnDrive</span>
             </div>
 
             {/* Center: Navigation + Search */}

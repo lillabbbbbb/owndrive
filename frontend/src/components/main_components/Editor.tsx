@@ -23,13 +23,15 @@ import { useUser } from '../../hooks/useUser';
 import { IFileFrontend } from '../../types/File';
 import Login from './Login';
 import { useTranslation } from 'react-i18next';
+import PdfViewer from '../PDFViewer';
+import { } from '../../utils/fileTypes';
 
 const Editor = () => {
 
-    const {t} = useTranslation()
+    const { t } = useTranslation()
     const [guestDialogOpen, setGuestDialogOpen] = useState<boolean>(true)
-    const jwt = localStorage.getItem("token")
 
+    const [jwt, setJwt] = useState<string | null>(null)
     const [file, setFile] = useState<IFileFrontend | null>(null)
     const [filename, setFilename] = useState<string>("New file")
     const [beingUsed, setBeingUsed] = useState<boolean>(false)
@@ -60,6 +62,9 @@ const Editor = () => {
     const navigate = useNavigate()
     const { user, currentFileId, getCurrentFile, getFile, createFile, updateFile, lockFile, userLoading, userError, filesLoading, filesError } = useAppContext()
 
+    useEffect(() => {
+        setJwt(localStorage.getItem("token"))
+    }, [user])
 
     useEffect(() => {
         if (!currentFileId) return
@@ -115,7 +120,7 @@ const Editor = () => {
     }
 
     const isExistingFile = async (id: string | null) => {
-        if(!id) return false
+        if (!id) return false
         console.log(currentFileId)
         return !!(await getFile(id))
     }
@@ -148,7 +153,8 @@ const Editor = () => {
             createFile({
                 created_by: user._id,
                 filename: filename,
-                file_type: ".docx",
+                file_type: ".json",
+                mime_type: "application/json",
                 content: content,
                 inUse: true,
                 usedBy: user._id
@@ -171,8 +177,9 @@ const Editor = () => {
 
             createFile({
                 created_by: user._id,
-                filename:  "default",
-                file_type: "default",
+                filename: filename,
+                file_type: "json",
+                mime_type: "application/json",
                 content: content,
                 inUse: true,
                 usedBy: user._id
@@ -199,7 +206,6 @@ const Editor = () => {
         //if not valid, set the value to be the previous file name
     }
 
-
     return (
         <>
             {!(jwt || visibleToGuest) &&
@@ -213,17 +219,20 @@ const Editor = () => {
                 {beingUsed && <ConcurrentEditingPopup />}
 
                 <Button onClick={() => handleSave()}>Save</Button>
-                {<div ref={targetRef}>
-                    <EditorButtons htmlContent={content}/>
+                <div ref={targetRef}>
+
+
+                    <EditorButtons htmlContent={content} />
                     <EditableText value={file?.filename ?? filename} onSave={handleSaveFileName} />
-                    <div>
-                        <EditorField ref={editorRef} content={file?.content ? content : content} setContent={setContent} editable={editable} />
-                        <div>Word count: {content ? content.trim().split(/\s+/).filter(Boolean).length : 0}</div>
-                    </div>
+
+                    {(file?.file_type === ".pdf") && <PdfViewer url="/public/files/sample.pdf" />}
+                    <EditorField ref={editorRef} content={file?.content ? content : content} setContent={setContent} editable={editable} />
+                    <div>Word count: {content ? content.trim().split(/\s+/).filter(Boolean).length : 0}</div>
+
 
 
                 </div>
-                }
+
 
                 {/* Render this if user is NOT logged in */}
                 {!jwt &&

@@ -28,7 +28,7 @@ import {
 import { useAppContext } from "../context/globalContext";
 import { useFiles } from '../../hooks/useFiles';
 import CustomDialog from '../popups/CustomDialog';
-import { isValidFileName } from '../../validators/validateFilename';
+import { isValidFileName } from '../../utils/validateFilename';
 import { useTranslation } from 'react-i18next';
 
 export type customOption = {
@@ -75,6 +75,7 @@ export function ClonePopup() {
       created_by: user._id,
       filename: input,
       file_type: originalFile.file_type,
+      mime_type: originalFile.mime_type,
       content: originalFile.content
     });
 

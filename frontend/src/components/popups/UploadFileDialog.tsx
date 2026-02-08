@@ -48,6 +48,7 @@ const UploadFileDialog = () => {
           created_by: user._id,
           filename: `${originalFilename}`,
           file_type: `.${fileExtension}`,
+          mime_type: file.type,
           content: content,
           inUse: true,
           usedBy: user._id

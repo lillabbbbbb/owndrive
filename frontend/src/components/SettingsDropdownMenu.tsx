@@ -21,6 +21,8 @@ function SettingsDropdownMenu() {
   const [profilePic, setProfilePic] = useState<string | null>(null)
 
   useEffect(() => {
+
+    console.log("User has changed")
     const loadProfilePic = async () => {
       const pic = await getProfilePic()
       console.log(pic)

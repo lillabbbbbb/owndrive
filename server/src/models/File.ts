@@ -1,6 +1,6 @@
 //DB model for File
 
-import mongoose, {Document, Schema, Types } from "mongoose";
+import mongoose, { Document, Schema, Types } from "mongoose";
 
 interface IFile extends Document {
    created_at: Date,
@@ -8,7 +8,13 @@ interface IFile extends Document {
    last_edited_at: Date,
    file_type: string,
    filename: string,
-   content: string,
+   mime_type: string;
+   // Editable text content
+   content?: string;
+   // Binary content (Buffer)
+   data?: Buffer;
+   // If stored externally
+   file_url?: string;
    canView: Types.ObjectId[], //list of usernames that can view the file
    canEdit: Types.ObjectId[], //list of usernames that can edit the file
    visibleToGuests: boolean,
@@ -21,24 +27,30 @@ interface IFile extends Document {
 }
 
 const fileSchema = new Schema({
-   created_at: {type: Date, required: true}, //permanent
-   created_by: {type: Schema.Types.ObjectId, ref: 'User', required: true}, //permanent
-   last_edited_at: {type: Date, required: true},
-   file_type: {type: String, required: true, default: ".docx"}, //permanent
-   filename: {type: String, required: true},
-   content: {type: String, required: true, default: ""},
-   canView: {type: [Schema.Types.ObjectId], required: true, default : []}, //list of userids that can view the file
-   canEdit: {type: [Schema.Types.ObjectId], required: true, default : []}, //list of userids that can edit the file
-   visibleToGuests: {type: Boolean, required: true, default: false},
-   showsInHomeShared: {type: Boolean, required: true, default: true},
-   private: {type: Boolean, required: true, default: false},
-   status: {type: String, required: true, default: "active"},
-   archivedAt: {type: Date, required: false},
-   inUse: {type: Boolean, required: true}, //= is anyone viewing (with edit permission) /editing this document
-   usedBy: {type: Schema.Types.ObjectId, required: false} //the user _id, if any, that is "using" the file
+   created_at: { type: Date, required: true }, //permanent
+   created_by: { type: Schema.Types.ObjectId, ref: 'User', required: true }, //permanent
+   last_edited_at: { type: Date, required: true },
+   file_type: { type: String, required: true, default: ".docx" }, //permanent
+   filename: { type: String, required: true },
+   mime_type: { type: String, required: true },
+   // Editable text
+   content: { type: String, required: false, },
+   // Binary data (for images, PDFs, etc.)
+   data: { type: Buffer, required: false },
+   // External URL (optional)
+   file_url: { type: String, required: false, unique: true },
+   canView: { type: [Schema.Types.ObjectId], required: true, default: [] }, //list of userids that can view the file
+   canEdit: { type: [Schema.Types.ObjectId], required: true, default: [] }, //list of userids that can edit the file
+   visibleToGuests: { type: Boolean, required: true, default: false },
+   showsInHomeShared: { type: Boolean, required: true, default: true },
+   private: { type: Boolean, required: true, default: false },
+   status: { type: String, required: true, default: "active" },
+   archivedAt: { type: Date, required: false },
+   inUse: { type: Boolean, required: true }, //= is anyone viewing (with edit permission) /editing this document
+   usedBy: { type: Schema.Types.ObjectId, required: false } //the user _id, if any, that is "using" the file
 
 })
 
 const File: mongoose.Model<IFile> = mongoose.model<IFile>("File", fileSchema)
 
-export {File, IFile}
+export { File, IFile }

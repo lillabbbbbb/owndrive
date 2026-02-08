@@ -42,7 +42,13 @@ const fileSchema = new mongoose_1.Schema({
     last_edited_at: { type: Date, required: true },
     file_type: { type: String, required: true, default: ".docx" }, //permanent
     filename: { type: String, required: true },
-    content: { type: String, required: true, default: "" },
+    mime_type: { type: String, required: true },
+    // Editable text
+    content: { type: String, required: false, },
+    // Binary data (for images, PDFs, etc.)
+    data: { type: Buffer, required: false },
+    // External URL (optional)
+    file_url: { type: String, required: false, unique: true },
     canView: { type: [mongoose_1.Schema.Types.ObjectId], required: true, default: [] }, //list of userids that can view the file
     canEdit: { type: [mongoose_1.Schema.Types.ObjectId], required: true, default: [] }, //list of userids that can edit the file
     visibleToGuests: { type: Boolean, required: true, default: false },

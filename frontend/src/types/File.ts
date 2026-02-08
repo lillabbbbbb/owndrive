@@ -23,7 +23,10 @@ export interface IFileFrontend {
    last_edited_at: Date,
    file_type: string,
    filename: string,
-   content: string,
+   mime_type: string;
+   content?: string;
+   file_url?: string;
+   data?: Buffer;
    canView: string[], //list of usernames that can view the file
    canEdit: string[], //list of usernames that can edit the file
    visibleToGuests: boolean,
