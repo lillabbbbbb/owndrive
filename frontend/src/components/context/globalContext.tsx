@@ -115,6 +115,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   };
 
   const logout = async () => {
+    console.log("Logout is called")
     await userHook.logout();
     setUser(null); // propagate state
   };

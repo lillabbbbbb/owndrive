@@ -9,14 +9,16 @@ import { useUser } from "../hooks/useUser"
 import { useAppContext } from "./context/globalContext";
 import CustomDialog from './popups/CustomDialog';
 import { useTranslation } from "react-i18next"
+import { IUserFrontend } from "../types/User"
 
 
 function SettingsDropdownMenu() {
 
-  const {t} = useTranslation()
+  const { t } = useTranslation()
   const navigate = useNavigate()
-  
-  const { getProfilePic, logout, user, userLoading, userError } = useAppContext()
+
+  const { getProfilePic, logout, getUser, userLoading, userError } = useAppContext()
+  const [user, setUser] = useState<IUserFrontend | null>(null)
   const [openProfilePicDialog, setOpenProfilePicDialog] = useState<boolean>(false)
   const [profilePic, setProfilePic] = useState<string | null>(null)
 
@@ -30,9 +32,21 @@ function SettingsDropdownMenu() {
         setProfilePic(`http://localhost:8000${pic.path}`)
       }
     }
-
     loadProfilePic()
   }, [user])
+
+  useEffect(() => {
+
+    console.log("User has changed")
+
+    const loadUser = async () => {
+      const fetchedUser = await getUser()
+      setUser(fetchedUser)
+      console.log(fetchedUser)
+    }
+
+    loadUser()
+  }, [])
 
   const handleLogout = () => {
     logout()
@@ -60,11 +74,6 @@ function SettingsDropdownMenu() {
   }
 
   useEffect(() => {
-    console.log(`User changed:`)
-    console.log(user)
-  }, [user])
-
-  useEffect(() => {
     console.log(`Profile pic changed: ${profilePic}`)
   }, [user, profilePic])
 
@@ -76,7 +85,7 @@ function SettingsDropdownMenu() {
             <AvatarImage
               src={profilePic ?? undefined}
             />
-            <AvatarFallback>{user?.email[0].toUpperCase()}</AvatarFallback>
+            <AvatarFallback>{user?.email ? user.email[0].toUpperCase() : "U"}</AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="bg-white text-black">
