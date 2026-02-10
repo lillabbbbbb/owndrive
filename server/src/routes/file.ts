@@ -10,6 +10,8 @@ import { IFile, File } from "../models/File"
 import { Types } from "mongoose"
 import { validateEmail, validatePassword, validateUsername } from "../validators/inputValidation"
 import { CustomRequest, validateUserToken } from "../middleware/userValidation"
+import { getFileCategory, CATEGORY_NAMES, FILE_CATEGORIES } from "../types/file"
+import upload from "../middleware/multer-config"
 
 
 const fileRouter: Router = Router()
@@ -41,6 +43,110 @@ fileRouter.get("/", async (req: Request, res: Response) => {
     }
 })
 
+fileRouter.post("/upload", upload.single("file"),
+    async (req: Request, res: Response) => {
+        try {
+
+            const customReq = req as CustomRequest;
+            if (!req.user) return res.status(401).json({ message: "Unauthorized" })
+            const userId = customReq.user?._id
+
+            if(!req.body.file) return res.status(403).json({message: "File not attached"})
+
+            const {
+                file,
+            } = req.body;
+
+            const filename = file.name.split('.').slice(0, -1).join('.');
+            const fileType = file.name.split('.').pop() || '';
+            const now = new Date();
+            const inUse = true
+            const usedBy = userId
+            const status = "active"
+            const visibleToGuests = false
+            const showsInHomeShared = true
+            const isPrivate = false
+
+            if (!filename) {
+                return res.status(400).json({ message: "Filename is required" });
+            }
+            // 1️⃣ Check if a file with this name already exists for this user
+            let existingFile = await File.findOne({ filename, created_by: userId });
+            if (existingFile) {
+                return res.status(401).json({ "message": "File already exists" });
+            }
+            // 2️⃣ Create new file based on file type
+            let uploadedFile
+            const fileCategory = getFileCategory(file)
+
+            if (fileCategory === CATEGORY_NAMES.Editable) {
+                uploadedFile = await File.create({
+                    created_at: now,
+                    created_by: userId,
+                    last_edited_at: now,
+                    file_type: fileType,
+                    mime_type: file.type,
+                    filename: filename,
+                    content: file.text(),
+                    inUse : inUse,
+                    usedBy : userId,
+                    status : status,
+                    visibleToGuests: visibleToGuests,
+                    showsInHomeShared: visibleToGuests,
+                    private: isPrivate,
+                    canView: [userId],
+                    canEdit: [userId],
+                });
+            }
+            else if (fileCategory === CATEGORY_NAMES.Image) {
+                uploadedFile = await File.create({
+                    created_at: now,
+                    created_by: userId,
+                    last_edited_at: now,
+                    file_type: fileType,
+                    mime_type: file.type,
+                    filename: filename,
+                    //data: ??,
+                    inUse : inUse,
+                    usedBy : userId,
+                    status : status,
+                    visibleToGuests: visibleToGuests,
+                    showsInHomeShared: visibleToGuests,
+                    private: isPrivate,
+                    canView: [userId],
+                    canEdit: [userId],
+                });
+            } else if (fileCategory == CATEGORY_NAMES.ViewOnly || fileCategory === CATEGORY_NAMES.Other) {
+                {
+                    uploadedFile = await File.create({
+                    created_at: now,
+                    created_by: userId,
+                    last_edited_at: now,
+                    file_type: fileType,
+                    mime_type: file.type,
+                    filename: filename,
+                    inUse : false,
+                    status : status,
+                    visibleToGuests: visibleToGuests,
+                    showsInHomeShared: visibleToGuests,
+                    private: isPrivate,
+                    canView: [userId],
+                    canEdit: [userId],
+                });
+                }
+            }
+
+
+            // 3️⃣ Push reference to user's files array
+            await User.findByIdAndUpdate(userId, { $push: { files: file._id } });
+
+            return res.status(200).json({"uploadedFile" : uploadedFile, "category" : fileCategory});
+        } catch (error: any) {
+            console.log(error)
+            return res.status(500).json({ "message": "Internal Server Error" })
+        }
+    })
+
 //POST create new file
 //params: id: string, filedata: JSON
 fileRouter.post("/",
@@ -53,8 +159,10 @@ fileRouter.post("/",
 
             const {
                 filename,
-                file_type = "doc",
-                content = "",
+                file_type,
+                mime_type,
+                content,
+                data,
                 inUse = false,
                 usedBy,
                 status = "active",
@@ -62,6 +170,8 @@ fileRouter.post("/",
                 showsInHomeShared = true,
                 private: isPrivate = false
             } = req.body;
+
+            const buffer = Buffer.from(data);
 
             if (!filename) {
                 return res.status(400).json({ message: "Filename is required" });
@@ -82,7 +192,9 @@ fileRouter.post("/",
                 created_by: userId,
                 last_edited_at: now,
                 file_type,
+                mime_type,
                 filename,
+                data,
                 content,
                 inUse,
                 usedBy,

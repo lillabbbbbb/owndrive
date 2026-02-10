@@ -31,6 +31,7 @@ export interface AppContextType {
   getFiles: () => Promise<IFileFrontend[] | null>;
   getFile: (id: string) => Promise<IFileFrontend | null>;
   createFile: (fileData: Partial<IFileFrontend>) => Promise<IFileFrontend | null>;
+  uploadFile: (file: File) => Promise<{file: IFileFrontend, category: string} | null>
   updateFile: (id: string, updates: Partial<IFileFrontend>) => Promise<IFileFrontend | null>;
   batchUpdateFiles: (filters: Partial<IFileFrontend>, updates: Partial<IFileFrontend>) => Promise<IFileFrontend | null>;
   restoreAllArchived: () => Promise<void>;
@@ -196,6 +197,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     lockFile: filesHook.lockFile,
     unlockFile: filesHook.unlockFile,
     createFile: filesHook.createFile,
+    uploadFile: filesHook.uploadFile,
     updateFile: filesHook.updateFile,
     batchUpdateFiles: filesHook.batchUpdateFiles,
     deleteFile: filesHook.deleteFile,

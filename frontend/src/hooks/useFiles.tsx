@@ -81,6 +81,31 @@ export function useFiles() {
     }
   }, []);
 
+  const uploadFile = useCallback(async (file: File) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await axios.post<{ uploadedFile: IFileFrontend, category: string }>(
+        "/api/files/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return res.data;
+    } catch (err) {
+      handleError(err);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
 
   const batchUpdateFiles = useCallback(async (filters: Partial<IFileFrontend>, updates: Partial<IFileFrontend>) => {
     setLoading(true);
@@ -207,7 +232,7 @@ export function useFiles() {
     setLoading(true);
     setError(null);
     try {
-      const res= await axios.post("/api/pdf",
+      const res = await axios.post("/api/pdf",
         { html },
         { responseType: "blob" }
       );
@@ -229,6 +254,7 @@ export function useFiles() {
     getFile,
     getFiles,
     createFile,
+    uploadFile,
     updateFile,
     batchUpdateFiles,
     restoreAllArchived,

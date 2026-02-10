@@ -9,7 +9,6 @@ import '@mantine/dropzone/styles.css';
 import { useFiles } from '../../hooks/useFiles';
 import { useAppContext } from "../context/globalContext";
 import CustomDialog from '../popups/CustomDialog';
-import { SUPPORTED_TEXT_TYPES, SUPPORTED_IMAGE_TYPES } from "../../types/File"
 import { useNavigate } from 'react-router-dom';
 import { useDropzone } from "react-dropzone";
 import { useTranslation } from 'react-i18next';
@@ -17,78 +16,38 @@ import { useTranslation } from 'react-i18next';
 
 const UploadFileDialog = () => {
 
-  const {t} = useTranslation()
+  const { t } = useTranslation()
   const navigate = useNavigate()
-  const { user, setCurrentFileId, createFile, filesLoading, filesError } = useAppContext()
+  const { user, setCurrentFileId, createFile, uploadFile, filesLoading, filesError } = useAppContext()
 
   const handleFileUpload = async (file: File) => {
 
-    if(!user) return
+    if (!user) return
 
     // Check if file is valid
     if (!file || !file.name) {
       throw new Error("Invalid file");
     }
 
-    // Extract filename without extension for safety
-    const originalFilename = file.name.split('.').slice(0, -1).join('.');
-    const fileExtension = file.name.split('.').pop() || '';
-
-    let content = '';
-    let uploadedFile;
-
     try {
-      // Handle text-based file upload
-      if (SUPPORTED_TEXT_TYPES[file.type as keyof typeof SUPPORTED_TEXT_TYPES]) {
-        console.log("attempting text file upload")
-        // Read text content
-        content = await file.text();
+      // Let the backend handle the file type logic
+        const response = await uploadFile(file);
 
-        uploadedFile = await createFile({
-          created_by: user._id,
-          filename: `${originalFilename}`,
-          file_type: `.${fileExtension}`,
-          mime_type: file.type,
-          content: content,
-          inUse: true,
-          usedBy: user._id
-        });
-      }
-      // Handle image upload
-      else if (SUPPORTED_IMAGE_TYPES[file.type as keyof typeof SUPPORTED_IMAGE_TYPES]) {
-        console.log("attempting image upload")
-        // For images, store as base64
-        const reader = new FileReader();
-        const imageContent = await new Promise<string>((resolve, reject) => {
-          reader.onload = (e) => resolve(e.target?.result as string);
-          reader.onerror = reject;
-          reader.readAsDataURL(file);
-        });
+        if(!response) return
 
-        uploadedFile = await createFile({
-          created_by: user._id,
-          filename: `${originalFilename}`,
-          file_type: `.${fileExtension}`,
-          content: imageContent, // Base64 encoded image
-          inUse: true,
-          usedBy: user._id
-        });
-      }
-      // Unsupported file type
-      else {
-        throw new Error(`Unsupported file type: ${file.type}`);
-      }
-
+      const uploadedFile = response.file
+      const category = response.category
+      
       // Navigate to the uploaded file's page
       if (uploadedFile && uploadedFile._id) {
         setCurrentFileId(uploadedFile._id)
-        navigate(`/${uploadedFile._id}`);
+        navigate(`/${user._id}/${uploadedFile._id}`);
       } else {
         throw new Error("File upload failed - no ID returned");
       }
 
     } catch (error) {
-      console.error("File upload error:", error);
+      console.log("File upload error:", error);
       // Handle error (show notification, etc.)
       throw error;
     }

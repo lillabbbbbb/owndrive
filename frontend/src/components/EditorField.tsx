@@ -3,14 +3,13 @@ import '../editor.scss'
 import { TextStyleKit } from '@tiptap/extension-text-style'
 import type { Editor } from '@tiptap/react'
 import { EditorContent, useEditor, useEditorState } from '@tiptap/react'
-import { usePDF } from 'react-to-pdf';
 import StarterKit from '@tiptap/starter-kit'
 import { useEffect, forwardRef } from 'react'
 import { Button } from '@headlessui/react'
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from './context/globalContext';
-import { getFileCategory, FILE_CATEGORIES } from "../utils/fileTypes"
+import { getFrontendFileCategory } from "../types/File"
 import React, { useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import * as mammoth from "mammoth";
@@ -292,7 +291,7 @@ const EditorField = forwardRef<HTMLDivElement, EditorFieldProps>(({ content, set
 
   useEffect(() => {
     if (!currentFile) return;
-    const category = getFileCategory(currentFile);
+    const category = getFrontendFileCategory(currentFile);
     async function loadFile() {
       switch (category) {
         case "editable":
@@ -309,7 +308,7 @@ const EditorField = forwardRef<HTMLDivElement, EditorFieldProps>(({ content, set
           }
           break;
 
-        case "images":
+        case "image":
           if (currentFile!.data) {
             const blob = new Blob([new Uint8Array(currentFile!.data)], { type: currentFile?.mime_type });
             const url = URL.createObjectURL(blob);
@@ -327,8 +326,8 @@ const EditorField = forwardRef<HTMLDivElement, EditorFieldProps>(({ content, set
 
         default:
           const blob = new Blob([currentFile!.content!], { type: currentFile!.mime_type });
-            const url = URL.createObjectURL(blob);
-            setContent(url)
+          const url = URL.createObjectURL(blob);
+          setContent(url)
           break;
       }
     }
@@ -337,14 +336,14 @@ const EditorField = forwardRef<HTMLDivElement, EditorFieldProps>(({ content, set
 
     // Cleanup blob URLs for images/view-only files
     return () => {
-      if (content && (category === "images" || category === "viewOnly")) {
+      if (content && (category === "image" || category === "viewOnly")) {
         URL.revokeObjectURL(content);
       }
     };
   }, [currentFile]);
 
   if (!currentFile) return <div>No file selected</div>;
-  const category = getFileCategory(currentFile);
+  const category = getFrontendFileCategory(currentFile);
 
   switch (category) {
     case "editable":
@@ -358,10 +357,13 @@ const EditorField = forwardRef<HTMLDivElement, EditorFieldProps>(({ content, set
             </div>
           </div>
         );
+      } else {
+        console.log("Non-JSON editable file skipped")
+        return (<p>Non-JSON editable file skipped</p>)
       }
       break;
 
-    case "images":
+    case "image":
       return <img src={content || ""} alt={currentFile.filename} style={{ maxWidth: "100%" }} />;
 
     case "viewOnly":

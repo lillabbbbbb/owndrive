@@ -190,7 +190,7 @@ const Home = () => {
 
     return data.filter((file) => {
       const filename = file.filename.toLowerCase();
-      const creator = file.content.toLowerCase();
+      const creator = file.created_by.toLowerCase();
 
       const matchesFilename = filename.includes(keyword);
       const matchesCreator = creator.includes(keyword);

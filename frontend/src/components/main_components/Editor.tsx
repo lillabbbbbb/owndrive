@@ -24,7 +24,6 @@ import { IFileFrontend } from '../../types/File';
 import Login from './Login';
 import { useTranslation } from 'react-i18next';
 import PdfViewer from '../PDFViewer';
-import { } from '../../utils/fileTypes';
 
 const Editor = () => {
 
