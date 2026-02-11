@@ -70,7 +70,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   const getCurrentFile = async () => {
     if (!currentFileId) return null;
     const file = await filesHook.getFile(currentFileId);
-    setCurrentFile(file || null);
+    setCurrentFile(file);
     return file;
   };
 
