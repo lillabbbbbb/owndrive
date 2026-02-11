@@ -3,3 +3,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+body {
+  cursor: none; /* hides the default cursor */
+}

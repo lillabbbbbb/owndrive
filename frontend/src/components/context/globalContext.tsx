@@ -101,6 +101,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         setUser(isUser);
       }
     };
+    loadUser()
 
     const loadFile = async () => {
       const fileId = sessionStorage.getItem("fileId")
@@ -108,7 +109,6 @@ export const AppProvider = ({ children }: AppProviderProps) => {
       setCurrentFileId(fileId)
     };
 
-    loadUser()
     loadFile()
   }, []);
 

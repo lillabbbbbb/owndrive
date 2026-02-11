@@ -9,6 +9,10 @@
   text-align: center;
 }
 
+body {
+  cursor: none; /* hides the default cursor */
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;

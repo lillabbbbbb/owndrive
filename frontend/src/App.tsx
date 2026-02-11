@@ -4,6 +4,7 @@ import Body from "./components/main_components/Body"
 import { BrowserRouter } from 'react-router-dom'
 import { AppProvider } from './components/context/globalContext'
 import { Toaster } from "sonner";
+import CustomCursor from './components/CustomCursor'
 
 //tailwind css class hardcoded variables can come here
 
@@ -36,21 +37,26 @@ export interface IUserTest {
   files: IFileTest[]
 }
 
+const cursorSrc = "/cursor.png"
+
 
 function App() {
 
 
   return (
     <>
-      <AppProvider>
-        <BrowserRouter>
-          <Header />
-          <Body />
+      <div style={{ cursor: "none" }}>
+        <CustomCursor src={undefined} size={30} />
+        <AppProvider>
+          <BrowserRouter>
+            <Header />
+            <Body />
 
-        </BrowserRouter>
-      </AppProvider>
+          </BrowserRouter>
+        </AppProvider>
 
-      <Toaster />
+        <Toaster />
+      </div>
     </>
   )
 }

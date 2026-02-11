@@ -16,7 +16,7 @@ export function EditableText(
     errorMessage = "Invalid file name"
   }: EditableTextProps) {
 
-    const {currentFileId, updateFile} = useAppContext()
+  const { currentFileId } = useAppContext()
 
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(value)
@@ -30,14 +30,17 @@ export function EditableText(
   useLayoutEffect(() => {
     if (spanRef.current) {
       const width = spanRef.current.offsetWidth
-      setInputWidth(width + 4) // small buffer for cursor
+      setInputWidth(width + 8) // small buffer for cursor
     }
   }, [draft])
 
   const finishEditing = () => {
     const valid = validate(draft)
     setIsValid(valid)
-    onSave
+    onSave(draft)
+    setDraft(draft)
+    setIsValid(true)
+    setEditing(false)
   }
 
   if (!editing) {
@@ -79,9 +82,6 @@ export function EditableText(
             setDraft(value)
             setIsValid(true)
             setEditing(false)
-            updateFile(currentFileId!, 
-              {filename: value}
-            )
           }
         }}
         style={{ width: inputWidth }}

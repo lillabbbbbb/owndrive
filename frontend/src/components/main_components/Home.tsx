@@ -76,7 +76,8 @@ const Home = () => {
   useEffect(() => {
     getFiles();
     setCurrentFileId(null)
-  }, []); // empty deps → runs once
+    sessionStorage.removeItem("fileId")
+  }, []);
 
   useEffect(() => {
     toast.error(filesError)

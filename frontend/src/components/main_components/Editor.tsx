@@ -18,8 +18,6 @@ import { EditableText } from '../EditableText';
 import CustomDialog from '../popups/CustomDialog';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from "../context/globalContext";
-import { useFiles } from '../../hooks/useFiles';
-import { useUser } from '../../hooks/useUser';
 import { IFileFrontend } from '../../types/File';
 import Login from './Login';
 import { useTranslation } from 'react-i18next';
@@ -32,7 +30,7 @@ const Editor = () => {
     const [guestDialogOpen, setGuestDialogOpen] = useState<boolean>(true)
 
     const [jwt, setJwt] = useState<string | null>(null)
-    const [file, setFile] = useState<{file: IFileFrontend, permissions: string[], base64data: string } | null>(null)
+    const [file, setFile] = useState<{ file: IFileFrontend, permissions: string[], base64data: string } | null>(null)
     const [filename, setFilename] = useState<string>("New file")
     const [beingUsed, setBeingUsed] = useState<boolean>(false)
     const [content, setContent] = useState<string>("Write here...")
@@ -43,7 +41,7 @@ const Editor = () => {
     const [isPrivate, setIsPrivate] = useState<boolean>(false)
     const [editable, setEditable] = useState<boolean>(false) //turn this into useEffect
 
-    
+
 
     // PDF hook
     const { toPDF, targetRef } = usePDF({
@@ -64,35 +62,33 @@ const Editor = () => {
 
     useEffect(() => {
         setJwt(localStorage.getItem("token"))
+
+
     }, [user])
-
     useEffect(() => {
-        toast.error(filesError)
-        if(filesLoading || userLoading){
-            toast.loading("Loading...")
-        }
-        toast.error(userError)
-    }, [filesError, filesLoading, userError, userLoading])
+        if (!currentFileId) {
+            //this means that this is a new file
+            setCurrentFileId(sessionStorage.getItem("fileId"))
+            setContent("Write here...")
+        } else {
+            const loadFile = async () => {
+                if (!currentFileId) return
+                const fetchedFile = await getCurrentFile(currentFileId)
+                if (fetchedFile) {
+                    setFilename(fetchedFile.file.filename)
+                    setBeingUsed(false) // while testing
+                    setFile(fetchedFile)
+                    setVisibleToGuest(fetchedFile.file.visibleToGuests)
+                    setCanEdit(fetchedFile.file.canEdit)
+                    setCanView(fetchedFile.file.canView)
+                    setIsPrivate(fetchedFile.file.private)
 
-    useEffect(() => {
-        setCurrentFileId(sessionStorage.getItem("fileId"))
-        if (!currentFileId) return
-        const loadFile = async () => {
-            const fetchedFile = await getCurrentFile(currentFileId)
-            if (fetchedFile) {
-                setFilename(fetchedFile.file.filename)
-                setBeingUsed(true)
-                setFile(fetchedFile)
-                setVisibleToGuest(fetchedFile.file.visibleToGuests)
-                setCanEdit(fetchedFile.file.canEdit)
-                setCanView(fetchedFile.file.canView)
-                setIsPrivate(fetchedFile.file.private)
-
-                console.log(fetchedFile.file.content)
-                console.log(fetchedFile)
+                    console.log(fetchedFile.file.content)
+                    console.log(fetchedFile)
+                }
             }
+            loadFile()
         }
-        loadFile()
     }, [currentFileId])
 
     useEffect(() => {
@@ -114,6 +110,8 @@ const Editor = () => {
 
 
     console.log(`File content is now: ${content}`)
+    console.log(`File name is now: ${filename}`)
+    console.log(`File name is now: ${file?.file.filename}`)
 
     useEffect(() => {
         if (currentFileId && user) {
@@ -188,13 +186,14 @@ const Editor = () => {
 
             createFile({
                 created_by: user._id,
-                filename: filename,
+                filename: newFileName,
                 file_type: "json",
                 mime_type: "application/json",
                 content: content,
                 inUse: true,
                 usedBy: user._id
             })
+            setFilename(newFileName)
             return
         }
 
@@ -207,12 +206,14 @@ const Editor = () => {
                 usedBy: user._id,
                 status: "active",
             })
+            setFilename(newFileName)
+            console.log("New filename saved")
         }
 
         //and display the new one
         //needs state or sum?
         //refresh URL with correct new filename
-        navigate(`/${username}/${currentFileId}`, { replace: true })
+        navigate(`/${user._id}/${currentFileId}`, { replace: true })
 
         //if not valid, set the value to be the previous file name
     }
@@ -234,8 +235,7 @@ const Editor = () => {
 
 
                     <EditorButtons htmlContent={content} />
-                    <EditableText value={file?.file.filename ?? filename} onSave={handleSaveFileName} />
-
+                    <EditableText value={filename} onSave={(v) => handleSaveFileName(v)} />
                     {(file?.file.file_type === ".pdf") && <PdfViewer url="/public/files/sample.pdf" />}
                     <EditorField ref={editorRef} content={file?.file.content ? content : content} setContent={setContent} editable={editable} />
 

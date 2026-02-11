@@ -142,7 +142,13 @@ fileRouter.post("/", async (req, res) => {
             return res.status(401).json({ message: "Unauthorized" });
         const userId = customReq.user?._id;
         const { filename, file_type, mime_type, content, data, inUse = false, usedBy, status = "active", visibleToGuests = false, showsInHomeShared = true, private: isPrivate = false } = req.body;
-        const buffer = Buffer.from(data);
+        let buffer;
+        if (data) {
+            buffer = Buffer.from(data);
+        }
+        else {
+            buffer = undefined;
+        }
         if (!filename) {
             return res.status(400).json({ message: "Filename is required" });
         }
@@ -160,8 +166,8 @@ fileRouter.post("/", async (req, res) => {
             file_type,
             mime_type,
             filename,
-            data,
-            content,
+            data: buffer,
+            content: content,
             inUse,
             usedBy,
             status,
@@ -297,8 +303,9 @@ fileRouter.get("/:fileId", async (req, res) => {
             permissions.accessType = "viewer";
         else if (existingFile?.canView.includes(userId))
             permissions.accessType = "editor";
-        if (!existingFile || !existingFile.data)
+        if (!existingFile)
             return res.status(404).json({ message: "File not found" });
+        const baseData = existingFile.data?.toString("base64") || null;
         return res.status(200).json({
             permissions: permissions,
             file: {
@@ -319,7 +326,7 @@ fileRouter.get("/:fileId", async (req, res) => {
                 canView: existingFile.canView,
                 canEdit: existingFile.canEdit,
             },
-            base64data: existingFile.data.toString("base64")
+            base64data: baseData
         });
     }
     catch (error) {

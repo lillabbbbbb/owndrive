@@ -349,7 +349,20 @@ const EditorField = forwardRef<HTMLDivElement, EditorFieldProps>(({ content, set
     };
   }, [currentFile]);
 
-  if (!currentFile) return <div>No file selected</div>;
+  if (!currentFile) {
+    return (
+      <>
+        <div>File not saved yet</div>
+        <div>
+          <EditorMenu editor={editor} />
+          <div ref={ref}>
+            <EditorContent editor={editor} className="tiptap-editor prose prose-slate dark:prose-invert" />
+            <div>Word count: {content ? content.trim().split(/\s+/).filter(Boolean).length : 0}</div>
+          </div>
+        </div>
+      </>)
+  }
+
   const category = getFileCategory(currentFile.file.mime_type);
 
   switch (category) {
