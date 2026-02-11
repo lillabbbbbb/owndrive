@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { Button } from "../ui/button"
 import { Group, Text } from '@mantine/core';
@@ -12,6 +12,7 @@ import CustomDialog from '../popups/CustomDialog';
 import { useNavigate } from 'react-router-dom';
 import { useDropzone } from "react-dropzone";
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 
 const UploadFileDialog = () => {
@@ -19,6 +20,13 @@ const UploadFileDialog = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { user, setCurrentFileId, createFile, uploadFile, filesLoading, filesError } = useAppContext()
+
+  useEffect(() => {
+    toast.error(filesError)
+    if (filesLoading) {
+      toast.loading("Loading...")
+    }
+  }, [filesError, filesLoading])
 
   const handleFileUpload = async (file: File) => {
 
@@ -31,13 +39,13 @@ const UploadFileDialog = () => {
 
     try {
       // Let the backend handle the file type logic
-        const response = await uploadFile(file);
+      const response = await uploadFile(file);
 
-        if(!response) return
+      if (!response) return
 
-      const uploadedFile = response.file
+      const uploadedFile = response.uploadedFile
       const category = response.category
-      
+
       // Navigate to the uploaded file's page
       if (uploadedFile && uploadedFile._id) {
         setCurrentFileId(uploadedFile._id)
@@ -73,9 +81,6 @@ const UploadFileDialog = () => {
       <Button type="button" onClick={open}>
         {t("home.upload-button")}
       </Button>
-
-      {filesError && <CustomDialog heading="Error" text={filesError} />}
-      {filesLoading && <p>{t("Loading...")}</p>}
     </>
   );
 }

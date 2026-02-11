@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Select, { components, createFilter } from 'react-select';
 //https://ui.shadcn.com/docs/components/radix/dialog
 import {
@@ -30,6 +30,7 @@ import { useFiles } from '../../hooks/useFiles';
 import CustomDialog from '../popups/CustomDialog';
 import { isValidFileName } from '../../utils/validateFilename';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 export type customOption = {
     label: string
@@ -50,6 +51,13 @@ export function ClonePopup() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [isInvalidName, setIsInvalidName] = useState(false);
+
+  useEffect(() => {
+        toast.error(filesError)
+        if(filesLoading){
+            toast.loading("Loading...")
+        }
+    }, [filesError, filesLoading])
 
   // Check if the input is valid & unique
   const isValidAndUnique = (): boolean => {
@@ -125,9 +133,6 @@ export function ClonePopup() {
               </Button>
             </form>
           </div>
-
-          {filesError && <CustomDialog heading="Error" text={filesError} />}
-          {filesLoading && <p>{("Loading...")}</p>}
         </DialogContent>
       </Dialog>
     </>

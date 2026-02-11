@@ -13,7 +13,7 @@ export interface AppContextType {
   filesLoading: boolean;
   filesError: string | null;
   files: IFileFrontend[] | [];
-  currentFile: IFileFrontend | null;
+  currentFile: {file: IFileFrontend, permissions: string[], base64data: string } | null;
 
   currentFileId: string | null;
 
@@ -27,11 +27,11 @@ export interface AppContextType {
   logout: () => Promise<void>;
 
   // File actions
-  getCurrentFile: (currentFileId: string) => Promise<IFileFrontend | null>
+  getCurrentFile: (currentFileId: string) => Promise<{file: IFileFrontend, permissions: string[], base64data: string } | null>;
   getFiles: () => Promise<IFileFrontend[] | null>;
-  getFile: (id: string) => Promise<IFileFrontend | null>;
+  getFile: (id: string) => Promise<{file: IFileFrontend, permissions: string[], base64data: string } | null>;
   createFile: (fileData: Partial<IFileFrontend>) => Promise<IFileFrontend | null>;
-  uploadFile: (file: File) => Promise<{file: IFileFrontend, category: string} | null>
+  uploadFile: (file: File) => Promise<{uploadedFile: IFileFrontend, category: string} | null>
   updateFile: (id: string, updates: Partial<IFileFrontend>) => Promise<IFileFrontend | null>;
   batchUpdateFiles: (filters: Partial<IFileFrontend>, updates: Partial<IFileFrontend>) => Promise<IFileFrontend | null>;
   restoreAllArchived: () => Promise<void>;
@@ -63,7 +63,7 @@ interface AppProviderProps {
 export const AppProvider = ({ children }: AppProviderProps) => {
   const userHook = useUser();
   const filesHook = useFiles();
-  const [currentFile, setCurrentFile] = useState<IFileFrontend | null>(null)
+  const [currentFile, setCurrentFile] = useState<{file: IFileFrontend, permissions: string[], base64data: string } | null>(null)
   const [currentFileId, setCurrentFileId] = useState<string | null>(null)
   const [user, setUser] = useState<IUserFrontend | null>(null)
 
@@ -102,14 +102,20 @@ export const AppProvider = ({ children }: AppProviderProps) => {
       }
     };
 
-    loadUser();
+    const loadFile = async () => {
+      const fileId = sessionStorage.getItem("fileId")
+      if(!fileId) return
+      setCurrentFileId(fileId)
+    };
+
+    loadUser()
+    loadFile()
   }, []);
 
 
   const login = async (email: string, password: string) => {
     const userFromHook = await userHook.login(email, password);
     if (userFromHook) {
-      sessionStorage.setItem("id", userFromHook._id);
       setUser(userFromHook); // propagate state to provider
     }
     return userFromHook;
@@ -122,10 +128,12 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   };
 
   const createFile = async (fileData: Partial<IFileFrontend>) => {
-    const createdUserFromHook = await filesHook.createFile(fileData)
-    if (createdUserFromHook) {
+    const createdFileFromHook = await filesHook.createFile(fileData)
+    if (createdFileFromHook) {
       console.log("File successfully created")
-      setCurrentFileId(createdUserFromHook._id)
+      sessionStorage.setItem("fileId", createdFileFromHook._id);
+      setCurrentFileId(createdFileFromHook._id)
+
     }
   }
 
@@ -158,7 +166,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     
     const a = document.createElement("a");
     a.href = url;
-    a.download = currentFile!.filename;
+    a.download = currentFile!.file.filename;
     a.click();
     window.URL.revokeObjectURL(url);
     

@@ -48,7 +48,7 @@ const fileSchema = new mongoose_1.Schema({
     // Binary data (for images, PDFs, etc.)
     data: { type: Buffer, required: false },
     // External URL (optional)
-    file_url: { type: String, required: false, unique: true },
+    //file_url: { type: String, required: false, unique: false },
     canView: { type: [mongoose_1.Schema.Types.ObjectId], required: true, default: [] }, //list of userids that can view the file
     canEdit: { type: [mongoose_1.Schema.Types.ObjectId], required: true, default: [] }, //list of userids that can edit the file
     visibleToGuests: { type: Boolean, required: true, default: false },

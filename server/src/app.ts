@@ -31,7 +31,7 @@ const port: number = parseInt(process.env.PORT as string) || 8001
 
 
 //Connect server to DB
-const mongoDB: string = "mongodb://127.0.0.1:27017/OwnDrive"
+export const mongoDB: string = "mongodb://127.0.0.1:27017/OwnDrive"
 mongoose.connect(mongoDB)
 mongoose.Promise = Promise
 const db: Connection = mongoose.connection
@@ -44,6 +44,8 @@ export async function connectDB(): Promise<void> {
 }
 
 db.on("error", console.error.bind(console, "MongoDB connection error"))
+//db.dropDatabase()
+//console.log("Database dropped")
 
 //Set up what the app should use
 app.use(passport.initialize())

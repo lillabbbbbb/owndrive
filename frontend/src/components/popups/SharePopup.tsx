@@ -28,6 +28,7 @@ import { useAppContext } from "../context/globalContext";
 import CustomDialog from '../popups/CustomDialog';
 import { IFileFrontend } from '../../types/File';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 
 export type customOption = {
@@ -54,6 +55,13 @@ export function SharePopup() {
   const [copied, setCopied] = useState(false);
   const [shortUrl, setShortUrl] = useState(`http://localhost:3000/user/file`);
   const [addUsersMenuOpen, setAddUsersMenuOpen] = useState<boolean>(false)
+
+  useEffect(() => {
+    toast.error(filesError)
+    if (filesLoading) {
+      toast.loading("Loading...")
+    }
+  }, [filesLoading, filesError])
 
   useEffect(() => {
     if (!currentFileId) return;
@@ -155,8 +163,7 @@ export function SharePopup() {
               onCheckedChange={(c) => { updateFile(currentFileId!, { private: c }) }} //set is private
             />
           </Field>
-          {filesError && <CustomDialog heading="Error" text={filesError} />}
-          {filesLoading && <p>{("Loading...")}</p>}
+
 
 
         </DialogContent>

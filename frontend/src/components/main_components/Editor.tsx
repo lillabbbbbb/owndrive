@@ -24,6 +24,7 @@ import { IFileFrontend } from '../../types/File';
 import Login from './Login';
 import { useTranslation } from 'react-i18next';
 import PdfViewer from '../PDFViewer';
+import { toast } from 'sonner';
 
 const Editor = () => {
 
@@ -31,7 +32,7 @@ const Editor = () => {
     const [guestDialogOpen, setGuestDialogOpen] = useState<boolean>(true)
 
     const [jwt, setJwt] = useState<string | null>(null)
-    const [file, setFile] = useState<IFileFrontend | null>(null)
+    const [file, setFile] = useState<{file: IFileFrontend, permissions: string[], base64data: string } | null>(null)
     const [filename, setFilename] = useState<string>("New file")
     const [beingUsed, setBeingUsed] = useState<boolean>(false)
     const [content, setContent] = useState<string>("Write here...")
@@ -42,7 +43,7 @@ const Editor = () => {
     const [isPrivate, setIsPrivate] = useState<boolean>(false)
     const [editable, setEditable] = useState<boolean>(false) //turn this into useEffect
 
-
+    
 
     // PDF hook
     const { toPDF, targetRef } = usePDF({
@@ -59,24 +60,35 @@ const Editor = () => {
 
 
     const navigate = useNavigate()
-    const { user, currentFileId, getCurrentFile, getFile, createFile, updateFile, lockFile, userLoading, userError, filesLoading, filesError } = useAppContext()
+    const { user, currentFileId, setCurrentFileId, getCurrentFile, getFile, createFile, updateFile, lockFile, userLoading, userError, filesLoading, filesError } = useAppContext()
 
     useEffect(() => {
         setJwt(localStorage.getItem("token"))
     }, [user])
 
     useEffect(() => {
+        toast.error(filesError)
+        if(filesLoading || userLoading){
+            toast.loading("Loading...")
+        }
+        toast.error(userError)
+    }, [filesError, filesLoading, userError, userLoading])
+
+    useEffect(() => {
+        setCurrentFileId(sessionStorage.getItem("fileId"))
         if (!currentFileId) return
         const loadFile = async () => {
             const fetchedFile = await getCurrentFile(currentFileId)
             if (fetchedFile) {
+                setFilename(fetchedFile.file.filename)
+                setBeingUsed(true)
                 setFile(fetchedFile)
-                setVisibleToGuest(fetchedFile.visibleToGuests)
-                setCanEdit(fetchedFile.canEdit)
-                setCanView(fetchedFile.canView)
-                setIsPrivate(fetchedFile.private)
+                setVisibleToGuest(fetchedFile.file.visibleToGuests)
+                setCanEdit(fetchedFile.file.canEdit)
+                setCanView(fetchedFile.file.canView)
+                setIsPrivate(fetchedFile.file.private)
 
-                console.log(fetchedFile.content)
+                console.log(fetchedFile.file.content)
                 console.log(fetchedFile)
             }
         }
@@ -90,7 +102,7 @@ const Editor = () => {
     // Update local content when file changes
     useEffect(() => {
         if (file) {
-            setContent(file.content ?? ""); // empty string fallback
+            setContent(file.file.content ?? ""); // empty string fallback
         }
         console.log(`Content set to ${content}`)
     }, [file]);
@@ -222,11 +234,10 @@ const Editor = () => {
 
 
                     <EditorButtons htmlContent={content} />
-                    <EditableText value={file?.filename ?? filename} onSave={handleSaveFileName} />
+                    <EditableText value={file?.file.filename ?? filename} onSave={handleSaveFileName} />
 
-                    {(file?.file_type === ".pdf") && <PdfViewer url="/public/files/sample.pdf" />}
-                    <EditorField ref={editorRef} content={file?.content ? content : content} setContent={setContent} editable={editable} />
-                    <div>Word count: {content ? content.trim().split(/\s+/).filter(Boolean).length : 0}</div>
+                    {(file?.file.file_type === ".pdf") && <PdfViewer url="/public/files/sample.pdf" />}
+                    <EditorField ref={editorRef} content={file?.file.content ? content : content} setContent={setContent} editable={editable} />
 
 
 
@@ -257,10 +268,6 @@ const Editor = () => {
                         </Dialog>
                     </>
                 }
-                {userError && <CustomDialog text={userError} />}
-                {userLoading && <p>{("Loading...")}</p>}
-                {filesError && <CustomDialog heading="Error" text={filesError} />}
-                {filesLoading && <p>{("Loading...")}</p>}
 
             </>}
         </>

@@ -11,7 +11,7 @@ import { Types } from "mongoose"
 import { validateEmail, validatePassword, validateUsername } from "../validators/inputValidation"
 import { CustomRequest, validateUserToken } from "../middleware/userValidation"
 import { getFileCategory, CATEGORY_NAMES, FILE_CATEGORIES } from "../types/file"
-import upload from "../middleware/multer-config"
+import uploadToMemory from "../middleware/multer-config"
 
 
 const fileRouter: Router = Router()
@@ -43,22 +43,20 @@ fileRouter.get("/", async (req: Request, res: Response) => {
     }
 })
 
-fileRouter.post("/upload", upload.single("file"),
+fileRouter.post("/upload", uploadToMemory.single("file"),
     async (req: Request, res: Response) => {
         try {
+            console.log(req.file);
 
             const customReq = req as CustomRequest;
             if (!req.user) return res.status(401).json({ message: "Unauthorized" })
             const userId = customReq.user?._id
 
-            if(!req.body.file) return res.status(403).json({message: "File not attached"})
+            if (!req.file) return res.status(403).json({ message: "File not attached" })
 
-            const {
-                file,
-            } = req.body;
 
-            const filename = file.name.split('.').slice(0, -1).join('.');
-            const fileType = file.name.split('.').pop() || '';
+            const filename = req.file.originalname.split('.').slice(0, -1).join('.');
+            const fileType = req.file.originalname.split('.').pop() || '';
             const now = new Date();
             const inUse = true
             const usedBy = userId
@@ -77,7 +75,8 @@ fileRouter.post("/upload", upload.single("file"),
             }
             // 2️⃣ Create new file based on file type
             let uploadedFile
-            const fileCategory = getFileCategory(file)
+            const fileCategory = getFileCategory(req.file.mimetype)
+            console.log("filecategory: " + fileCategory)
 
             if (fileCategory === CATEGORY_NAMES.Editable) {
                 uploadedFile = await File.create({
@@ -85,12 +84,12 @@ fileRouter.post("/upload", upload.single("file"),
                     created_by: userId,
                     last_edited_at: now,
                     file_type: fileType,
-                    mime_type: file.type,
+                    mime_type: req.file.mimetype,
                     filename: filename,
-                    content: file.text(),
-                    inUse : inUse,
-                    usedBy : userId,
-                    status : status,
+                    content: req.file.buffer.toString("utf-8"),
+                    inUse: inUse,
+                    usedBy: userId,
+                    status: status,
                     visibleToGuests: visibleToGuests,
                     showsInHomeShared: visibleToGuests,
                     private: isPrivate,
@@ -99,17 +98,24 @@ fileRouter.post("/upload", upload.single("file"),
                 });
             }
             else if (fileCategory === CATEGORY_NAMES.Image) {
+
+                //const base64Image = req.file.buffer.toString("base64");
+                //const mimeType = req.file.mimetype;
+                //const dataUrl = `data:${mimeType};base64,${base64Image}`;
+                //console.log(dataUrl); 
+                console.log(req.file.buffer)
+
                 uploadedFile = await File.create({
                     created_at: now,
                     created_by: userId,
                     last_edited_at: now,
                     file_type: fileType,
-                    mime_type: file.type,
+                    mime_type: req.file.mimetype,
                     filename: filename,
-                    //data: ??,
-                    inUse : inUse,
-                    usedBy : userId,
-                    status : status,
+                    data: req.file.buffer,
+                    inUse: inUse,
+                    usedBy: userId,
+                    status: status,
                     visibleToGuests: visibleToGuests,
                     showsInHomeShared: visibleToGuests,
                     private: isPrivate,
@@ -117,30 +123,29 @@ fileRouter.post("/upload", upload.single("file"),
                     canEdit: [userId],
                 });
             } else if (fileCategory == CATEGORY_NAMES.ViewOnly || fileCategory === CATEGORY_NAMES.Other) {
-                {
-                    uploadedFile = await File.create({
+                uploadedFile = await File.create({
                     created_at: now,
                     created_by: userId,
                     last_edited_at: now,
                     file_type: fileType,
-                    mime_type: file.type,
+                    mime_type: req.file.mimetype,
                     filename: filename,
-                    inUse : false,
-                    status : status,
+                    inUse: false,
+                    status: status,
                     visibleToGuests: visibleToGuests,
                     showsInHomeShared: visibleToGuests,
                     private: isPrivate,
                     canView: [userId],
                     canEdit: [userId],
                 });
-                }
+            }
+
+            if (uploadedFile) {
+                await User.findByIdAndUpdate(userId, { $addToSet: { files: uploadedFile._id } })
             }
 
 
-            // 3️⃣ Push reference to user's files array
-            await User.findByIdAndUpdate(userId, { $push: { files: file._id } });
-
-            return res.status(200).json({"uploadedFile" : uploadedFile, "category" : fileCategory});
+            return res.status(200).json({ "uploadedFile": uploadedFile, "category": fileCategory });
         } catch (error: any) {
             console.log(error)
             return res.status(500).json({ "message": "Internal Server Error" })
@@ -370,7 +375,31 @@ fileRouter.get("/:fileId",
             if (existingFile?.canView.includes(userId)) permissions.accessType = "viewer"
             else if (existingFile?.canView.includes(userId)) permissions.accessType = "editor"
 
-            return res.status(200).json({ permissions: permissions, file: existingFile })
+            if (!existingFile || !existingFile.data) return res.status(404).json({ message: "File not found" })
+
+            return res.status(200).json({
+                permissions: permissions,
+                file: {
+                    _id: existingFile._id,
+                    filename: existingFile.filename,
+                    mime_type: existingFile.mime_type,
+                    file_type: existingFile.file_type,
+                    created_at: existingFile.created_at,
+                    created_by: existingFile.created_by,
+
+                    last_edited_at: existingFile.last_edited_at,
+                    content: existingFile.content,
+                    inUse: existingFile.inUse,
+                    usedBy: existingFile.usedBy,
+                    status: existingFile.status,
+                    visibleToGuests: existingFile.visibleToGuests,
+                    showsInHomeShared: existingFile.showsInHomeShared,
+                    private: existingFile.private,
+                    canView: existingFile.canView,
+                    canEdit: existingFile.canEdit,
+                },
+                base64data: existingFile.data.toString("base64")
+            })
 
         } catch (error: any) {
             console.log(error)

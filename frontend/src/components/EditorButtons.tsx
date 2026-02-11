@@ -1,4 +1,4 @@
-import React, { ReactElement, useState, RefObject } from 'react'
+import React, { ReactElement, useState, RefObject, useEffect } from 'react'
 import { Tooltip, TooltipTrigger, TooltipContent } from "../components/ui/tooltip"
 import { HiShare } from "react-icons/hi2";
 import SharePopup from './popups/SharePopup';
@@ -7,12 +7,13 @@ import { useFiles } from '../hooks/useFiles'
 import { usePDF } from 'react-to-pdf';
 import { useAppContext } from "./context/globalContext";
 import CustomDialog from './popups/CustomDialog';
+import { toast } from 'sonner';
 import {
-    Dialog,
-    DialogContent,
-    DialogClose,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogClose,
+  DialogHeader,
+  DialogTitle,
 } from "./ui/dialog"
 import { Label } from "./ui/label"
 import { Button } from "./ui/button"
@@ -22,13 +23,20 @@ interface EditorButtonsProps {
   htmlContent: string
 }
 
-const EditorButtons = ({htmlContent}: EditorButtonsProps) => {
+const EditorButtons = ({ htmlContent }: EditorButtonsProps) => {
 
-  const {t} = useTranslation()
-  const {downloadPDF, currentFileId, createFile, updateFile, filesLoading, filesError} = useAppContext()
+  const { t } = useTranslation()
+  const { downloadPDF, currentFileId, createFile, updateFile, filesLoading, filesError } = useAppContext()
   const [PDFDialogOpen, setPDFDialogOpen] = useState<boolean>(false)
 
   console.log(currentFileId)
+
+  useEffect(() => {
+    toast.error(filesError)
+    if (filesLoading) {
+      toast.loading("Loading...")
+    }
+  }, [filesError, filesLoading])
 
   const handlePDFButtonClick = () => {
     console.log("PDF button clicked, cool sonner banner should appear after successful download")
@@ -45,20 +53,17 @@ const EditorButtons = ({htmlContent}: EditorButtonsProps) => {
   const handleDeleteButtonClick = () => {
     console.log("Delete button clicked, reassuring window should pop up")
     //set file's status to "archived"
-    updateFile(currentFileId!, {status: "archived"})
+    updateFile(currentFileId!, { status: "archived" })
   }
 
 
   return (
     <div>
-      
-      {filesError && <CustomDialog heading="Error" text={filesError} />}
-      {filesLoading && <p>{("Loading...")}</p>}
 
       <Tooltip>
         <TooltipTrigger asChild>
           <SharePopup />
-          
+
         </TooltipTrigger>
         <TooltipContent side="top">
           {t("editor-buttons.share")}
@@ -90,25 +95,25 @@ const EditorButtons = ({htmlContent}: EditorButtonsProps) => {
       </Tooltip>
 
       <Dialog open={PDFDialogOpen} onOpenChange={setPDFDialogOpen}>
-                <DialogContent>
-                    {/*<DialogHeader>
+        <DialogContent>
+          {/*<DialogHeader>
             <DialogTitle>Yes</DialogTitle>
           </DialogHeader>*/}
 
-                    <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4">
 
-                        <Label>{("This feature is not available yet.")}</Label>
+            <Label>{("This feature is not available yet.")}</Label>
 
-                        <Label>
-                            ...</Label>
+            <Label>
+              ...</Label>
 
-                    </div>
-                    <DialogClose asChild>
-                        <Button variant="outline">OK</Button>
-                    </DialogClose>
+          </div>
+          <DialogClose asChild>
+            <Button variant="outline">OK</Button>
+          </DialogClose>
 
-                </DialogContent>
-            </Dialog>
+        </DialogContent>
+      </Dialog>
 
       <Tooltip>
         <TooltipTrigger asChild>

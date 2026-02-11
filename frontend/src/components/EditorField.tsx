@@ -9,7 +9,7 @@ import { Button } from '@headlessui/react'
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from './context/globalContext';
-import { getFrontendFileCategory } from "../types/File"
+import { getFileCategory } from "../../../server/src/types/file"
 import React, { useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import * as mammoth from "mammoth";
@@ -253,6 +253,9 @@ const EditorField = forwardRef<HTMLDivElement, EditorFieldProps>(({ content, set
   const { currentFile } = useAppContext()
   console.log(currentFile)
 
+
+  const [url, setUrl] = useState<string | null>(null)
+
   const editor = useEditor({
     extensions,
     editable,
@@ -290,12 +293,17 @@ const EditorField = forwardRef<HTMLDivElement, EditorFieldProps>(({ content, set
   const [numPages, setNumPages] = useState<number>(0);
 
   useEffect(() => {
-    if (!currentFile) return;
-    const category = getFrontendFileCategory(currentFile);
+    if (!currentFile) {
+      setContent(""); // or null
+      return;
+    }
+
+    setContent("");
+    const category = getFileCategory(currentFile.file.mime_type);
     async function loadFile() {
       switch (category) {
         case "editable":
-          if (currentFile?.file_type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+          if (currentFile?.file.file_type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
             const content: string = "<your string>";
             const encoder = new TextEncoder();
             const buffer = encoder.encode(content); // Uint8Array
@@ -303,31 +311,30 @@ const EditorField = forwardRef<HTMLDivElement, EditorFieldProps>(({ content, set
             const { value: html } = await mammoth.convertToHtml({ arrayBuffer });
             setContent(html);
           } else {
-            const text = currentFile?.content;
+            const text = currentFile?.file.content;
             setContent(text!);
           }
           break;
 
         case "image":
-          if (currentFile!.data) {
-            const blob = new Blob([new Uint8Array(currentFile!.data)], { type: currentFile?.mime_type });
-            const url = URL.createObjectURL(blob);
-            setContent(url)
+          if (currentFile && currentFile.base64data) {
+            const url = `data:${currentFile.file.mime_type};base64,${currentFile.base64data}`;
+            setUrl(url); //
           }
           break;
 
         case "viewOnly":
-          if (currentFile!.content) {
-            const blob = new Blob([currentFile!.content], { type: currentFile!.mime_type });
-            const url = URL.createObjectURL(blob);
-            setContent(url)
+          if (currentFile && currentFile.file.content) {
+            const url = `data:${currentFile.file.mime_type};base64,${currentFile.file.content}`;
+            setUrl(url); //
           }
           break;
 
         default:
-          const blob = new Blob([currentFile!.content!], { type: currentFile!.mime_type });
-          const url = URL.createObjectURL(blob);
-          setContent(url)
+          if (currentFile && currentFile.base64data) {
+            const url = `data:${currentFile.file.mime_type};base64,${currentFile.base64data}`;
+            setUrl(url); //
+          }
           break;
       }
     }
@@ -336,24 +343,25 @@ const EditorField = forwardRef<HTMLDivElement, EditorFieldProps>(({ content, set
 
     // Cleanup blob URLs for images/view-only files
     return () => {
-      if (content && (category === "image" || category === "viewOnly")) {
-        URL.revokeObjectURL(content);
+      if (url && (category === "image" || category === "viewOnly")) {
+        URL.revokeObjectURL(url);
       }
     };
   }, [currentFile]);
 
   if (!currentFile) return <div>No file selected</div>;
-  const category = getFrontendFileCategory(currentFile);
+  const category = getFileCategory(currentFile.file.mime_type);
 
   switch (category) {
     case "editable":
-      if (currentFile.mime_type === "application/json") {
-        setContent(currentFile.content!)
+      if (currentFile.file.mime_type === "application/json") {
+        setContent(currentFile.file.content!)
         return (
           <div>
             <EditorMenu editor={editor} />
             <div ref={ref}>
               <EditorContent editor={editor} className="tiptap-editor prose prose-slate dark:prose-invert" />
+              <div>Word count: {content ? content.trim().split(/\s+/).filter(Boolean).length : 0}</div>
             </div>
           </div>
         );
@@ -364,10 +372,10 @@ const EditorField = forwardRef<HTMLDivElement, EditorFieldProps>(({ content, set
       break;
 
     case "image":
-      return <img src={content || ""} alt={currentFile.filename} style={{ maxWidth: "100%" }} />;
+      return <img src={url || undefined} alt={currentFile.file.filename} style={{ maxWidth: "100%" }} />;
 
     case "viewOnly":
-      if (currentFile.file_type === "application/pdf") {
+      if (currentFile.file.file_type === "application/pdf") {
         return (
           <Document file={content} onLoadSuccess={({ numPages: string }) => setNumPages(numPages)}>
             {Array.from(new Array(numPages), (_, index) => (
@@ -377,16 +385,16 @@ const EditorField = forwardRef<HTMLDivElement, EditorFieldProps>(({ content, set
         );
       } else {
         return (
-          <a href={content || ""} target="_blank" rel="noopener noreferrer">
-            View / Download {currentFile.filename}
+          <a href={content || undefined} target="_blank" rel="noopener noreferrer">
+            View / Download {currentFile.file.filename}
           </a>
         );
       }
 
     default:
       return (
-        <a href={content || ""} target="_blank" rel="noopener noreferrer">
-          Download {currentFile.filename}
+        <a href={content || undefined} target="_blank" rel="noopener noreferrer">
+          Download {currentFile.file.filename}
         </a>
       );
 

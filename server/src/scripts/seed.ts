@@ -70,6 +70,24 @@ const admin = await User.findOne({ email: "admin@example.com" });
       last_edited_at: faker.date.recent(),
       file_type: faker.helpers.arrayElement(['doc', 'txt', 'md']),
       filename: faker.system.fileName(),
+      mime_type: "application/json",
+      content: faker.lorem.paragraphs(2),
+      visibleToGuests: faker.datatype.boolean(),
+      showsInHomeShared: faker.datatype.boolean(),
+      private: faker.datatype.boolean(),
+      status: faker.helpers.arrayElement(['active', 'archived']),
+      archivedAt: faker.datatype.boolean() ? faker.date.past() : undefined,
+      inUse: false,
+      usedBy: undefined,
+    });
+
+    const imageFile = await File.create({
+      created_at: faker.date.past(),
+      created_by: admin._id,
+      last_edited_at: faker.date.recent(),
+      file_type: faker.helpers.arrayElement(['doc', 'txt', 'md']),
+      filename: faker.system.fileName(),
+      mime_type: "image/png",
       content: faker.lorem.paragraphs(2),
       visibleToGuests: faker.datatype.boolean(),
       showsInHomeShared: faker.datatype.boolean(),
@@ -82,6 +100,7 @@ const admin = await User.findOne({ email: "admin@example.com" });
 
     // Push file to creator's files array
     admin.files.push(file._id);
+    admin.files.push(imageFile._id)
     await admin.save();
   }
 

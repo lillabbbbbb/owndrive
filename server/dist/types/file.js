@@ -30,13 +30,13 @@ exports.CATEGORY_NAMES = {
     ViewOnly: "viewOnly",
     Other: "other",
 };
-function getFileCategory(file) {
-    console.log(file.type);
-    if (exports.FILE_CATEGORIES.editable.includes(file.type))
+function getFileCategory(mimetype) {
+    console.log(mimetype);
+    if (exports.FILE_CATEGORIES.editable.includes(mimetype))
         return exports.CATEGORY_NAMES.Editable;
-    if (exports.FILE_CATEGORIES.image.includes(file.type))
+    if (exports.FILE_CATEGORIES.image.includes(mimetype))
         return exports.CATEGORY_NAMES.Image;
-    if (exports.FILE_CATEGORIES.viewOnly.includes(file.type))
+    if (exports.FILE_CATEGORIES.viewOnly.includes(mimetype))
         return exports.CATEGORY_NAMES.ViewOnly;
     return exports.CATEGORY_NAMES.Other;
 }

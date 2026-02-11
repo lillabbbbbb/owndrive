@@ -3,10 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.uploadToDisk = void 0;
 const multer_1 = __importDefault(require("multer"));
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
-const storage = multer_1.default.diskStorage({
+const diskStorage = multer_1.default.diskStorage({
     destination: function (req, file, cb) {
         // What's the actual path here?
         console.log("🔍 Multer saving to:", path_1.default.join(__dirname, '../public/images'));
@@ -20,11 +21,15 @@ const storage = multer_1.default.diskStorage({
         cb(null, uploadPath);
     },
     filename: function (req, file, cb) {
-        const filename = file.fieldname + '-' + Date.now() + path_1.default.extname(file.originalname);
+        const name = file.originalname.split('.').slice(0, -1).join('.');
+        console.log(name);
+        const filename = name + '-' + Date.now() + path_1.default.extname(file.originalname);
         console.log("🔍 Multer generating filename:", filename);
         cb(null, filename);
     }
 });
-const upload = (0, multer_1.default)({ storage: storage });
-exports.default = upload;
+const memoryStorage = multer_1.default.memoryStorage();
+exports.uploadToDisk = (0, multer_1.default)({ storage: diskStorage });
+const uploadToMemory = (0, multer_1.default)({ storage: memoryStorage });
+exports.default = uploadToMemory;
 //# sourceMappingURL=multer-config.js.map

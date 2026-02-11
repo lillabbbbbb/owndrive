@@ -2,14 +2,10 @@ import './App.css'
 import Header from "./components/main_components/Header"
 import Body from "./components/main_components/Body"
 import { BrowserRouter } from 'react-router-dom'
-import { useEffect, useState } from 'react'
-import { IUser } from "../../server/src/models/User"
-import { statusEnum } from './components/main_components/Home'
 import { AppProvider } from './components/context/globalContext'
+import { Toaster } from "sonner";
 
 //tailwind css class hardcoded variables can come here
-
-
 
 export interface IFileTest {
   _id: string,
@@ -53,6 +49,8 @@ function App() {
 
         </BrowserRouter>
       </AppProvider>
+
+      <Toaster />
     </>
   )
 }

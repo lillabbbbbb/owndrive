@@ -10,6 +10,7 @@ import { useAppContext } from "./context/globalContext";
 import CustomDialog from './popups/CustomDialog';
 import { useTranslation } from "react-i18next"
 import { IUserFrontend } from "../types/User"
+import { toast } from "sonner"
 
 
 function SettingsDropdownMenu() {
@@ -21,6 +22,13 @@ function SettingsDropdownMenu() {
   const [user, setUser] = useState<IUserFrontend | null>(null)
   const [openProfilePicDialog, setOpenProfilePicDialog] = useState<boolean>(false)
   const [profilePic, setProfilePic] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (userLoading) {
+      toast.warning(userLoading);
+    }
+    toast.warning(userError)
+  }, [userError, userLoading]);
 
   useEffect(() => {
 
@@ -95,8 +103,6 @@ function SettingsDropdownMenu() {
           <DropdownMenuItem onClick={() => handleLogout()}><LucideLogOut className="mr-2" /> {t("settings.log-out")}</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-
-      {userError && <CustomDialog text={userError} />}
     </>
   )
 }

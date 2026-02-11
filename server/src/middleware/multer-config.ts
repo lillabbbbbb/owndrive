@@ -2,7 +2,7 @@ import multer, {StorageEngine, Multer} from "multer"
 import path from 'path'
 import fs from 'fs'
 
-const storage: StorageEngine = multer.diskStorage({
+const diskStorage: StorageEngine = multer.diskStorage({
     destination: function (req, file, cb) {
       // What's the actual path here?
       console.log("🔍 Multer saving to:", path.join(__dirname, '../public/images'))
@@ -19,12 +19,17 @@ const storage: StorageEngine = multer.diskStorage({
       cb(null, uploadPath)
     },
     filename: function (req, file, cb) {
-      const filename = file.fieldname + '-' + Date.now() + path.extname(file.originalname)
+      const name = file.originalname.split('.').slice(0, -1).join('.');
+      console.log(name)
+      const filename = name + '-' + Date.now() + path.extname(file.originalname)
       console.log("🔍 Multer generating filename:", filename)
       cb(null, filename)
     }
 })
-  
-const upload: Multer = multer({ storage: storage })
 
-export default upload
+const memoryStorage: StorageEngine = multer.memoryStorage()
+  
+export const uploadToDisk: Multer = multer({ storage: diskStorage })
+const uploadToMemory: Multer = multer({ storage: memoryStorage })
+
+export default uploadToMemory

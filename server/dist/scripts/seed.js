@@ -64,6 +64,23 @@ async function seed() {
             last_edited_at: faker_1.faker.date.recent(),
             file_type: faker_1.faker.helpers.arrayElement(['doc', 'txt', 'md']),
             filename: faker_1.faker.system.fileName(),
+            mime_type: "application/json",
+            content: faker_1.faker.lorem.paragraphs(2),
+            visibleToGuests: faker_1.faker.datatype.boolean(),
+            showsInHomeShared: faker_1.faker.datatype.boolean(),
+            private: faker_1.faker.datatype.boolean(),
+            status: faker_1.faker.helpers.arrayElement(['active', 'archived']),
+            archivedAt: faker_1.faker.datatype.boolean() ? faker_1.faker.date.past() : undefined,
+            inUse: false,
+            usedBy: undefined,
+        });
+        const imageFile = await File_1.File.create({
+            created_at: faker_1.faker.date.past(),
+            created_by: admin._id,
+            last_edited_at: faker_1.faker.date.recent(),
+            file_type: faker_1.faker.helpers.arrayElement(['doc', 'txt', 'md']),
+            filename: faker_1.faker.system.fileName(),
+            mime_type: "image/png",
             content: faker_1.faker.lorem.paragraphs(2),
             visibleToGuests: faker_1.faker.datatype.boolean(),
             showsInHomeShared: faker_1.faker.datatype.boolean(),
@@ -75,6 +92,7 @@ async function seed() {
         });
         // Push file to creator's files array
         admin.files.push(file._id);
+        admin.files.push(imageFile._id);
         await admin.save();
     }
     console.log(await File_1.File.find().lean().exec());

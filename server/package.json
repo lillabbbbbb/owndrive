@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsc-watch --onSuccess \"nodemon dist/app.js\"",
     "start": "tsc && node dist/app.js",
-    "seed": "ts-node src/scripts/seed.ts"
+    "seed": "ts-node src/scripts/seed.ts",
+    "drop": "ts-node src/scripts/drop.ts"
   },
   "author": "",
   "license": "ISC",

@@ -17,7 +17,8 @@ import { useAppContext } from "../context/globalContext";
 import CustomDialog from '../popups/CustomDialog';
 import { config } from 'process';
 import { IFileFrontend } from '../../types/File';
-import {useTranslation} from 'react-i18next'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner';
 
 export const sortingTypes = {
   by_last_modified: "Last modified",
@@ -60,7 +61,7 @@ enum datesEnum {
 
 const Home = () => {
 
-  const {t} = useTranslation()
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { user, files = [], getFiles, getFile, updateFile, setCurrentFileId, restoreAllArchived, deleteAllArchived, userLoading, userError, filesLoading, filesError } = useAppContext()
 
@@ -76,6 +77,14 @@ const Home = () => {
     getFiles();
     setCurrentFileId(null)
   }, []); // empty deps → runs once
+
+  useEffect(() => {
+    toast.error(filesError)
+    if (filesLoading || userLoading) {
+      toast.loading("Loading...")
+    }
+    toast.error(userError)
+  }, [filesError, filesLoading, userError, userLoading])
 
   const fileTypes = [...new Set((files || []).map((file: IFileFrontend) => file.file_type))]
   const ownerNames = [...new Set((files || []).map((file: IFileFrontend) => file.created_by))]
@@ -357,23 +366,18 @@ const Home = () => {
         />
       </div>
       {!showingArchives &&
-          <>
-            <Button onClick={() => handleCreateNewClick()}>{t("home.create-new")}</Button>
-            <UploadFileDialog />
-          </>
-        }
-        {
-          showingArchives &&
-          <>
-            <Button onClick={() => handleRestoreAll()}>{t("restore-all")}</Button>
-            <Button onClick={() => handleDeleteAll()}>{t("delete-all")}</Button>
-          </>
-        }
-
-      {userError && <CustomDialog text={userError} />}
-      {userError && <p>{t("Loading...")}</p>}
-      {filesError && <CustomDialog heading="Error" text={filesError} />}
-      {filesLoading && <p>{t("Loading...")}</p>}
+        <>
+          <Button onClick={() => handleCreateNewClick()}>{t("home.create-new")}</Button>
+          <UploadFileDialog />
+        </>
+      }
+      {
+        showingArchives &&
+        <>
+          <Button onClick={() => handleRestoreAll()}>{t("restore-all")}</Button>
+          <Button onClick={() => handleDeleteAll()}>{t("delete-all")}</Button>
+        </>
+      }
 
       {/*
       {!showingArchives && isClicked && <EditorButtons canView={canView} setCanView={setCanView} canEdit={canEdit} setCanEdit={setCanEdit} visibleToGuest={visibleToGuest} setVisibleToGuest={setVisibleToGuest} isPrivate={isPrivate} setIsPrivate={setIsPrivate} />}

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import React from 'react'
 import {
     Dialog,
@@ -15,9 +15,9 @@ import {
 import { useUser } from "../../hooks/useUser"
 import { useAppContext } from "../context/globalContext";
 import CustomDialog from '../popups/CustomDialog';
-
 import { Button } from "../ui/button"
 import { useTranslation } from "react-i18next"
+import { toast } from "sonner"
 
 type ProfilePicDialogProps = {
     open: boolean,
@@ -26,12 +26,20 @@ type ProfilePicDialogProps = {
 
 const ProfilePicDialog = ({ open, setOpen }: ProfilePicDialogProps) => {
 
-    const {t} = useTranslation()
+    const { t } = useTranslation()
     const { updateProfilePic, getProfilePic, userLoading, userError } = useAppContext()
 
     const [preview, setPreview] = useState<string | null>(null)
     const [chosenFile, setChosenFile] = useState<File>()
-    
+
+    useEffect(() => {
+        toast.error(userError)
+        if (userLoading) {
+            toast.loading("Loading...")
+        }
+    }, [userLoading, userError])
+
+
     //AI-generated code snippet
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
         const file = e.target.files?.[0]
@@ -80,7 +88,6 @@ const ProfilePicDialog = ({ open, setOpen }: ProfilePicDialogProps) => {
                 <Button onClick={handleSave} disabled={userLoading || !chosenFile}>
                     {userLoading ? t("Saving...") : t("Save")}
                 </Button>
-                {userError && <CustomDialog text={userError} />}
 
             </DialogContent>
         </Dialog>

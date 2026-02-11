@@ -33,11 +33,11 @@ export const CATEGORY_NAMES = {
 
 export type CategoryName = typeof CATEGORY_NAMES[keyof typeof CATEGORY_NAMES];
 
-export function getFileCategory(file: File): CategoryName {
-  console.log(file.type)
-  if (FILE_CATEGORIES.editable.includes(file.type)) return CATEGORY_NAMES.Editable;
-  if (FILE_CATEGORIES.image.includes(file.type)) return CATEGORY_NAMES.Image;
-  if (FILE_CATEGORIES.viewOnly.includes(file.type)) return CATEGORY_NAMES.ViewOnly;
+export function getFileCategory(mimetype: string): CategoryName {
+  console.log(mimetype)
+  if (FILE_CATEGORIES.editable.includes(mimetype)) return CATEGORY_NAMES.Editable;
+  if (FILE_CATEGORIES.image.includes(mimetype)) return CATEGORY_NAMES.Image;
+  if (FILE_CATEGORIES.viewOnly.includes(mimetype)) return CATEGORY_NAMES.ViewOnly;
   return CATEGORY_NAMES.Other;
 }
 

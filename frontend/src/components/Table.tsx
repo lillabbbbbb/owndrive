@@ -45,6 +45,7 @@ export default function FilesTable({ onRowClick, sortedFilteredData }: TableProp
   const handleRowDoubleClick = (file: IFileFrontend) => {
     console.log(`${file.filename} double-clicked, file should be opened in editor...`)
 
+    sessionStorage.setItem("fileId", file._id);
     setCurrentFileId(file._id)
     navigate(`/${file.created_by}/${file._id}`)
   }

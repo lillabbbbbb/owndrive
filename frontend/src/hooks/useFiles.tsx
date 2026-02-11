@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import axios from "axios";
 import { IFileFrontend } from "../types/File";
 import { statusEnum } from "../components/main_components/Home";
+import {toast} from "sonner"
 
 export function useFiles() {
   const [files, setFiles] = useState<IFileFrontend[] | []>([])
@@ -32,6 +33,7 @@ export function useFiles() {
   const handleError = (err: unknown) => {
     if (axios.isAxiosError(err)) setError(err.response?.data?.message || "Server error");
     else setError("Unexpected error");
+    toast.error(error)
   };
 
   const getFiles = useCallback(async () => {
@@ -57,8 +59,8 @@ export function useFiles() {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.get<{ file: IFileFrontend, permissions: string }>(`/api/files/${id}`);
-      return res.data.file;
+      const res = await axios.get<Promise<{file: IFileFrontend, permissions: string[], base64data: string } | null>>(`/api/files/${id}`);
+      return res.data;
     } catch (err) {
       handleError(err);
       return null;

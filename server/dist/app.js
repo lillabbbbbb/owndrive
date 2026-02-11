@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.mongoDB = void 0;
 exports.connectDB = connectDB;
 const dotenv_1 = __importDefault(require("dotenv"));
 require("dotenv/config"); //if this line is not HERE, the google oauth passport runs into an error
@@ -25,17 +26,19 @@ dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = parseInt(process.env.PORT) || 8001;
 //Connect server to DB
-const mongoDB = "mongodb://127.0.0.1:27017/OwnDrive";
-mongoose_1.default.connect(mongoDB);
+exports.mongoDB = "mongodb://127.0.0.1:27017/OwnDrive";
+mongoose_1.default.connect(exports.mongoDB);
 mongoose_1.default.Promise = Promise;
 const db = mongoose_1.default.connection;
 // Connect function for scripts
 async function connectDB() {
     if (mongoose_1.default.connection.readyState === 0) {
-        await mongoose_1.default.connect(mongoDB);
+        await mongoose_1.default.connect(exports.mongoDB);
     }
 }
 db.on("error", console.error.bind(console, "MongoDB connection error"));
+//db.dropDatabase()
+//console.log("Database dropped")
 //Set up what the app should use
 app.use(google_passport_config_1.default.initialize());
 app.use(express_1.default.json());
