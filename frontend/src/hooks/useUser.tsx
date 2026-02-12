@@ -35,15 +35,6 @@ export function useUser(): UseUserReturn {
     }
   }
 
-  //Automatically add the Bearer token to each request
-  axios.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token"); // or from context
-    if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  });
-
 
   //General error handler, manually called with each API request
   const handleError = (err: unknown) => {

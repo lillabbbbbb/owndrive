@@ -18,28 +18,36 @@ const Body = () => {
   const { t } = useTranslation()
   const jwt = localStorage.getItem("token")
 
-  const { currentFileId, getFile, currentFile, user } = useAppContext()
+  const { currentFileId, getFile, currentFile, user, editorReady, userLoading, filesLoading } = useAppContext()
 
-  const [editorAllowed, setEditorAllowed] = useState(false);
+  console.log(user)
+  console.log(currentFile)
+  
 
-  useEffect(() => {
+  if (!editorReady) {
+    return <div>Loading...</div>; // wait for user and file to load
+  }
+  let editorAllowed = false;
+
+  if (editorReady) {
     if (!currentFile) {
-      setEditorAllowed(false);
-      return;
+      editorAllowed = false
+      console.log("currentfile not found")
     }
 
-    if (!user) {
-      setEditorAllowed(currentFile.file.visibleToGuests ?? false);
-      return;
+    else if (!user) {
+      editorAllowed = currentFile.file.visibleToGuests ?? false
+      console.log("user not found, whether file is visible for guest: " + currentFile.file.visibleToGuests)
     }
-
-    const userId = user._id;
-    setEditorAllowed(
-      currentFile.file.canView?.includes(userId) ||
-      currentFile.file.canEdit?.includes(userId) ||
-      currentFile.file.created_by === userId
-    );
-  }, [currentFile, user]);
+    else {
+      const userId = user._id;
+      editorAllowed =
+        currentFile.file.canView?.includes(userId) ||
+        currentFile.file.canEdit?.includes(userId) ||
+        currentFile.file.created_by === userId;
+      console.log("user and file found, editorallowed = " + editorAllowed)
+    }
+  }
 
   return (
     <div className='mt-20'>
@@ -56,13 +64,13 @@ const Body = () => {
         </Route>
 
         <Route path="/:user/:file" element={
-          <ProtectedRoute condition={editorAllowed}>
-            {currentFile ? <Editor /> : <div>Loading editor...</div>}
+          <ProtectedRoute condition={editorAllowed} isLoading={!editorReady || !currentFile} >
+            <Editor />
           </ProtectedRoute>
         } >
         </Route>
 
-        <Route path="*" element={<div>{t("home.not-found")!}</div>} />
+          <Route path="*" element={<div>{t("home.not-found")!}</div>} />
 
       </Routes>
     </div>

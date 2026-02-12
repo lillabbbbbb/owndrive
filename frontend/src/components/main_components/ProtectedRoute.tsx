@@ -4,17 +4,21 @@ import { useAppContext } from "../context/globalContext";
 
 type ProtectedRouteProps = {
   children: ReactNode
-  condition: boolean
+  condition: boolean | null,
+  isLoading?: boolean
 };
 
 //use this in the component where the routing is
 //wrap each route into this
-export function ProtectedRoute({ children, condition }: ProtectedRouteProps) {
+export function ProtectedRoute({ children, condition, isLoading }: ProtectedRouteProps) {
 
+  if (isLoading) return <div>Loading...</div>;
+  
+  
   if (!condition) {
-    // If user is not logged in, redirect to login page
+    console.log("navigating to login...")
     return <Navigate to="/login" replace />;
   }
 
-  return children; // else render the requested page
+  return <>{children}</>;
 }

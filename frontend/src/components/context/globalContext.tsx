@@ -13,9 +13,10 @@ export interface AppContextType {
   filesLoading: boolean;
   filesError: string | null;
   files: IFileFrontend[] | [];
-  currentFile: {file: IFileFrontend, permissions: string[], base64data: string } | null;
+  currentFile: { file: IFileFrontend, permissions: string[], base64data: string } | null;
 
   currentFileId: string | null;
+  editorReady: boolean;
 
   // User actions
   setUser: (user: IUserFrontend | null) => void;
@@ -27,11 +28,11 @@ export interface AppContextType {
   logout: () => Promise<void>;
 
   // File actions
-  getCurrentFile: (currentFileId: string) => Promise<{file: IFileFrontend, permissions: string[], base64data: string } | null>;
+  getCurrentFile: (currentFileId: string) => Promise<{ file: IFileFrontend, permissions: string[], base64data: string } | null>;
   getFiles: () => Promise<IFileFrontend[] | null>;
-  getFile: (id: string) => Promise<{file: IFileFrontend, permissions: string[], base64data: string } | null>;
+  getFile: (id: string) => Promise<{ file: IFileFrontend, permissions: string[], base64data: string } | null>;
   createFile: (fileData: Partial<IFileFrontend>) => Promise<IFileFrontend | null>;
-  uploadFile: (file: File) => Promise<{uploadedFile: IFileFrontend, category: string} | null>
+  uploadFile: (file: File) => Promise<{ uploadedFile: IFileFrontend, category: string } | null>
   updateFile: (id: string, updates: Partial<IFileFrontend>) => Promise<IFileFrontend | null>;
   batchUpdateFiles: (filters: Partial<IFileFrontend>, updates: Partial<IFileFrontend>) => Promise<IFileFrontend | null>;
   restoreAllArchived: () => Promise<void>;
@@ -63,17 +64,65 @@ interface AppProviderProps {
 export const AppProvider = ({ children }: AppProviderProps) => {
   const userHook = useUser();
   const filesHook = useFiles();
-  const [currentFile, setCurrentFile] = useState<{file: IFileFrontend, permissions: string[], base64data: string } | null>(null)
+  const [currentFile, setCurrentFile] = useState<{ file: IFileFrontend, permissions: string[], base64data: string } | null>(null)
   const [currentFileId, setCurrentFileId] = useState<string | null>(null)
   const [user, setUser] = useState<IUserFrontend | null>(null)
+  const [editorReady, setEditorReady] = useState(false);
+
+
+  //wait till user and currentFile is loaded first when page is rendered. Only reroute after that
+  useEffect(() => {
+    const initApp = async () => {
+      try {
+        // 1️⃣ Load user
+        let u: IUserFrontend | null = null;
+        const token = localStorage.getItem("token");
+        if (token) {
+          const userRes = await userHook.getUser();
+          // validate backend response
+          if (userRes && typeof userRes === "object" && "_id" in userRes) {
+            u = userRes;
+            setUser(u);
+          } else {
+            console.warn("Invalid user response, ", userRes);
+            setUser(null);
+            if(localStorage.getItem("token")){
+              initApp()
+            }
+          }
+        }
+
+        // 2️⃣ Load file
+        const fileId = sessionStorage.getItem("fileId");
+        if (fileId) {
+          const f = await filesHook.getFile(fileId);
+          if (f) {
+            setCurrentFile(f);
+            setCurrentFileId(fileId);
+          }
+        }
+      } catch (err) {
+        console.error("App initialization error:", err);
+        setUser(null);
+        setCurrentFile(null);
+      } finally {
+        // 3️⃣ Only now mark editor ready
+        setEditorReady(true)
+      }
+    };
+
+    initApp();
+  }, []);
+
 
   const getCurrentFile = async () => {
-    if (!currentFileId) return null;
-    const file = await filesHook.getFile(currentFileId);
+    const fileId = sessionStorage.getItem("fileId")
+    if (!fileId) return null;
+    const file = await filesHook.getFile(fileId);
     setCurrentFile(file);
+    setCurrentFileId(fileId)
     return file;
   };
-
   const getUserIdFromToken = (token: string | null) => {
     if (!token) {
       console.log("token not found")
@@ -89,28 +138,6 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     }
 
   }
-
-  useEffect(() => {
-    const loadUser = async () => {
-      const token = localStorage.getItem("token")
-      const id = getUserIdFromToken(token)
-      if (!id) return;
-
-      const isUser = await userHook.getUser();
-      if (isUser) {
-        setUser(isUser);
-      }
-    };
-    loadUser()
-
-    const loadFile = async () => {
-      const fileId = sessionStorage.getItem("fileId")
-      if(!fileId) return
-      setCurrentFileId(fileId)
-    };
-
-    loadFile()
-  }, []);
 
 
   const login = async (email: string, password: string) => {
@@ -158,18 +185,18 @@ export const AppProvider = ({ children }: AppProviderProps) => {
 
   const downloadPDF = async (html: string) => {
     const response = await filesHook.downloadPDF(html)
-    if(!response){
+    if (!response) {
       console.log("Failed PDF download")
       return
     }
     const url = window.URL.createObjectURL(new Blob([response.data], { type: "application/pdf" }));
-    
+
     const a = document.createElement("a");
     a.href = url;
     a.download = currentFile!.file.filename;
     a.click();
     window.URL.revokeObjectURL(url);
-    
+
   }
 
   const value = {
@@ -180,6 +207,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
 
     //Editor-related
     currentFileId: currentFileId,
+    editorReady: editorReady,
 
     // File state
     filesLoading: filesHook.loading,

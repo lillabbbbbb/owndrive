@@ -23,6 +23,11 @@ userRouter.get("/me", async (req: Request, res: Response) => {
 
         const existingUser = await User.findById({ _id: userId })
 
+        if (!existingUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+
         return res.json(existingUser)
     }
     catch (error: any) {
@@ -66,53 +71,53 @@ userRouter.patch("/me", uploadToDisk.single("image"), async (req: Request, res: 
         // Get the user with their current profile_pic reference
         const user = await User.findById(userId).select("profile_pic")
         if (!user) return res.status(404).json({ message: 'User not found' })
-// Prepare image data
-const imgPath = `/images/${req.file.filename}`
-const imageData = {
-    filename: req.file.filename,
-    description: req.body.description,
-    path: imgPath,
-    createdAt: new Date()
-}
+        // Prepare image data
+        const imgPath = `/images/${req.file.filename}`
+        const imageData = {
+            filename: req.file.filename,
+            description: req.body.description,
+            path: imgPath,
+            createdAt: new Date()
+        }
 
-// ✅ Check if user has a profile_pic reference
-if (user.profile_pic) {
-    // ✅ Verify the image document actually exists
-    const existingImage = await Image.findById(user.profile_pic)
-    
-    if (existingImage) {
-        // Image exists, update it
-        await Image.findByIdAndUpdate(
-            user.profile_pic,
-            { $set: imageData },
-            { runValidators: true }
-        )
-        
-        return res.status(200).json({
-            message: "Profile pic successfully updated",
-            imageId: user.profile_pic
-        })
-    } else {
-        // Reference exists but image document is missing - create new
-        console.log("⚠️ Orphaned reference, creating new image")
+        // ✅ Check if user has a profile_pic reference
+        if (user.profile_pic) {
+            // ✅ Verify the image document actually exists
+            const existingImage = await Image.findById(user.profile_pic)
+
+            if (existingImage) {
+                // Image exists, update it
+                await Image.findByIdAndUpdate(
+                    user.profile_pic,
+                    { $set: imageData },
+                    { runValidators: true }
+                )
+
+                return res.status(200).json({
+                    message: "Profile pic successfully updated",
+                    imageId: user.profile_pic
+                })
+            } else {
+                // Reference exists but image document is missing - create new
+                console.log("⚠️ Orphaned reference, creating new image")
+                const newImage = await Image.create(imageData)
+                await User.findByIdAndUpdate(userId, { profile_pic: newImage._id })
+
+                return res.status(201).json({
+                    message: "Profile pic created",
+                    imageId: newImage._id
+                })
+            }
+        }
+
+        // No profile_pic reference - create new
         const newImage = await Image.create(imageData)
         await User.findByIdAndUpdate(userId, { profile_pic: newImage._id })
-        
+
         return res.status(201).json({
-            message: "Profile pic created",
+            message: "Profile pic successfully uploaded",
             imageId: newImage._id
         })
-    }
-}
-
-// No profile_pic reference - create new
-const newImage = await Image.create(imageData)
-await User.findByIdAndUpdate(userId, { profile_pic: newImage._id })
-
-return res.status(201).json({
-    message: "Profile pic successfully uploaded",
-    imageId: newImage._id
-})
 
     } catch (error: any) {
         console.error(`Error while uploading file:`, error)

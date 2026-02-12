@@ -71,6 +71,9 @@ if (process.env.NODE_ENV === "development") {
 else if (process.env.NODE_ENV === "production") {
     app.use(express_1.default.static(path_1.default.resolve("../..", "client", "build")));
     app.get("*", (req, res) => {
+        if (req.path.startsWith("/api")) {
+            return res.status(404).json({ message: "API route not found" });
+        }
         res.sendFile(path_1.default.resolve("../..", "client", "build", "index.html"));
     });
 }

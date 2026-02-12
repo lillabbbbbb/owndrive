@@ -20,6 +20,9 @@ userRouter.get("/me", async (req, res) => {
             return res.status(401).json({ message: "Unauthorized" });
         const userId = customReq.user?._id;
         const existingUser = await User_1.User.findById({ _id: userId });
+        if (!existingUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
         return res.json(existingUser);
     }
     catch (error) {

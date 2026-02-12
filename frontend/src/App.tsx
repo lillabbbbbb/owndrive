@@ -4,7 +4,9 @@ import Body from "./components/main_components/Body"
 import { BrowserRouter } from 'react-router-dom'
 import { AppProvider } from './components/context/globalContext'
 import { Toaster } from "sonner";
+import { useEffect } from 'react'
 import CustomCursor from './components/CustomCursor'
+import axios from 'axios'
 
 //tailwind css class hardcoded variables can come here
 
@@ -41,6 +43,14 @@ const cursorSrc = "/cursor.png"
 
 
 function App() {
+
+  useEffect(() => {
+  axios.interceptors.request.use(config => {
+    const token = localStorage.getItem("token");
+    if (token && config.headers) config.headers.Authorization = `Bearer ${token}`;
+    return config;
+  });
+}, []);
 
 
   return (

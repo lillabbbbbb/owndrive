@@ -62,9 +62,8 @@ const Editor = () => {
 
     useEffect(() => {
         setJwt(localStorage.getItem("token"))
-
-
     }, [user])
+
     useEffect(() => {
         if (!currentFileId) {
             //this means that this is a new file
@@ -102,9 +101,6 @@ const Editor = () => {
         }
         console.log(`Content set to ${content}`)
     }, [file]);
-
-    console.log(user)
-    console.log(file)
 
     const username = user?.username || user?.email
 

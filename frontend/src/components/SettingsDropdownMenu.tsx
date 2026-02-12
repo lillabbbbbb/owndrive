@@ -38,9 +38,9 @@ function SettingsDropdownMenu() {
       console.log(pic)
       if (pic) {
         setProfilePic(`http://localhost:8000${pic.path}`)
+        loadProfilePic()
       }
     }
-    loadProfilePic()
   }, [user])
 
   useEffect(() => {

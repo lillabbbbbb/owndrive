@@ -5,7 +5,7 @@ import { faker } from "@faker-js/faker";
 describe("User Files E2E Test", () => {
   const username = "username1";
   const password = "password123!";
-  const BASE_API = "http://localhost:3000/";
+  const BASE_API = "http://localhost:8000/";
 
   before(() => {
     // 1️⃣ Reset DB (test-only API)

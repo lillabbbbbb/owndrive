@@ -2,7 +2,7 @@
 import dotenv from "dotenv"
 import 'dotenv/config'; //if this line is not HERE, the google oauth passport runs into an error
 import passport from "./middleware/google-passport-config"
-import express, {Express} from "express"
+import express, { Express } from "express"
 import { Request, Response } from "express";
 import path from "path"
 import router from "./routes/index"
@@ -10,7 +10,7 @@ import userRouter from "./routes/user"
 import imageRouter from "./routes/image";
 import morgan from "morgan"
 import mongoose, { Connection } from 'mongoose'
-import cors, {CorsOptions} from 'cors'
+import cors, { CorsOptions } from 'cors'
 import fileRouter from "./routes/file";
 import fs from 'fs'
 import bodyParser from "body-parser";
@@ -38,9 +38,9 @@ const db: Connection = mongoose.connection
 
 // Connect function for scripts
 export async function connectDB(): Promise<void> {
-  if (mongoose.connection.readyState === 0) {
-    await mongoose.connect(mongoDB);
-  }
+    if (mongoose.connection.readyState === 0) {
+        await mongoose.connect(mongoDB);
+    }
 }
 
 db.on("error", console.error.bind(console, "MongoDB connection error"))
@@ -50,7 +50,7 @@ db.on("error", console.error.bind(console, "MongoDB connection error"))
 //Set up what the app should use
 app.use(passport.initialize())
 app.use(express.json())
-app.use(express.urlencoded({extended: false}))
+app.use(express.urlencoded({ extended: false }))
 app.use(morgan("dev"))
 
 app.use(cors());
@@ -75,23 +75,26 @@ app.listen(port, () => {
 
 const allowedEnvs = ['development', 'test']
 if (!allowedEnvs.includes(process.env.NODE_ENV ?? '')) {
-  throw new Error('❌ Invalid environment for seeding')
+    throw new Error('❌ Invalid environment for seeding')
 }
 
 
 
 //Enable cross-origin resource sharing
 
-if(process.env.NODE_ENV === "development") {
+if (process.env.NODE_ENV === "development") {
     const corsOptions: CorsOptions = {
         origin: "http://localhost:3000",
         optionsSuccessStatus: 200,
     }
 
     app.use(cors(corsOptions))
-} else if(process.env.NODE_ENV === "production") {
+} else if (process.env.NODE_ENV === "production") {
     app.use(express.static(path.resolve("../..", "client", "build")))
     app.get("*", (req: Request, res: Response) => {
+        if (req.path.startsWith("/api")) {
+            return res.status(404).json({ message: "API route not found" });
+        }
         res.sendFile(path.resolve("../..", "client", "build", "index.html"))
     })
 }
