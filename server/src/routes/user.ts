@@ -14,6 +14,30 @@ userRouter.use(validateUserToken)
 
 //route to anything else: handled in frontend
 
+userRouter.get("/", async (req: Request, res: Response) => {
+    try {
+
+        const customReq = req as CustomRequest;
+        if (!req.user) return res.status(401).json({ message: "Unauthorized" })
+        const userId = customReq.user?._id
+
+        const existingUser = await User.findById({ _id: userId })
+
+        if (!existingUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const emails = await User.find({}, "email")
+
+        console.log(emails)
+        return res.json(emails)
+    }
+    catch (error: any) {
+        console.log(error)
+        return res.status(500).json({ "message": "Internal Server Error" })
+    }
+})
+
 userRouter.get("/me", async (req: Request, res: Response) => {
     try {
 

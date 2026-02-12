@@ -13,6 +13,25 @@ const fs_1 = __importDefault(require("fs"));
 const userRouter = (0, express_1.Router)();
 userRouter.use(userValidation_1.validateUserToken);
 //route to anything else: handled in frontend
+userRouter.get("/", async (req, res) => {
+    try {
+        const customReq = req;
+        if (!req.user)
+            return res.status(401).json({ message: "Unauthorized" });
+        const userId = customReq.user?._id;
+        const existingUser = await User_1.User.findById({ _id: userId });
+        if (!existingUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        const emails = await User_1.User.find({}, "email");
+        console.log(emails);
+        return res.json(emails);
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ "message": "Internal Server Error" });
+    }
+});
 userRouter.get("/me", async (req, res) => {
     try {
         const customReq = req;

@@ -37,24 +37,45 @@ export type customOption = {
 }
 
 
-const usernames: string[] = ["elisbet29", "9dbaskj2", "lillabbbbbbb"]
-
-const allUsers = usernames.map((u) => ({
-  value: u,
-  label: u
-}))
-
-
 export function SharePopup() {
 
   const { t } = useTranslation()
-  const { currentFileId, getFile, updateFile, filesLoading, filesError } = useAppContext()
+  const { currentFileId, getFile, updateFile, getAllUsernames, filesLoading, filesError } = useAppContext()
 
-  const [file, setFile] = useState<IFileFrontend | null>(null)
+
+  const [file, setFile] = useState<{ file: IFileFrontend, permissions: string[], base64data: string } | null>(null)
   const [open, setOpen] = useState<boolean>(false)
   const [copied, setCopied] = useState(false);
   const [shortUrl, setShortUrl] = useState(`http://localhost:3000/user/file`);
   const [addUsersMenuOpen, setAddUsersMenuOpen] = useState<boolean>(false)
+  const [options, setOptions] = useState<customOption[]>([])
+  const [selectedEmails, setSelectedEmails] = useState<customOption[]>([])
+
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const usernames = await getAllUsernames();
+      if (!Array.isArray(usernames)) return [];
+      console.log(usernames)
+
+      const mapped = usernames.map(u => ({ value: u._id, label: u.email }));
+      setOptions(mapped);
+    };
+
+    fetchUsers();
+  }, []);
+
+  useEffect(() => {
+    if (!file) return
+
+    const filteredEmails = (file.file.canEdit).map(id => {
+      const match = options.find(opt => opt.value === id);
+      return match;
+    })
+    .filter((match): match is customOption => !!match); // TypeScript now knows it's string[]
+
+    setSelectedEmails(filteredEmails)
+  }, [])
 
   useEffect(() => {
     toast.error(filesError)
@@ -76,11 +97,12 @@ export function SharePopup() {
   }, [currentFileId, getFile]);
 
 
-  if (file) {
-    console.log("This file is " + (!file.private ? "not " : "") + "private.");
-    console.log("This file is " + (!file.visibleToGuests ? "not " : "") + "visible to guests.");
-    console.log("Selected options:", file.canEdit);
-  }
+  useEffect(() => {
+    if (!file) return
+    console.log("This file is " + (!file.file.private ? "not " : "") + "private.");
+    console.log("This file is " + (!file.file.visibleToGuests ? "not " : "") + "visible to guests.");
+    console.log("Selected options:", file.file.canEdit);
+  }, [file])
 
 
   //https://medium.com/@plsreeparvathy/copy-to-clipboard-feature-with-react-and-mui-065afa55f866
@@ -123,13 +145,13 @@ export function SharePopup() {
                 </FieldDescription>
               </FieldContent>
 
-              <Switch id="visible-to-guest" onCheckedChange={(c) => updateFile(currentFileId!, { visibleToGuests: !c })} /> //visible to guest
+              <Switch id="visible-to-guest" onCheckedChange={(c) => updateFile(currentFileId!, { visibleToGuests: c })} /> //visible to guest
             </Field>
 
 
             <Select<customOption, true>
               isMulti
-              options={allUsers}
+              options={options}
               onInputChange={(value) => {
                 console.log(value)
                 if (value.length < 6) {
@@ -140,7 +162,7 @@ export function SharePopup() {
                   setAddUsersMenuOpen(true);
                 }
               }}
-              value={(file.canEdit || []).map(user => ({ value: user, label: user }))} // controlled component
+              value={selectedEmails}
               onChange={(newValue: MultiValue<customOption>, actionMeta: ActionMeta<customOption>) => {
                 updateFile(currentFileId!, { canEdit: newValue.map((v: customOption) => v.value) }); // back to string[] //set who can edit
               }}
@@ -159,7 +181,7 @@ export function SharePopup() {
             </FieldContent>
             <Switch
               id="is-private"
-              checked={file.private}
+              checked={file.file.private}
               onCheckedChange={(c) => { updateFile(currentFileId!, { private: c }) }} //set is private
             />
           </Field>

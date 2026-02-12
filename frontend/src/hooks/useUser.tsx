@@ -9,6 +9,7 @@ type UseUserReturn = {
   error: string | null;
 
   getUser: () => Promise<IUserFrontend | null>;
+  getAllUsernames: () => Promise<{_id: string, email: string}[] | null>;
   getProfilePic: () => Promise<IImageFrontend | null>;
   updateUser: (changes: Partial<IUserFrontend>) => Promise<IUserFrontend | null>;
   updateProfilePic: (file: File, description?: string) => Promise<IImageFrontend | null>;
@@ -50,7 +51,21 @@ export function useUser(): UseUserReturn {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.get<IUserFrontend>(`api/users/me`);
+      const res = await axios.get<IUserFrontend>(`/api/users/me`);
+      return res.data
+    } catch (err) {
+      handleError(err);
+      return null
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const getAllUsernames = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.get<{_id: string, email: string}[]>(`/api/users`);
       return res.data
     } catch (err) {
       handleError(err);
@@ -156,6 +171,7 @@ export function useUser(): UseUserReturn {
     loading,
     error,
     getUser,
+    getAllUsernames,
     updateUser,
     updateProfilePic,
     getProfilePic,

@@ -21,6 +21,7 @@ export interface AppContextType {
   // User actions
   setUser: (user: IUserFrontend | null) => void;
   getUser: () => Promise<IUserFrontend | null>;
+  getAllUsernames: () => Promise<{_id: string, email: string}[] | null>
   getProfilePic: () => Promise<IImageFrontend | null>;
   updateUser: (changes: Partial<IUserFrontend>) => Promise<IUserFrontend | null>;
   updateProfilePic: (file: File, description?: string) => Promise<IImageFrontend | null>;
@@ -80,16 +81,8 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         if (token) {
           const userRes = await userHook.getUser();
           // validate backend response
-          if (userRes && typeof userRes === "object" && "_id" in userRes) {
-            u = userRes;
-            setUser(u);
-          } else {
-            console.warn("Invalid user response, ", userRes);
-            setUser(null);
-            if(localStorage.getItem("token")){
-              initApp()
-            }
-          }
+          
+            setUser(u)
         }
 
         // 2️⃣ Load file
@@ -218,6 +211,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     // User actions
     setUser: setUser,
     getUser: userHook.getUser,
+    getAllUsernames: userHook.getAllUsernames,
     getProfilePic: userHook.getProfilePic,
     updateUser: userHook.updateUser,
     updateProfilePic: updateProfilePic,
