@@ -21,6 +21,7 @@ export interface AppContextType {
   // User actions
   setUser: (user: IUserFrontend | null) => void;
   getUser: () => Promise<IUserFrontend | null>;
+  getUsername: (userId : string) => Promise<string | null>
   getAllUsernames: () => Promise<{_id: string, email: string}[] | null>
   getProfilePic: () => Promise<IImageFrontend | null>;
   updateUser: (changes: Partial<IUserFrontend>) => Promise<IUserFrontend | null>;
@@ -211,6 +212,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     // User actions
     setUser: setUser,
     getUser: userHook.getUser,
+    getUsername: userHook.getUsername,
     getAllUsernames: userHook.getAllUsernames,
     getProfilePic: userHook.getProfilePic,
     updateUser: userHook.updateUser,

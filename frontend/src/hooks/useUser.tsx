@@ -9,6 +9,7 @@ type UseUserReturn = {
   error: string | null;
 
   getUser: () => Promise<IUserFrontend | null>;
+  getUsername: (userId : string) => Promise<string | null>;
   getAllUsernames: () => Promise<{_id: string, email: string}[] | null>;
   getProfilePic: () => Promise<IImageFrontend | null>;
   updateUser: (changes: Partial<IUserFrontend>) => Promise<IUserFrontend | null>;
@@ -61,12 +62,29 @@ export function useUser(): UseUserReturn {
     }
   }, []);
 
+
   const getAllUsernames = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const res = await axios.get<{_id: string, email: string}[]>(`/api/users`);
       return res.data
+    } catch (err) {
+      handleError(err);
+      return null
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const getUsername = useCallback(async (userId : string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const usernames = await getAllUsernames()
+      if(!usernames) return null
+      const user = usernames.find((u) => u._id === userId)
+      return user!.email || null
     } catch (err) {
       handleError(err);
       return null
@@ -171,6 +189,7 @@ export function useUser(): UseUserReturn {
     loading,
     error,
     getUser,
+    getUsername,
     getAllUsernames,
     updateUser,
     updateProfilePic,

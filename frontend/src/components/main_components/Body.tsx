@@ -64,9 +64,7 @@ const Body = () => {
         </Route>
 
         <Route path="/:user/:file" element={
-          <ProtectedRoute condition={editorAllowed} isLoading={!editorReady || !currentFile} >
-            <Editor />
-          </ProtectedRoute>
+          <Editor />
         } >
         </Route>
 

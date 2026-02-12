@@ -27,7 +27,8 @@ const COLUMN_NAMES = ["filename", "file_type", "created_by", "last_edited_at", "
 
 export default function FilesTable({ onRowClick, sortedFilteredData }: TableProps) {
 
-  const {t} = useTranslation()
+  const { t } = useTranslation()
+  const { getAllUsernames } = useAppContext()
 
   //console.log('📊 TABLE RECEIVED:', sortedFilteredData?.length, 'items');
   console.log('Table data:', sortedFilteredData);
@@ -35,12 +36,21 @@ export default function FilesTable({ onRowClick, sortedFilteredData }: TableProp
   const navigate = useNavigate()
   const { setCurrentFileId, user } = useAppContext()
 
+  const [usernamesMap, setUsernamesMap] = useState<Record<string, string>>({});
   const [columns, setColumns] = useState<string[]>(COLUMN_NAMES);
   const [currentPage, setCurrentPage] = useState(1);
   const ROWS_PER_PAGE = 12;
 
-
-
+  useEffect(() => {
+    const fetchAllUsernames = async () => {
+      const allUsers = await getAllUsernames(); // fetch once
+      const map: Record<string, string> = {};
+      if (!allUsers) return
+      allUsers.forEach(u => { map[u._id] = u.email; });
+      setUsernamesMap(map);
+    };
+    fetchAllUsernames();
+  }, []);
 
   const handleRowDoubleClick = (file: IFileFrontend) => {
     console.log(`${file.filename} double-clicked, file should be opened in editor...`)
@@ -61,7 +71,7 @@ export default function FilesTable({ onRowClick, sortedFilteredData }: TableProp
     (currentPage - 1) * ROWS_PER_PAGE,
     currentPage * ROWS_PER_PAGE
   );
-  
+
   return (
     <div className="space-y-4">
       {/* Column selectors */}
@@ -97,7 +107,7 @@ export default function FilesTable({ onRowClick, sortedFilteredData }: TableProp
         <Table>
           <TableHeader>
             <TableRow >
-              
+
               {columns.includes(COLUMN_NAMES[0]) && <TableHead>{t(COLUMN_NAMES[0])}</TableHead>}
               {columns.includes(COLUMN_NAMES[1]) && <TableHead>{t(COLUMN_NAMES[1])}</TableHead>}
               {columns.includes(COLUMN_NAMES[2]) && <TableHead>{t(COLUMN_NAMES[2])}</TableHead>}
@@ -108,11 +118,11 @@ export default function FilesTable({ onRowClick, sortedFilteredData }: TableProp
 
           <TableBody>
             {(currentRows || []).map((file) => (
-              
+
               <TableRow className="text-left w-auto whitespace-nowrap px-4 py-2" key={file._id} onClick={() => onRowClick(file)} onDoubleClick={() => handleRowDoubleClick(file)}>
                 {columns.includes(COLUMN_NAMES[0]) && <TableCell className="whitespace-nowrap pr-16 py-2">{`${file.filename} (${file._id})`}</TableCell>}
                 {columns.includes(COLUMN_NAMES[1]) && <TableCell className="whitespace-nowrap pr-16 py-2">{file.file_type}</TableCell>}
-                {columns.includes(COLUMN_NAMES[3]) && <TableCell className="whitespace-nowrap pr-16 py-2">{user?.username}</TableCell>}
+                {columns.includes(COLUMN_NAMES[3]) && <TableCell className="whitespace-nowrap pr-16 py-2">{usernamesMap[file.created_by]}</TableCell>}
                 {columns.includes(COLUMN_NAMES[2]) && <TableCell className="whitespace-nowrap pr-16 py-2">{new Date(file.last_edited_at).toLocaleDateString()}</TableCell>}
                 {columns.includes(COLUMN_NAMES[4]) && <TableCell className="whitespace-nowrap pl-16 py-2">{new Date(file.created_at).toLocaleDateString()}</TableCell>}
               </TableRow>

@@ -28,14 +28,21 @@ fileRouter.get("/", async (req: Request, res: Response) => {
         const userId = customReq.user?._id
 
         //get the right user
-        const user: IUser | null = await User.findOne({ _id: userId }).populate("files")
+        //const user: IUser | null = await User.findOne({ _id: userId }).populate("files")
 
         //return if user not found
-        if (!user) throw new Error("Owner not found");
+        //if (!user) throw new Error("Owner not found");
 
+        const files = await File.find({
+            $or: [
+                {created_by: userId},
+                {canView: userId},
+                {canEdit: userId}
+            ]
+        })
 
-        console.log(user.files)
-        return res.status(200).json(user.files)
+        console.log(files)
+        return res.status(200).json(files)
 
     } catch (error: any) {
         console.log(error)

@@ -21,12 +21,18 @@ fileRouter.get("/", async (req, res) => {
             return res.status(401).json({ message: "Unauthorized" });
         const userId = customReq.user?._id;
         //get the right user
-        const user = await User_1.User.findOne({ _id: userId }).populate("files");
+        //const user: IUser | null = await User.findOne({ _id: userId }).populate("files")
         //return if user not found
-        if (!user)
-            throw new Error("Owner not found");
-        console.log(user.files);
-        return res.status(200).json(user.files);
+        //if (!user) throw new Error("Owner not found");
+        const files = await File_1.File.find({
+            $or: [
+                { created_by: userId },
+                { canView: userId },
+                { canEdit: userId }
+            ]
+        });
+        console.log(files);
+        return res.status(200).json(files);
     }
     catch (error) {
         console.log(error);

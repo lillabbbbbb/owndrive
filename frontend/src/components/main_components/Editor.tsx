@@ -33,6 +33,7 @@ const Editor = () => {
     const [file, setFile] = useState<{ file: IFileFrontend, permissions: string[], base64data: string } | null>(null)
     const [filename, setFilename] = useState<string>("New file")
     const [beingUsed, setBeingUsed] = useState<boolean>(false)
+    const [usedBy, setUsedBy] = useState<string | null>(null)
     const [content, setContent] = useState<string>("Write here...")
     //const [lastEditedAt, setLastEditedAt] = useState<string>("")
     const [canView, setCanView] = useState<string[]>([])
@@ -41,7 +42,12 @@ const Editor = () => {
     const [isPrivate, setIsPrivate] = useState<boolean>(false)
     const [editable, setEditable] = useState<boolean>(false) //turn this into useEffect
 
+    useEffect(() => {
 
+        const isOtherUser : boolean = (!!beingUsed && !!user && usedBy != user._id)
+
+        setEditable(!isOtherUser)
+    }, [beingUsed, usedBy])
 
     // PDF hook
     const { toPDF, targetRef } = usePDF({
@@ -52,9 +58,6 @@ const Editor = () => {
     // Use this ref to forward to EditorField
     const editorRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        setEditable(!beingUsed)
-    }, [beingUsed])
 
 
     const navigate = useNavigate()
@@ -75,7 +78,7 @@ const Editor = () => {
                 const fetchedFile = await getCurrentFile(currentFileId)
                 if (fetchedFile) {
                     setFilename(fetchedFile.file.filename)
-                    setBeingUsed(false) // while testing
+                    setBeingUsed(true) // while testing
                     setFile(fetchedFile)
                     setVisibleToGuest(fetchedFile.file.visibleToGuests)
                     setCanEdit(fetchedFile.file.canEdit)
@@ -224,7 +227,7 @@ const Editor = () => {
 
             {(jwt || visibleToGuest) && <>
                 {/* Render this if user is logged in */}
-                {beingUsed && <ConcurrentEditingPopup />}
+                {!editable && <ConcurrentEditingPopup />}
 
                 <Button onClick={() => handleSave()}>Save</Button>
                 <div ref={targetRef}>

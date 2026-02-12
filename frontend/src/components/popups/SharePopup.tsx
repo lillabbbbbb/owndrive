@@ -164,7 +164,8 @@ export function SharePopup() {
               }}
               value={selectedEmails}
               onChange={(newValue: MultiValue<customOption>, actionMeta: ActionMeta<customOption>) => {
-                updateFile(currentFileId!, { canEdit: newValue.map((v: customOption) => v.value) }); // back to string[] //set who can edit
+                updateFile(currentFileId!, { canEdit: newValue.map((v: customOption) => v.value) }) //set who can edit
+                setSelectedEmails ([...newValue])
               }}
 
               menuIsOpen={addUsersMenuOpen}
