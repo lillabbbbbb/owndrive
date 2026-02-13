@@ -8,45 +8,49 @@ import {
 } from "./ui/select";
 import { changeLanguage } from "i18next"
 import { useTranslation } from 'react-i18next';
+import { useAppContext } from './context/globalContext';
+import { LANGUAGES } from '../types/other';
+import { THEME } from "../theme"
+import clsx from 'clsx';
 
-const languageOptions = ["en", "fi", "hu"]
 
 const LanguageDropdown = () => {
 
-    const {i18n} = useTranslation()
+    const { i18n } = useTranslation()
+    const { lightMode } = useAppContext()
+    const { lang, setLang } = useAppContext()
     const changeLanguage = (lang: string) => {
         i18n.changeLanguage(lang)
     }
 
     //Note: language choice should be stored in browser's local storage
 
-    const [selected, setSelected] = useState<string>(languageOptions[0])
     const triggerRef = useRef<HTMLButtonElement>(null)
     const [contentWidth, setContentWidth] = useState<number | undefined>()
 
     useLayoutEffect(() => {
-    if (triggerRef.current) {
-      setContentWidth(triggerRef.current.offsetWidth)
-    }
-  }, [selected]) // re-run if selected changes (optional)
+        if (triggerRef.current) {
+            setContentWidth(triggerRef.current.offsetWidth)
+        }
+    }, [lang]) // re-run if selected changes (optional)
 
 
     return (
         <div>
-            <Select value={selected} onValueChange={(lang) => {
-                setSelected(lang)
+            <Select value={lang} onValueChange={(lang) => {
+                setLang(lang)
                 changeLanguage(lang.toLocaleLowerCase())
                 console.log(lang.toLowerCase())
-                }} >
-                <SelectTrigger ref={triggerRef} className="flex [&>svg]:hidden">
-                    <SelectValue placeholder={selected} />
+            }} >
+                <SelectTrigger ref={triggerRef} className={clsx(THEME.menu.item(lightMode),"flex [&>svg]:hidden")} >
+                    <SelectValue placeholder={lang} />
                 </SelectTrigger>
                 <SelectContent
-                className=""
-                style={{ width: contentWidth }}
-                position="popper">
-                    {languageOptions.map((option) => (
-                        <SelectItem className="[&>svg]:hidden" key={option} value={option}>
+                    className={clsx(THEME.menu.item(lightMode),)}
+                    style={{ width: contentWidth }}
+                    position="popper">
+                    {Object.values(LANGUAGES).map((option) => (
+                        <SelectItem className={clsx(THEME.menu.item(lightMode), "[&>svg]:hidden")} key={option} value={option}>
                             {option.toUpperCase()}
                         </SelectItem>
                     ))}

@@ -1,7 +1,7 @@
 {
     "home": {
         "home": "Kezdőlap",
-        "create-new": "Új létrehozása",
+        "create-new": "Új dokumentum",
         "search-placeholder": "Ide írd a keresőszót",
         "search-button": "Keresés",
         "results-num": "fájlok",
@@ -41,14 +41,14 @@
         "log-out": "Kijelentkezés"
     },
     "login": {
-        "log-in": "Jelentkezés",
+        "log-in": "Bejelentkezés",
         "email": "Email",
         "email-placeholder": "Az email címed",
         "password": "Jelszó",
         "password-placeholder": "Ide írd a jelszavad...",
         "or-register-here": "vagy regisztrálj ide kattintva"
     },
-    "registration": {
+    "register": {
         "register": "Regisztráció",
         "email": "Email",
         "email-placeholder": "Az email címed",
@@ -67,17 +67,17 @@
     "editor-buttons": {
         "share_button": "Megosztás",
         "download_PDF": "PDF letöltése",
-        "generate_shareable_link": "Megosztható link generálása",
+        "generate_shareable_link": "Megosztható link lekérése",
         "invite_others": "Mások meghívása",
-        "clone_button": "Klónozás",
+        "clone_button": "Megkettőzés",
         "rename": "Átnevezés",
         "edit_permissions": "Jogosultságok szerkesztése",
-        "make_private": "Priváttá tétel (Rejtett a vendégek és minden megosztott felhasználó elől)",
+        "make_private": "Priváttá tétel (Ezzel a művelettel elrejted a fájlt vendégek és minden megosztott felhasználó elől)",
         "delete": "Törlés"
     },
     "share": {
         "copy_link": "Link másolása",
-        "show_for_guests:toggle": "Vendégeknek mutatás (A vendégek láthatják a fájlt)",
+        "show_for_guests:toggle": "Mutatás vendégeknek (Vendégek látni fogják a fájlt)",
         "or_add_by_username": "Vagy adj hozzá felhasználónév alapján",
         "type_username_placeholder": "Írd be a felhasználónevet...",
         "add_user_button": "Felhasználó hozzáadása"
@@ -95,22 +95,22 @@
         }
     },
     "guest-dialog": {
-        "heading": "Nem vagy bejelentkezve, csak vendég megtekintési módban vagy.",
+        "heading": "Nem vagy bejelentkezve, így csak vendég megtekintési módban férhetsz hozzá a fájlhoz.",
         "prompt": "Jelentkezz be vagy regisztrálj a további funkciók eléréséhez.",
         "yes-button": "Csináljuk!",
         "no-button": "Talán később"
     },
     "dialog": {
         "clone": {
-            "clone-action": "Klónozás",
+            "clone-action": "Fálj megkettőzése",
             "description": "Az új dokumentum a Drive-odba kerül mentésre.",
             "name": "Név",
             "error": "Érvénytelen fájlnév / Már létezik ilyen nevű fájl",
             "save-copy": "Másolat mentése"
         },
         "concurrent-editing": {
-            "heading": "Hoppá, valaki éppen szerkeszti ezt a fájlt!",
-            "refresh-button": "Frissítés"
+            "heading": "Hoppá, valaki más éppen szerkeszti ezt a fájlt!",
+            "refresh-button": "Újrapróbálkozás"
         },
         "unavailable": {
             "heading": "Ez a funkció még nem elérhető.",

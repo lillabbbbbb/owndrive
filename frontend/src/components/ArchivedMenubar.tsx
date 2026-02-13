@@ -3,10 +3,13 @@ import { Button } from "./ui/button"
 import { IFileFrontend } from '../types/File'
 import { useAppContext } from './context/globalContext'
 import { useTranslation } from 'react-i18next'
+import { THEME } from "../theme"
+import clsx from 'clsx'
 
 const ArchivedMenubar = () => {
 
   const {t} = useTranslation()
+const { lightMode } = useAppContext()
     const {updateFile, deleteFile, currentFileId} = useAppContext()
 
     const handleDelete = () => {
@@ -33,22 +36,22 @@ const ArchivedMenubar = () => {
   return (
     <div>
 
-        <Button 
+        <Button className={clsx(THEME.button.primary(lightMode), )}
       onClick={() => handleRestore()}
       disabled={!currentFileId}
       >{t("archive.restore-all")}</Button>
 
-        <Button 
+        <Button className={clsx(THEME.button.primary(lightMode), )}
       onClick={() => handleRestore()}
       disabled={!currentFileId}
       >{t("archive.restore")}</Button>
 
-      <Button 
+      <Button className={clsx(THEME.button.primary(lightMode), )}
       onClick={() => handleDelete()}
       disabled={!currentFileId}
       >{t("archive.delete")}</Button>
 
-      <Button 
+      <Button className={clsx(THEME.button.primary(lightMode), )}
       onClick={() => handleRestore()}
       disabled={!currentFileId}
       >{t("archive.delete-all")}</Button>

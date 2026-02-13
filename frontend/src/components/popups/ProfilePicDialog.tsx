@@ -18,6 +18,8 @@ import CustomDialog from '../popups/CustomDialog';
 import { Button } from "../ui/button"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
+import { THEME } from "../../theme"
+import clsx from "clsx"
 
 type ProfilePicDialogProps = {
     open: boolean,
@@ -27,6 +29,8 @@ type ProfilePicDialogProps = {
 const ProfilePicDialog = ({ open, setOpen }: ProfilePicDialogProps) => {
 
     const { t } = useTranslation()
+    
+const { lightMode } = useAppContext()
     const { updateProfilePic, getProfilePic, userLoading, userError } = useAppContext()
 
     const [preview, setPreview] = useState<string | null>(null)
@@ -64,15 +68,15 @@ const ProfilePicDialog = ({ open, setOpen }: ProfilePicDialogProps) => {
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>{t("settings.profile-picture")}</DialogTitle>
+                    <DialogTitle className={clsx(THEME.text.primary(lightMode), )}>{t("settings.profile-picture")}</DialogTitle>
                 </DialogHeader>
-                <div className="flex flex-col items-center gap-4">
+                <div className={clsx(THEME.background.popup(lightMode), "flex flex-col items-center gap-4 ")} >
                     <Avatar className="h-28 w-28">
                         <AvatarImage src={preview ?? undefined} />
                         <AvatarFallback>JD</AvatarFallback>
                     </Avatar>
 
-                    <Button asChild variant="outline">
+                    <Button asChild variant="outline" className={clsx(THEME.button.primary(lightMode))}>
                         <label>
                             {t("dialog.change-profile-pic.upload-image")}
                             <input
@@ -85,7 +89,7 @@ const ProfilePicDialog = ({ open, setOpen }: ProfilePicDialogProps) => {
                     </Button>
                 </div>
 
-                <Button onClick={handleSave} disabled={userLoading || !chosenFile}>
+                <Button className={clsx(THEME.button.highlightedPrimary(lightMode), )} onClick={handleSave} disabled={userLoading || !chosenFile}>
                     {userLoading ? t("Saving...") : t("Save")}
                 </Button>
 

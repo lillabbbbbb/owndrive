@@ -13,6 +13,9 @@ import {
 } from "./ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
 import { useTranslation } from "react-i18next"
+import { THEME } from "../theme"
+import { useAppContext } from "./context/globalContext"
+import clsx from "clsx"
 
 
 interface MultiSelectProps {
@@ -22,14 +25,15 @@ interface MultiSelectProps {
 }
 
 export function MultiSelect({ options, value, onChange }: MultiSelectProps) {
-  
-  const {t} = useTranslation()
-    const toggle = (val: string) => {
-  const next = new Set(value) // copy the current Set from props
-  if (next.has(val)) next.delete(val) // remove if already selected
-  else next.add(val)                   // add if not selected
-  onChange(next)                       // pass updated Set to parent
-}
+
+  const { t } = useTranslation()
+  const { lightMode } = useAppContext()
+  const toggle = (val: string) => {
+    const next = new Set(value) // copy the current Set from props
+    if (next.has(val)) next.delete(val) // remove if already selected
+    else next.add(val)                   // add if not selected
+    onChange(next)                       // pass updated Set to parent
+  }
 
   return (
     <Popover>
@@ -37,7 +41,7 @@ export function MultiSelect({ options, value, onChange }: MultiSelectProps) {
         <Button
           variant="outline"
           role="combobox"
-          className="w-48 justify-between"
+          className={clsx(THEME.menu.item(lightMode), "w-48 justify-between")}
         >
           {value.size
             ? `${value.size} selected`
@@ -46,7 +50,7 @@ export function MultiSelect({ options, value, onChange }: MultiSelectProps) {
         </Button>
       </PopoverTrigger>
 
-      <PopoverContent className="w-48 p-0">
+      <PopoverContent className={clsx(THEME.background(lightMode), "w-48 p-0")} >
         <Command>
           <CommandEmpty>{t("home.no-results")}</CommandEmpty>
           <CommandGroup>

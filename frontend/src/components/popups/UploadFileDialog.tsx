@@ -13,12 +13,15 @@ import { useNavigate } from 'react-router-dom';
 import { useDropzone } from "react-dropzone";
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import { THEME } from "../../theme" 
+import clsx from 'clsx';
 
 
 const UploadFileDialog = () => {
 
   const { t } = useTranslation()
   const navigate = useNavigate()
+const { lightMode } = useAppContext()
   const { user, setCurrentFileId, createFile, uploadFile, filesLoading, filesError } = useAppContext()
 
   useEffect(() => {
@@ -78,7 +81,7 @@ const UploadFileDialog = () => {
     <>
       <input {...getInputProps()} />
 
-      <Button type="button" onClick={open}>
+      <Button className={clsx(THEME.button.primary(lightMode),)} type="button" onClick={open}>
         {t("home.upload-button")}
       </Button>
     </>

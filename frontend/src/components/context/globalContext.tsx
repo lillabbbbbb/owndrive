@@ -5,6 +5,8 @@ import { useFiles } from "../../hooks/useFiles";
 import { IUserFrontend } from "../../types/User";
 import { IFileFrontend } from "../../types/File";
 import { IImageFrontend } from "../../types/Image";
+import {MODES, LANGUAGES} from "../../types/other"
+import { model } from "mongoose";
 
 export interface AppContextType {
   user: IUserFrontend | null;
@@ -14,6 +16,11 @@ export interface AppContextType {
   filesError: string | null;
   files: IFileFrontend[] | [];
   currentFile: { file: IFileFrontend, permissions: string[], base64data: string } | null;
+
+  lightMode: boolean;
+  setMode :(isLight: boolean) => void;
+  lang: string;
+  setLang: (lang: string) => void;
 
   currentFileId: string | null;
   editorReady: boolean;
@@ -62,7 +69,6 @@ export const useAppContext = (): AppContextType => {
 interface AppProviderProps {
   children: ReactNode;
 }
-
 export const AppProvider = ({ children }: AppProviderProps) => {
   const userHook = useUser();
   const filesHook = useFiles();
@@ -70,6 +76,25 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   const [currentFileId, setCurrentFileId] = useState<string | null>(null)
   const [user, setUser] = useState<IUserFrontend | null>(null)
   const [editorReady, setEditorReady] = useState(false);
+  const [lightMode, setMode] = useState(true)
+  const [lang, setLang] = useState(LANGUAGES.en)
+
+
+  //apply correct language and mode upon first render
+  useEffect(() => {
+    setMode(localStorage.getItem("lightMode") === "true")
+    setLang(localStorage.getItem("i18nextLng")?.toUpperCase() ?? LANGUAGES.en)
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem("lightMode", String(lightMode))
+  }, [lightMode])
+
+  useEffect(() => {
+    localStorage.setItem("lang", lang)
+  }, [lang])
+
+
 
 
   //wait till user and currentFile is loaded first when page is rendered. Only reroute after that
@@ -202,6 +227,11 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     //Editor-related
     currentFileId: currentFileId,
     editorReady: editorReady,
+
+    lightMode: lightMode,
+    setMode: setMode,
+    lang: lang,
+    setLang: setLang,
 
     // File state
     filesLoading: filesHook.loading,

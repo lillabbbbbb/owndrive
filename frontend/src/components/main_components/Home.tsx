@@ -19,6 +19,8 @@ import { config } from 'process';
 import { IFileFrontend } from '../../types/File';
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner';
+import { THEME } from "../../theme"
+import clsx from 'clsx';
 
 export const sortingTypes = {
   by_last_modified: "Last modified",
@@ -65,6 +67,7 @@ const Home = () => {
   const navigate = useNavigate()
   const { user, files = [], getFiles, getFile, updateFile, setCurrentFileId, restoreAllArchived, deleteAllArchived, userLoading, userError, filesLoading, filesError } = useAppContext()
 
+const { lightMode } = useAppContext()
   const [isClicked, setClicked] = useState(false)
   const [selectedSorting, setSelectedSorting] = useState(sortingTypes.by_last_modified)
   const [searchKeyword, setSearchKeyword] = useState("")
@@ -347,12 +350,12 @@ const Home = () => {
   return (
     <div >
 
-      <Input
+      <Input 
         type="text"
         placeholder={t("home.search-placeholder")}
         value={searchKeyword}
         onChange={(e) => { handleSearchChange(e) }}
-        className="w-full"
+        className={clsx(THEME.input.field(lightMode), "w-full")}
       />
 
       <div>
@@ -368,15 +371,15 @@ const Home = () => {
       </div>
       {!showingArchives &&
         <>
-          <Button onClick={() => handleCreateNewClick()}>{t("home.create-new")}</Button>
+          <Button className={clsx(THEME.button.primary(lightMode))} onClick={() => handleCreateNewClick()}>{t("home.create-new")}</Button>
           <UploadFileDialog />
         </>
       }
       {
         showingArchives &&
         <>
-          <Button onClick={() => handleRestoreAll()}>{t("restore-all")}</Button>
-          <Button onClick={() => handleDeleteAll()}>{t("delete-all")}</Button>
+          <Button className={clsx(THEME.button.primary(lightMode))} onClick={() => handleRestoreAll()}>{t("restore-all")}</Button>
+          <Button className={clsx(THEME.button.primary(lightMode))} onClick={() => handleDeleteAll()}>{t("delete-all")}</Button>
         </>
       }
 

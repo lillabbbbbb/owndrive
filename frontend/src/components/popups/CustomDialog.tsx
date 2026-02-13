@@ -6,12 +6,17 @@ type DialogProps = {
   text: string;
 };
 import { useTranslation } from "react-i18next";
+import { THEME } from "../../theme"
+import { useAppContext } from "../context/globalContext";
+import clsx from "clsx";
 
 
 const CustomDialog = ({ heading, text}: DialogProps) => {
 
   const {t} = useTranslation()
-    const [open, setOpen] = useState(true)
+  
+const { lightMode } = useAppContext()
+  const [open, setOpen] = useState(true)
 
   return (
     <HeadlessDialog open={open} onClose={() => setOpen(false)}>
@@ -20,7 +25,7 @@ const CustomDialog = ({ heading, text}: DialogProps) => {
           <HeadlessDialog.Title className="text-lg font-bold">{heading}</HeadlessDialog.Title>
           <HeadlessDialog.Description className="mt-2">{text}</HeadlessDialog.Description>
           <button
-            className="mt-4 px-4 py-2 bg-red-500 text-white rounded"
+            className={clsx(THEME.button.primary(lightMode), "mt-4 px-4 py-2 bg-red-500 text-white rounded")}
             onClick={() => setOpen(false)}
           >
             {t("close")}

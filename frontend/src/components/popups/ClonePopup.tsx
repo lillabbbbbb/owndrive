@@ -31,6 +31,8 @@ import CustomDialog from '../popups/CustomDialog';
 import { isValidFileName } from '../../utils/validateFilename';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import { THEME } from "../../theme"
+import clsx from 'clsx';
 
 export type customOption = {
     label: string
@@ -46,6 +48,7 @@ const fileName = "testFileNameNotreal"
 
 export function ClonePopup() {
   const {t} = useTranslation()
+  const { lightMode } = useAppContext()
   const { currentFileId, user, files, getFile, createFile, filesLoading, filesError } = useAppContext();
 
   const [open, setOpen] = useState(false);
@@ -82,9 +85,9 @@ export function ClonePopup() {
     await createFile({
       created_by: user._id,
       filename: input,
-      file_type: originalFile.file_type,
-      mime_type: originalFile.mime_type,
-      content: originalFile.content
+      file_type: originalFile.file.file_type,
+      mime_type: originalFile.file.mime_type,
+      content: originalFile.file.content
     });
 
     setOpen(false); // close dialog
@@ -111,6 +114,7 @@ export function ClonePopup() {
                     placeholder="New file"
                     required
                     value={input}
+                    className={clsx(THEME.input.field(lightMode))}
                     onChange={e => {
                       setInput(e.target.value);
                       setIsInvalidName(false); // reset error while typing
@@ -127,7 +131,7 @@ export function ClonePopup() {
               <Button
                 type="submit"
                 disabled={!isValidAndUnique()}
-                className={!isValidAndUnique() ? "opacity-50 cursor-not-allowed" : ""}
+                className={clsx(THEME.input.field(lightMode), !isValidAndUnique() ? "opacity-50 cursor-not-allowed" : "")}
               >
                 {t("dialog.clone.save-copy")}
               </Button>

@@ -13,6 +13,7 @@ import { getFileCategory } from "../../../server/src/types/file"
 import React, { useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import * as mammoth from "mammoth";
+import { THEME } from "../theme"
 
 const BRIGHT_BUTTON_CLASS = "rounded bg-sky-600 px-4 py-2 text-sm text-white data-active:bg-sky-700 data-hover:bg-sky-500"
 const DISABLED_BUTTON = "opacity-50 cursor-not-allowed"
@@ -23,6 +24,7 @@ const extensions = [TextStyleKit, StarterKit]
 function EditorMenu({ editor }: { editor: Editor }) {
 
   const { t } = useTranslation()
+  const { lightMode } = useAppContext()
   const jwt = localStorage.getItem("token")
 
   const editorState = useEditorState({
@@ -61,7 +63,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
   return (
     <div className="control-group">
       <div className="button-group">
-        <Button className={clsx(
+        <Button className={clsx( THEME.button.primary(lightMode),
           BRIGHT_BUTTON_CLASS,
           !editor?.isEditable && DISABLED_BUTTON,
           editorState.isBold && 'is-active'
@@ -74,7 +76,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
         <Button
           onClick={() => editor.chain().focus().toggleItalic().run()}
           disabled={!editor?.isEditable}
-          className={clsx(
+          className={clsx(THEME.button.primary(lightMode),
             BRIGHT_BUTTON_CLASS,
             !editor?.isEditable && DISABLED_BUTTON,
             editorState.isItalic && 'is-active'
@@ -85,7 +87,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
         <Button
           onClick={() => editor.chain().focus().toggleStrike().run()}
           disabled={!editor?.isEditable}
-          className={clsx(
+          className={clsx(THEME.button.primary(lightMode),
             BRIGHT_BUTTON_CLASS,
             !editor?.isEditable && DISABLED_BUTTON,
             editorState.isStrike && 'is-active'
@@ -98,7 +100,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
         <Button
           onClick={() => editor.chain().focus().toggleCode().run()}
           disabled={!editor?.isEditable}
-          className={clsx(
+          className={clsx(THEME.button.primary(lightMode),
             BRIGHT_BUTTON_CLASS,
             !editor?.isEditable && DISABLED_BUTTON,
             editorState.isCode && 'is-active'
@@ -112,7 +114,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
         <button
           onClick={() => editor.chain().focus().setParagraph().run()}
           disabled={!editor?.isEditable}
-          className={clsx(
+          className={clsx(THEME.button.primary(lightMode),
             BRIGHT_BUTTON_CLASS,
             !editor?.isEditable && DISABLED_BUTTON,
             editorState.isParagraph && 'is-active'
@@ -123,7 +125,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
           disabled={!editor?.isEditable}
-          className={clsx(
+          className={clsx(THEME.button.primary(lightMode),
             BRIGHT_BUTTON_CLASS,
             !editor?.isEditable && DISABLED_BUTTON,
             editorState.isHeading1 && 'is-active'
@@ -134,7 +136,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           disabled={!editor?.isEditable}
-          className={clsx(
+          className={clsx(THEME.button.primary(lightMode),
             BRIGHT_BUTTON_CLASS,
             !editor?.isEditable && DISABLED_BUTTON,
             editorState.isHeading2 && 'is-active'
@@ -145,7 +147,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
           disabled={!editor?.isEditable}
-          className={clsx(
+          className={clsx(THEME.button.primary(lightMode),
             BRIGHT_BUTTON_CLASS,
             !editor?.isEditable && DISABLED_BUTTON,
             editorState.isHeading3 && 'is-active'
@@ -156,7 +158,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
           disabled={!editor?.isEditable}
-          className={clsx(
+          className={clsx(THEME.button.primary(lightMode),
             BRIGHT_BUTTON_CLASS,
             !editor?.isEditable && DISABLED_BUTTON,
             editorState.isHeading4 && 'is-active'
@@ -167,7 +169,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()}
           disabled={!editor?.isEditable}
-          className={clsx(
+          className={clsx(THEME.button.primary(lightMode),
             BRIGHT_BUTTON_CLASS,
             !editor?.isEditable && DISABLED_BUTTON,
             editorState.isHeading5 && 'is-active'
@@ -178,7 +180,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 6 }).run()}
           disabled={!editor?.isEditable}
-          className={clsx(
+          className={clsx(THEME.button.primary(lightMode),
             BRIGHT_BUTTON_CLASS,
             !editor?.isEditable && DISABLED_BUTTON,
             editorState.isHeading6 && 'is-active'
@@ -189,7 +191,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
         <button
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           disabled={!editor?.isEditable}
-          className={clsx(
+          className={clsx(THEME.button.primary(lightMode),
             BRIGHT_BUTTON_CLASS,
             !editor?.isEditable && DISABLED_BUTTON,
             editorState.isBulletList && 'is-active'
@@ -200,7 +202,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
         <button
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           disabled={!editor?.isEditable}
-          className={clsx(
+          className={clsx(THEME.button.primary(lightMode),
             BRIGHT_BUTTON_CLASS,
             !editor?.isEditable && DISABLED_BUTTON,
             editorState.isOrderedList && 'is-active'
@@ -211,7 +213,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
         <button
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
           disabled={!editor?.isEditable}
-          className={clsx(
+          className={clsx(THEME.button.primary(lightMode),
             BRIGHT_BUTTON_CLASS,
             !editor?.isEditable && DISABLED_BUTTON,
             editorState.isCodeBlock && 'is-active'
@@ -222,7 +224,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
         <button
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           disabled={!editor?.isEditable}
-          className={clsx(
+          className={clsx(THEME.button.primary(lightMode),
             BRIGHT_BUTTON_CLASS,
             !editor?.isEditable && DISABLED_BUTTON,
             editorState.isBlockquote && 'is-active'
@@ -230,12 +232,12 @@ function EditorMenu({ editor }: { editor: Editor }) {
         >
           Blockquote
         </button>
-        <button onClick={() => editor.chain().focus().setHorizontalRule().run()} disabled={!editor?.isEditable}>Horizontal rule</button>
-        <button onClick={() => editor.chain().focus().setHardBreak().run()} disabled={!editor?.isEditable}>Hard break</button>
-        <button onClick={() => editor.chain().focus().undo().run()} disabled={!editor?.isEditable}>
+        <button className={clsx(THEME.button.primary(lightMode),)} onClick={() => editor.chain().focus().setHorizontalRule().run()} disabled={!editor?.isEditable}>Horizontal rule</button>
+        <button className={clsx(THEME.button.primary(lightMode),)} onClick={() => editor.chain().focus().setHardBreak().run()} disabled={!editor?.isEditable}>Hard break</button>
+        <button className={clsx(THEME.button.primary(lightMode),)} onClick={() => editor.chain().focus().undo().run()} disabled={!editor?.isEditable}>
           Undo
         </button>
-        <button onClick={() => editor.chain().focus().redo().run()} disabled={!editor?.isEditable}>
+        <button className={clsx(THEME.button.primary(lightMode),)} onClick={() => editor.chain().focus().redo().run()} disabled={!editor?.isEditable}>
           Redo
         </button>
       </div>

@@ -1,10 +1,15 @@
 import { useState, type FormEvent } from 'react';
 import { Link } from "react-router-dom"
 import { useTranslation } from 'react-i18next';
+import { THEME } from "../../theme"
+import clsx from 'clsx';
+import { useAppContext } from '../context/globalContext';
 
 const Register = () => {
 
-    const {t} = useTranslation()
+    const { t } = useTranslation()
+    const { lightMode } = useAppContext()
+
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -64,12 +69,12 @@ const Register = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        placeholder=" "
-                        className="peer block w-full rounded-md border border-gray-300 px-3 pt-5 pb-2 text-gray-900 placeholder-transparent focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
+                        placeholder=""
+                        className={clsx(THEME.input.field(lightMode), "peer block w-full rounded-md border border-gray-300 px-3 pt-5 pb-2 text-gray-900 placeholder-transparent focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none")}
                     />
                     <label
                         htmlFor="name"
-                        className="absolute left-3 top-2.5 text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base peer-focus:top-2.5 peer-focus:text-sm peer-focus:text-blue-500"
+                        className={clsx(THEME.text.secondary(lightMode), "absolute left-3 top-2.5 text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base peer-focus:top-2.5 peer-focus:text-sm peer-focus:text-blue-500")}
                     >
                         {t("register.email")}
                     </label>
@@ -83,11 +88,11 @@ const Register = () => {
                         onChange={(e) => setUsername(e.target.value)}
                         required
                         placeholder=" "
-                        className="peer block w-full rounded-md border border-gray-300 px-3 pt-5 pb-2 text-gray-900 placeholder-transparent focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
+                        className={clsx(THEME.input.field(lightMode), "peer block w-full rounded-md border border-gray-300 px-3 pt-5 pb-2 text-gray-900 placeholder-transparent focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none")}
                     />
                     <label
                         htmlFor="name"
-                        className="absolute left-3 top-2.5 text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base peer-focus:top-2.5 peer-focus:text-sm peer-focus:text-blue-500"
+                        className={clsx(THEME.text.secondary(lightMode), "absolute left-3 top-2.5 text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base peer-focus:top-2.5 peer-focus:text-sm peer-focus:text-blue-500")}
                     >
                         {t("register.username")}
                     </label>
@@ -102,11 +107,11 @@ const Register = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         required
                         placeholder=" "
-                        className="peer block w-full rounded-md border border-gray-300 px-3 pt-5 pb-2 text-gray-900 placeholder-transparent focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
+                        className={clsx(THEME.input.field(lightMode), "peer block w-full rounded-md border border-gray-300 px-3 pt-5 pb-2 text-gray-900 placeholder-transparent focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none")}
                     />
                     <label
                         htmlFor="password"
-                        className="absolute left-3 top-2.5 text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base peer-focus:top-2.5 peer-focus:text-sm peer-focus:text-blue-500"
+                        className={clsx(THEME.text.secondary(lightMode), "absolute left-3 top-2.5 text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base peer-focus:top-2.5 peer-focus:text-sm peer-focus:text-blue-500")}
                     >
                         {t("register.password")}
                     </label>
@@ -115,7 +120,7 @@ const Register = () => {
                 {/* Submit button */}
                 <button
                     type="submit"
-                    className="w-full bg-blue-500 text-white py-2 rounded-md font-semibold hover:bg-blue-600 transition"
+                    className={clsx(THEME.button.primary(lightMode), "w-full bg-blue-500 text-white py-2 rounded-md font-semibold hover:bg-blue-600 transition")}
 
                 >{t("register.register")}
                 </button>
@@ -125,19 +130,19 @@ const Register = () => {
             <div className="flex justify-between gap-2">
                 <button
                     type="button"
-                    className="flex-1 border border-gray-300 py-2 rounded-md hover:bg-gray-100 transition"
+                    className={clsx(THEME.button.secondary(lightMode), "flex-1 border border-gray-300 py-2 rounded-md hover:bg-gray-100 transition")}
                     onClick={() => handleGoogleClick()}
                 >
                     Google
                 </button>
                 <button
                     type="button"
-                    className="flex-1 border border-gray-300 py-2 rounded-md hover:bg-gray-100 transition"
+                    className={clsx(THEME.button.secondary(lightMode), "flex-1 border border-gray-300 py-2 rounded-md hover:bg-gray-100 transition")}
                     onClick={() => handleAppleClick()}
                 >
                     Apple
                 </button>
-                <p><Link to="/login">{t("register.or-login-here")}</Link>
+                <p className={clsx(THEME.text.muted(lightMode))}><Link to="/login">{t("register.or-login-here")}</Link>
 
                 </p>
             </div>

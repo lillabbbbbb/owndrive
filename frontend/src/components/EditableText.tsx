@@ -1,6 +1,8 @@
 import { Input } from "./ui/input"
 import { useState, useRef, useEffect, useLayoutEffect } from "react"
 import { AppContext, useAppContext } from "./context/globalContext"
+import { THEME } from "../theme"
+import clsx from "clsx"
 
 type EditableTextProps = {
   value: string
@@ -17,6 +19,7 @@ export function EditableText(
   }: EditableTextProps) {
 
   const { currentFileId } = useAppContext()
+const { lightMode } = useAppContext()
 
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(value)
@@ -67,7 +70,7 @@ export function EditableText(
         {draft || ""}
       </span>
 
-      <Input
+      <Input 
         ref={inputRef}
         autoFocus
         value={draft}
@@ -85,8 +88,7 @@ export function EditableText(
           }
         }}
         style={{ width: inputWidth }}
-        className={`h-7 px-1 transition-colors duration-100 ${isValid ? "" : "border border-red-500 outline-none"
-          } ${className}`}
+        className={clsx(THEME.menu.item(lightMode), "h-7 px-1 transition-colors duration-100",  isValid ? "" : "border border-red-500 outline-none", className)}
       />
       {!isValid && (
         <div className="text-red-500 text-xs mt-1 absolute">

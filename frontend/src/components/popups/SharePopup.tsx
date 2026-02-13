@@ -29,6 +29,8 @@ import CustomDialog from '../popups/CustomDialog';
 import { IFileFrontend } from '../../types/File';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import { THEME } from "../../theme"
+import clsx from 'clsx';
 
 
 export type customOption = {
@@ -40,6 +42,7 @@ export type customOption = {
 export function SharePopup() {
 
   const { t } = useTranslation()
+const { lightMode } = useAppContext()
   const { currentFileId, getFile, updateFile, getAllUsernames, filesLoading, filesError } = useAppContext()
 
 
@@ -120,7 +123,7 @@ export function SharePopup() {
 
   return (
     file && <>
-      <Button onClick={() => setOpen(true)}><HiShare className="w-5 h-5" /></Button>
+      <Button className={clsx(THEME.button.primary(lightMode))}  onClick={() => setOpen(true)}><HiShare className="w-5 h-5" /></Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
@@ -128,13 +131,13 @@ export function SharePopup() {
             <DialogTitle>Yes</DialogTitle>
           </DialogHeader>*/}
 
-          <div className="flex flex-col gap-4">
+          <div className={clsx(THEME.background.popup(lightMode), "flex flex-col gap-4")} >
 
             <Field orientation="horizontal" className='mt-5'>
               <FieldContent>
                 <FieldLabel htmlFor="copy-link-text">{shortUrl}</FieldLabel>
               </FieldContent>
-              <Button onClick={() => handleCopy()}>{t("share.copy_link")}</Button>
+              <Button className={clsx(THEME.button.primary(lightMode))} onClick={() => handleCopy()}>{t("share.copy_link")}</Button>
             </Field>
 
             <Field orientation="horizontal">

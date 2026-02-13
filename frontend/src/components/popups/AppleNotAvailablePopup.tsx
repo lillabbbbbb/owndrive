@@ -13,6 +13,9 @@ import { Label } from "../ui/label"
 import { Switch } from "../ui/switch"
 import { Button } from "../ui/button"
 import { useTranslation } from 'react-i18next';
+import { THEME } from "../../theme"
+const { lightMode } = useAppContext()
+{clsx(THEME.menu.item(!lightMode), 
 
 
 const AppleNotAvailablePopup = () => {

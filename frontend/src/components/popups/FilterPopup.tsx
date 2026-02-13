@@ -20,6 +20,9 @@ import { MultiSelect } from '../Multiselect'
 import { Filter, Filters } from '../main_components/Home';
 import { Text } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { THEME } from "../../theme"
+import { useAppContext } from '../context/globalContext';
+import clsx from 'clsx';
 
 export type customOption = {
   label: string | null
@@ -46,11 +49,13 @@ export function ControlledFilterDialog({ filters, onChange }: FilterDialogProps)
   //Note: active filters could be stored in session storage
 
   const {t} = useTranslation()
+const { lightMode } = useAppContext()
+
   const [open, setOpen] = useState<boolean>(false)
 
   return (
     <>
-      <Button onClick={() => setOpen(true)}>{t("home.filter-button")}</Button>
+      <Button className={clsx(THEME.button.primary(lightMode))} onClick={() => setOpen(true)}>{t("home.filter-button")}</Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
@@ -62,7 +67,7 @@ export function ControlledFilterDialog({ filters, onChange }: FilterDialogProps)
             {filters.map((filter) => {
               return (
                 <div key={filter.label} className="flex flex-col gap-2">
-                  <Label>{t(filter.label)}</Label>
+                  <Label className={clsx(THEME.text.primary(lightMode))}>{t(filter.label)}</Label>
                   {filter.type === "multi" ? (
                     <MultiSelect
                       options={filter.options}
@@ -71,15 +76,15 @@ export function ControlledFilterDialog({ filters, onChange }: FilterDialogProps)
                     />
                   ) : (
                     <Select
-                      value={filter.selected as string}
+                      value={filter.selected as string} 
                       onValueChange={filter.onChange as (val: string) => void}
                     >
                       <SelectTrigger className="w-48">
                         <SelectValue placeholder={`Select ${filter.label}`} />
                       </SelectTrigger>
-                      <SelectContent position='popper'>
+                      <SelectContent className={clsx(THEME.text.primary(lightMode))} position='popper'>
                         {filter.options.map((option) => (
-                          <SelectItem key={option.value} value={option.value as string}>
+                          <SelectItem key={option.value} className={clsx(THEME.text.primary(lightMode))} value={option.value as string}>
                             {t(option.label!)}
                           </SelectItem>
                         ))}

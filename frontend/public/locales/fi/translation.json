@@ -1,7 +1,7 @@
 {
     "home": {
-        "home": "Koti",
-        "create-new": "Luo uusi",
+        "home": "Etusivu",
+        "create-new": "Luo uutta",
         "search-placeholder": "Kirjoita hakusana tähän",
         "search-button": "Hae",
         "results-num": "tiedostot",
@@ -48,7 +48,7 @@
         "password-placeholder": "Kirjoita salasanasi tähän...",
         "or-register-here": "tai rekisteröidy tästä"
     },
-    "registration": {
+    "register": {
         "register": "Rekisteröidy",
         "email": "Sähköposti",
         "email-placeholder": "Sähköpostiosoitteesi",

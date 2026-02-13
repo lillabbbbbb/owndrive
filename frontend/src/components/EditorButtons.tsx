@@ -8,6 +8,7 @@ import { usePDF } from 'react-to-pdf';
 import { useAppContext } from "./context/globalContext";
 import CustomDialog from './popups/CustomDialog';
 import { toast } from 'sonner';
+import { THEME } from "../theme" 
 import {
   Dialog,
   DialogContent,
@@ -18,6 +19,7 @@ import {
 import { Label } from "./ui/label"
 import { Button } from "./ui/button"
 import { useTranslation } from 'react-i18next';
+import clsx from 'clsx';
 
 interface EditorButtonsProps {
   htmlContent: string
@@ -26,6 +28,7 @@ interface EditorButtonsProps {
 const EditorButtons = ({ htmlContent }: EditorButtonsProps) => {
 
   const { t } = useTranslation()
+const { lightMode } = useAppContext()
   const { downloadPDF, currentFileId, createFile, updateFile, filesLoading, filesError } = useAppContext()
   const [PDFDialogOpen, setPDFDialogOpen] = useState<boolean>(false)
 
@@ -65,7 +68,7 @@ const EditorButtons = ({ htmlContent }: EditorButtonsProps) => {
           <SharePopup />
 
         </TooltipTrigger>
-        <TooltipContent side="top">
+        <TooltipContent className={clsx(THEME.tooltip(lightMode),)} side="top">
           {t("editor-buttons.share")}
         </TooltipContent>
       </Tooltip>
@@ -74,7 +77,7 @@ const EditorButtons = ({ htmlContent }: EditorButtonsProps) => {
         <TooltipTrigger asChild>
           <ClonePopup />
         </TooltipTrigger>
-        <TooltipContent side="top">
+        <TooltipContent className={clsx(THEME.tooltip(lightMode),)} side="top">
           {t("editor-buttons.clone")}
         </TooltipContent>
       </Tooltip>
@@ -83,13 +86,13 @@ const EditorButtons = ({ htmlContent }: EditorButtonsProps) => {
         <TooltipTrigger asChild>
           <button
             onClick={() => handlePDFButtonClick()}
-            className={
-              "rounded bg-sky-600 px-4 py-2 text-sm text-white data-active:bg-sky-700 data-hover:bg-sky-500"}
+            className={clsx(THEME.button.primary(lightMode),
+              "rounded bg-sky-600 px-4 py-2 text-sm text-white data-active:bg-sky-700 data-hover:bg-sky-500")}
           >
             {("PDF")}
           </button>
         </TooltipTrigger>
-        <TooltipContent side="top">
+        <TooltipContent className={clsx(THEME.tooltip(lightMode),)} side="top">
           {t("editor-buttons.download-PDF")}
         </TooltipContent>
       </Tooltip>
@@ -119,13 +122,13 @@ const EditorButtons = ({ htmlContent }: EditorButtonsProps) => {
         <TooltipTrigger asChild>
           <button
             onClick={() => handleDeleteButtonClick()}
-            className={
-              "rounded bg-sky-600 px-4 py-2 text-sm text-white data-active:bg-sky-700 data-hover:bg-sky-500"}
+            className={clsx(THEME.button.primary(lightMode),
+              "rounded bg-sky-600 px-4 py-2 text-sm text-white data-active:bg-sky-700 data-hover:bg-sky-500")}
           >
             D
           </button>
         </TooltipTrigger>
-        <TooltipContent side="top">
+        <TooltipContent className={clsx(THEME.tooltip(lightMode),)} side="top">
           {t("archive.delete")}
         </TooltipContent>
       </Tooltip>

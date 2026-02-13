@@ -48,7 +48,7 @@
         "password-placeholder": "Type your password here...",
         "or-register-here": "or register here"
     },
-    "registration": {
+    "register": {
         "register": "Register",
         "email": "Email",
         "email-placeholder": "Your email",

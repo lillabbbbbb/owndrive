@@ -14,6 +14,8 @@ import { useNavigate } from "react-router-dom";
 import { useAppContext } from "./context/globalContext";
 import { IFileFrontend } from "../types/File";
 import { useTranslation } from "react-i18next";
+import { THEME } from "../theme"
+import clsx from "clsx";
 
 
 type TableProps = {
@@ -28,6 +30,7 @@ const COLUMN_NAMES = ["filename", "file_type", "created_by", "last_edited_at", "
 export default function FilesTable({ onRowClick, sortedFilteredData }: TableProps) {
 
   const { t } = useTranslation()
+const { lightMode } = useAppContext()
   const { getAllUsernames } = useAppContext()
 
   //console.log('📊 TABLE RECEIVED:', sortedFilteredData?.length, 'items');
@@ -82,7 +85,7 @@ export default function FilesTable({ onRowClick, sortedFilteredData }: TableProp
               type="checkbox"
               checked={columns.includes(col)}
               onChange={() => toggleColumn(col)}
-              className="accent-blue-500"
+              className={clsx(THEME.input.field(lightMode), "accent-blue-500")}
             />
             {col.toUpperCase()}
           </label>
@@ -90,7 +93,7 @@ export default function FilesTable({ onRowClick, sortedFilteredData }: TableProp
       </div>
 
       {/* Results summary */}
-      <div className="flex justify-between items-center px-1">
+      <div className={clsx(THEME.background.page(lightMode), "flex justify-between items-center px-1")} >
         <div className="text-sm text-gray-600">
           {currentRows.length === 0 ? (
             t("home.no-results")

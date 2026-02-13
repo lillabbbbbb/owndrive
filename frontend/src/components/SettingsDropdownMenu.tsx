@@ -11,12 +11,17 @@ import CustomDialog from './popups/CustomDialog';
 import { useTranslation } from "react-i18next"
 import { IUserFrontend } from "../types/User"
 import { toast } from "sonner"
+import {MODES, LANGUAGES} from "../types/other"
+import { LIGHT_MENUITEM_CLASSES, DARK_MENUITEM_CLASSES } from "../types/classNames"
+import clsx from "clsx"
+import { THEME } from "../theme"
 
 
 function SettingsDropdownMenu() {
 
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const {lightMode, setMode} = useAppContext()
 
   const { getProfilePic, logout, getUser, userLoading, userError } = useAppContext()
   const [user, setUser] = useState<IUserFrontend | null>(null)
@@ -73,6 +78,8 @@ function SettingsDropdownMenu() {
   const handleModeChange = () => {
     console.log("Mode button clicked")
 
+    setMode(!lightMode)
+
     //store in browser's local storage
 
     //Mode should be changed:
@@ -97,10 +104,10 @@ function SettingsDropdownMenu() {
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="bg-white text-black">
-          <DropdownMenuItem onSelect={(e) => handleProfilePic(e)}><LucideUser className="mr-2" /> {t("settings.profile-picture")}</DropdownMenuItem>
+          <DropdownMenuItem className={THEME.dropdown.item(lightMode)} onSelect={(e) => handleProfilePic(e)}><LucideUser className="mr-2" /> {t("settings.profile-picture")}</DropdownMenuItem>
           <ProfilePicDialog open={openProfilePicDialog} setOpen={setOpenProfilePicDialog} />
-          <DropdownMenuItem onClick={() => handleModeChange()}><LucideSettings className="mr-2" /> {t("settings.dark-mode") || t("settings.light-mode")}</DropdownMenuItem>
-          <DropdownMenuItem onClick={() => handleLogout()}><LucideLogOut className="mr-2" /> {t("settings.log-out")}</DropdownMenuItem>
+          <DropdownMenuItem className={THEME.dropdown.item(lightMode)} onClick={() => handleModeChange()}><LucideSettings className="mr-2" /> {lightMode ? t("settings.dark-mode") : t("settings.light-mode")}</DropdownMenuItem>
+          <DropdownMenuItem className={THEME.dropdown.item(lightMode)} onClick={() => handleLogout()}><LucideLogOut className="mr-2" /> {t("settings.log-out")}</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </>

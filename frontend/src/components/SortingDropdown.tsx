@@ -8,6 +8,9 @@ import {
 } from "../components/ui/select";
 import { sortingTypes } from "./main_components/Home";
 import { useTranslation } from "react-i18next";
+import { THEME } from "../theme"
+import { useAppContext } from "./context/globalContext";
+import clsx from "clsx";
 
 type Props = {
   value: string;
@@ -17,6 +20,7 @@ type Props = {
 export default function SortingDropdown({ value, onChange }: Props) {
 
   const {t} = useTranslation()
+const { lightMode } = useAppContext()
 
 
   return (
@@ -26,7 +30,7 @@ export default function SortingDropdown({ value, onChange }: Props) {
       </SelectTrigger>
       <SelectContent>
         {Object.entries(sortingTypes).map(([key, value]) => (
-          <SelectItem key={key} value={value}>
+          <SelectItem className={clsx(THEME.dropdown.item(lightMode), )} key={key} value={value}>
             {t(value)}
           </SelectItem>
         ))}
