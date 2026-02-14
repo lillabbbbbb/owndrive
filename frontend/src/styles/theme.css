@@ -1,0 +1,62 @@
+/* -------------------- */
+/* Light Theme (Default) */
+/* -------------------- */
+:root {
+  /* Base */
+  --background: #fdf6ec;       /* beige-100 */
+  --foreground: #7c2d12;       /* orange-800 */
+
+  --card: #fefaf3;
+  --popover: #ffffff;
+
+  /* Primary */
+  --primary: #f97316;          /* orange-500 */
+  --primary-foreground: #ffffff;
+
+  /* Muted */
+  --muted: #f5e6d3;
+  --muted-foreground: #9ca3af;
+
+  /* Borders */
+  --border: #f1d5b6;
+  --input: #f1d5b6;
+
+  /* Accent */
+  --accent: #fb923c;
+  --accent-foreground: #000000;
+
+  /* States */
+  --success: #15803d;
+  --warning: #a16207;
+  --error: #b91c1c;
+
+  /* Radius */
+  --radius: 1rem;
+}
+
+/* -------------------- */
+/* Dark Theme */
+/* -------------------- */
+.dark {
+  --background: #000000;
+  --foreground: #fb923c;
+
+  --card: #111111;
+  --popover: #000000;
+
+  --primary: #ea580c;
+  --primary-foreground: #000000;
+
+  --muted: #1f1f1f;
+  --muted-foreground: #9ca3af;
+
+  --border: #1f2937;
+  --input: #1f2937;
+
+  --accent: #f97316;
+  --accent-foreground: #000000;
+
+  --success: #22c55e;
+  --warning: #facc15;
+  --error: #ef4444;
+}

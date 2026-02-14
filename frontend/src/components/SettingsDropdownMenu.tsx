@@ -15,13 +15,14 @@ import {MODES, LANGUAGES} from "../types/other"
 import { LIGHT_MENUITEM_CLASSES, DARK_MENUITEM_CLASSES } from "../types/classNames"
 import clsx from "clsx"
 import { THEME } from "../theme"
+import {useTheme} from "../components/context/ThemeContext"
 
 
 function SettingsDropdownMenu() {
 
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const {lightMode, setMode} = useAppContext()
+  const {lightMode, toggle} = useTheme()
 
   const { getProfilePic, logout, getUser, userLoading, userError } = useAppContext()
   const [user, setUser] = useState<IUserFrontend | null>(null)
@@ -78,7 +79,7 @@ function SettingsDropdownMenu() {
   const handleModeChange = () => {
     console.log("Mode button clicked")
 
-    setMode(!lightMode)
+    toggle()
 
     //store in browser's local storage
 

@@ -12,12 +12,13 @@ import { useAppContext } from './context/globalContext';
 import { LANGUAGES } from '../types/other';
 import { THEME } from "../theme"
 import clsx from 'clsx';
+import { useTheme } from "../components/context/ThemeContext"
 
 
 const LanguageDropdown = () => {
 
     const { i18n } = useTranslation()
-    const { lightMode } = useAppContext()
+    const { lightMode } = useTheme()
     const { lang, setLang } = useAppContext()
     const changeLanguage = (lang: string) => {
         i18n.changeLanguage(lang)
@@ -36,26 +37,30 @@ const LanguageDropdown = () => {
 
 
     return (
-        <div>
+        <div className={clsx(THEME.background.card(lightMode))}>
             <Select value={lang} onValueChange={(lang) => {
                 setLang(lang)
                 changeLanguage(lang.toLocaleLowerCase())
                 console.log(lang.toLowerCase())
-            }} >
-                <SelectTrigger ref={triggerRef} className={clsx(THEME.menu.item(lightMode),"flex [&>svg]:hidden")} >
-                    <SelectValue placeholder={lang} />
+            }}>
+                <SelectTrigger className={clsx(THEME.dropdown.trigger(lightMode),
+                    "flex items-center [&>svg]:hidden")}>
+                    <SelectValue className={clsx(THEME.dropdown.text(lightMode))} placeholder={lang} />
                 </SelectTrigger>
-                <SelectContent
-                    className={clsx(THEME.menu.item(lightMode),)}
-                    style={{ width: contentWidth }}
-                    position="popper">
+
+                <SelectContent className={clsx(THEME.dropdown.menu(lightMode),)} position="popper">
                     {Object.values(LANGUAGES).map((option) => (
-                        <SelectItem className={clsx(THEME.menu.item(lightMode), "[&>svg]:hidden")} key={option} value={option}>
+                        <SelectItem
+                            key={option}
+                            value={option}
+                            className={clsx(THEME.dropdown.item(lightMode), "[&>svg]:hidden")}
+                        >
                             {option.toUpperCase()}
                         </SelectItem>
                     ))}
                 </SelectContent>
             </Select>
+
         </div>
     )
 }

@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { THEME } from "../theme"
 import { useAppContext } from "./context/globalContext";
 import clsx from "clsx";
+import {useTheme} from "../components/context/ThemeContext"
 
 type Props = {
   value: string;
@@ -20,15 +21,15 @@ type Props = {
 export default function SortingDropdown({ value, onChange }: Props) {
 
   const {t} = useTranslation()
-const { lightMode } = useAppContext()
+const { lightMode } = useTheme()
 
 
   return (
     <Select onValueChange={onChange} value={value}>
-      <SelectTrigger className="w-48">
-        <SelectValue placeholder="Select an option" />
+      <SelectTrigger className={clsx(THEME.button.secondary(lightMode), "w-48")} >
+        <SelectValue placeholder="Select an option" className={clsx(THEME.dropdown.text(lightMode))}/>
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className={clsx(THEME.dropdown.menu(lightMode))}>
         {Object.entries(sortingTypes).map(([key, value]) => (
           <SelectItem className={clsx(THEME.dropdown.item(lightMode), )} key={key} value={value}>
             {t(value)}

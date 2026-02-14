@@ -3,6 +3,7 @@ import { useState, useRef, useEffect, useLayoutEffect } from "react"
 import { AppContext, useAppContext } from "./context/globalContext"
 import { THEME } from "../theme"
 import clsx from "clsx"
+import {useTheme} from "../components/context/ThemeContext"
 
 type EditableTextProps = {
   value: string
@@ -19,7 +20,7 @@ export function EditableText(
   }: EditableTextProps) {
 
   const { currentFileId } = useAppContext()
-const { lightMode } = useAppContext()
+const { lightMode } = useTheme()
 
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(value)
@@ -88,7 +89,7 @@ const { lightMode } = useAppContext()
           }
         }}
         style={{ width: inputWidth }}
-        className={clsx(THEME.menu.item(lightMode), "h-7 px-1 transition-colors duration-100",  isValid ? "" : "border border-red-500 outline-none", className)}
+        className={clsx(THEME.input.field(lightMode), "h-7 px-1 transition-colors duration-100",  isValid ? "" : "border border-red-500 outline-none", className)}
       />
       {!isValid && (
         <div className="text-red-500 text-xs mt-1 absolute">

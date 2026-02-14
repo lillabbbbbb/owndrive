@@ -221,60 +221,56 @@ const Editor = () => {
             //if not valid, set the value to be the previous file name
         }
 
-        return (
-            <>
-                {!(jwt || visibleToGuest) &&
-                    <>
-                        <Login />
-                    </>
-                }
+ return (
+    <div className={clsx(THEME.background.page(lightMode), "min-h-screen w-full flex flex-col")}>
+      
+      {/* Toolbar */}
+      <div className={clsx(THEME.background.dashboard(lightMode), "flex items-center justify-between px-6 py-4 shadow-md")}>
+        <EditableText
+          value={filename}
+          onSave={(v) => setFilename(v)}
+          className="text-xl font-semibold"
+        />
+        <div className="flex gap-2">
+          <Button className={clsx(THEME.button.primary(lightMode))} onClick={handleSave}>
+            {t("save")}
+          </Button>
+          
+          <EditorButtons htmlContent={content} />
+        </div>
+      </div>
 
-                {(jwt || visibleToGuest) && <>
-                    {/* Render this if user is logged in */}
-                    {!editable && <ConcurrentEditingPopup />}
+      {/* Main content */}
+      <div className="flex flex-1 gap-6 p-6">
+        
+        {/* Left editor column */}
+        <div className="flex-1 flex flex-col gap-4">
+          <div ref={targetRef} className="flex flex-col gap-4">
+            <EditorField
+              ref={editorRef}
+              content={content}
+              setContent={setContent}
+              editable={editable}
+            />
+          </div>
+        </div>
 
-                    <Button className={clsx(THEME.button.primary(lightMode), )} onClick={() => handleSave()}>Save</Button>
-                    <div ref={targetRef}>
+        {/* Right sidebar */}
+        <div className="w-1/3 flex flex-col gap-4">
+          {file?.file.file_type === ".pdf" && (
+            <PdfViewer url="/public/files/sample.pdf" />
+          )}
+          {!editable && <ConcurrentEditingPopup />}
+        </div>
+      </div>
 
+      {/* Guest login dialog */}
+      {!jwt && (
+        <Login />
+      )}
 
-                        <EditorButtons htmlContent={content} />
-                        <EditableText value={filename} onSave={(v) => handleSaveFileName(v)} />
-                        {(file?.file.file_type === ".pdf") && <PdfViewer url="/public/files/sample.pdf" />}
-                        <EditorField ref={editorRef} content={file?.file.content ? content : content} setContent={setContent} editable={editable} />
-
-
-
-                    </div>
-
-
-                    {/* Render this if user is NOT logged in */}
-                    {!jwt &&
-                        <>
-
-                            <Dialog open={guestDialogOpen} onOpenChange={setGuestDialogOpen}>
-                                <DialogContent>
-
-                                    <div className={clsx(THEME.background(lightMode), "flex flex-col gap-4")} >
-
-                                        <Label className={clsx(THEME.text.primary(lightMode), )}>{t("guest-dialog.heading")}</Label>
-
-                                        <Label className={clsx(THEME.text.primary(lightMode), )}>
-                                            {t("guest-dialog.prompt")}</Label>
-
-                                    </div>
-                                    <DialogClose asChild>
-                                        <Button className={clsx(THEME.button.primary(lightMode), )} variant="outline">{t("guest-dialog.no-button")}</Button>
-                                    </DialogClose>
-                                    <Button className={clsx(THEME.button.primary(lightMode), )}>{t("guest-dialog.yes-button")}</Button>
-
-                                </DialogContent>
-                            </Dialog>
-                        </>
-                    }
-
-                </>}
-            </>
-        )
-    }
+    </div>
+  );
+};
 
     export default Editor

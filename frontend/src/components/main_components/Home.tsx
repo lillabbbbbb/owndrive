@@ -67,7 +67,7 @@ const Home = () => {
   const navigate = useNavigate()
   const { user, files = [], getFiles, getFile, updateFile, setCurrentFileId, restoreAllArchived, deleteAllArchived, userLoading, userError, filesLoading, filesError } = useAppContext()
 
-const { lightMode } = useAppContext()
+  const { lightMode } = useAppContext()
   const [isClicked, setClicked] = useState(false)
   const [selectedSorting, setSelectedSorting] = useState(sortingTypes.by_last_modified)
   const [searchKeyword, setSearchKeyword] = useState("")
@@ -348,47 +348,77 @@ const { lightMode } = useAppContext()
 
 
   return (
-    <div >
+    <>
+      <div className={clsx("min-h-screen flex flex-col gap-6 p-6", THEME.background.page(lightMode))}>
 
-      <Input 
-        type="text"
-        placeholder={t("home.search-placeholder")}
-        value={searchKeyword}
-        onChange={(e) => { handleSearchChange(e) }}
-        className={clsx(THEME.input.field(lightMode), "w-full")}
-      />
+        {/* ===== Header / Top Controls ===== */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <Input
+            type="text"
+            placeholder={t("home.search-placeholder")}
+            value={searchKeyword}
+            onChange={handleSearchChange}
+            className={clsx(THEME.input.field(lightMode), "flex-1 md:max-w-md")}
+          />
 
-      <div>
-        <SortingDropdown value={selectedSorting} onChange={(value) => handleChangeSorting(value)} />
+          <div className="flex gap-2">
+            <SortingDropdown value={selectedSorting} onChange={handleChangeSorting} />
+            
+            <ControlledFilterDialog
+              filters={filterConfigs}
+              onChange={(newFilters: Filters) => setFilters(newFilters)}
+            />
+          </div>
+        </div>
 
-        <ControlledFilterDialog filters={filterConfigs}
-          onChange={
-            (newFilters: Filters) => {
-              setFilters(newFilters)
-              console.log("sorttable called in filtering")
-            }}
-        />
+        {/* ===== Action Buttons ===== */}
+        <div className="flex flex-wrap gap-2 items-center">
+          {!showingArchives && (
+            <>
+              <Button
+                className={clsx(THEME.button.highlightedPrimary(lightMode))}
+                onClick={handleCreateNewClick}
+              >
+                {t("home.create-new")}
+              </Button>
+              <UploadFileDialog />
+            </>
+          )}
+
+          {showingArchives && (
+            <>
+              <Button
+                className={clsx(THEME.button.primary(lightMode))}
+                onClick={handleRestoreAll}
+              >
+                {t("restore-all")}
+              </Button>
+              <Button
+                className={clsx(THEME.button.highlightedSecondary(lightMode))}
+                onClick={handleDeleteAll}
+              >
+                {t("delete-all")}
+              </Button>
+            </>
+          )}
+        </div>
+
+        {/* ===== Files Table / Main Content ===== */}
+        <div className={clsx(
+        )}>
+          {sortedFilteredData.length > 0 ? (
+            <FilesTable
+              onRowClick={handleRowClick}
+              sortedFilteredData={sortedFilteredData}
+            />
+          ) : (
+            <p className="text-gray-500 dark:text-gray-400 text-center py-20">
+              {t("home.no-files")}
+            </p>
+          )}
+        </div>
       </div>
-      {!showingArchives &&
-        <>
-          <Button className={clsx(THEME.button.primary(lightMode))} onClick={() => handleCreateNewClick()}>{t("home.create-new")}</Button>
-          <UploadFileDialog />
-        </>
-      }
-      {
-        showingArchives &&
-        <>
-          <Button className={clsx(THEME.button.primary(lightMode))} onClick={() => handleRestoreAll()}>{t("restore-all")}</Button>
-          <Button className={clsx(THEME.button.primary(lightMode))} onClick={() => handleDeleteAll()}>{t("delete-all")}</Button>
-        </>
-      }
-
-      {/*
-      {!showingArchives && isClicked && <EditorButtons canView={canView} setCanView={setCanView} canEdit={canEdit} setCanEdit={setCanEdit} visibleToGuest={visibleToGuest} setVisibleToGuest={setVisibleToGuest} isPrivate={isPrivate} setIsPrivate={setIsPrivate} />}
-      */}
-
-      {sortedFilteredData && <FilesTable onRowClick={() => handleRowClick()} sortedFilteredData={sortedFilteredData} />}
-    </div>
+    </>
   )
 }
 

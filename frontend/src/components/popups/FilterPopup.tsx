@@ -48,58 +48,60 @@ export function ControlledFilterDialog({ filters, onChange }: FilterDialogProps)
 
   //Note: active filters could be stored in session storage
 
-  const {t} = useTranslation()
-const { lightMode } = useAppContext()
+  const { t } = useTranslation()
+  const { lightMode } = useAppContext()
 
   const [open, setOpen] = useState<boolean>(false)
 
   return (
     <>
-      <Button className={clsx(THEME.button.primary(lightMode))} onClick={() => setOpen(true)}>{t("home.filter-button")}</Button>
+      <Button className={clsx(THEME.button.secondary(lightMode))} onClick={() => setOpen(true)}>{t("home.filter-button")}</Button>
 
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
-          {/*<DialogHeader>
+      <div className={clsx(THEME.background.card(lightMode))}>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogContent className={clsx(THEME.background.card(lightMode))}>
+            {/*<DialogHeader>
             <DialogTitle>Yes</DialogTitle>
           </DialogHeader>*/}
 
-          <div className="flex flex-col gap-4">
-            {filters.map((filter) => {
-              return (
-                <div key={filter.label} className="flex flex-col gap-2">
-                  <Label className={clsx(THEME.text.primary(lightMode))}>{t(filter.label)}</Label>
-                  {filter.type === "multi" ? (
-                    <MultiSelect
-                      options={filter.options}
-                      value={filter.selected as Set<string>}
-                      onChange={filter.onChange as (val: Set<string>) => void}
-                    />
-                  ) : (
-                    <Select
-                      value={filter.selected as string} 
-                      onValueChange={filter.onChange as (val: string) => void}
-                    >
-                      <SelectTrigger className="w-48">
-                        <SelectValue placeholder={`Select ${filter.label}`} />
-                      </SelectTrigger>
-                      <SelectContent className={clsx(THEME.text.primary(lightMode))} position='popper'>
-                        {filter.options.map((option) => (
-                          <SelectItem key={option.value} className={clsx(THEME.text.primary(lightMode))} value={option.value as string}>
-                            {t(option.label!)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                </div>
-              )
-            })}
-          </div>
+            <div className={clsx("flex flex-col")} >
+              {filters.map((filter) => {
+                return (
+                  <div key={filter.label} className="flex flex-col gap-2">
+                    <Label className={clsx(THEME.text.primary(lightMode))}>{t(filter.label)}</Label>
+                    {filter.type === "multi" ? (
+                      <MultiSelect
+                        options={filter.options}
+                        value={filter.selected as Set<string>}
+                        onChange={filter.onChange as (val: Set<string>) => void}
+                      />
+                    ) : (
+                      <Select
+                        value={filter.selected as string}
+                        onValueChange={filter.onChange as (val: string) => void}
+                      >
+                        <SelectTrigger className={clsx(THEME.dropdown.trigger(lightMode), "w-48")} >
+                          <SelectValue placeholder={`Select ${filter.label}`} />
+                        </SelectTrigger>
+                        <SelectContent className={clsx(THEME.dropdown.menu(lightMode))} position='popper'>
+                          {filter.options.map((option) => (
+                            <SelectItem key={option.value} className={clsx(THEME.dropdown.item(lightMode))} value={option.value as string}>
+                              {t(option.label!)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
 
 
-          {/*<Button onClick={() => setOpen(false)}>Close</Button>*/}
-        </DialogContent>
-      </Dialog>
+            {/*<Button onClick={() => setOpen(false)}>Close</Button>*/}
+          </DialogContent>
+        </Dialog>
+      </div>
     </>
   )
 }

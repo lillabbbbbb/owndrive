@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { THEME } from "../theme"
 import { useAppContext } from "./context/globalContext";
 import clsx from "clsx";
+import {useTheme} from "../components/context/ThemeContext"
 
 type CustomCursorProps = {
     src?: string;           // image URL
@@ -11,7 +12,7 @@ type CustomCursorProps = {
 export default function CustomCursor({ src, size = 40 }: CustomCursorProps) {
 
 
-    const { lightMode } = useAppContext()
+    const { lightMode } = useTheme()
 
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });

@@ -18,50 +18,58 @@ import { THEME } from "../../theme"
 const Header = () => {
 
 
-        const { t } = useTranslation()
-        const { lightMode } = useAppContext()
-        const navigate = useNavigate()
-        const jwt = localStorage.getItem("token")
+    const { t } = useTranslation()
+    const { lightMode } = useAppContext()
+    const navigate = useNavigate()
+    const jwt = localStorage.getItem("token")
 
-        useEffect(() => {
-            console.log("jwt changed")
-        }, [jwt])
+    useEffect(() => {
+        console.log("jwt changed")
+    }, [jwt])
 
-        const handleHomeClick = () => {
-            console.log("Home button clicked")
-            navigate("/home")
-        }
-
-        return (
-            <header className={clsx(THEME.background.page(lightMode), "flex items-center justify-between fixed top-0 left-0 w-full z-50 p-4 bg-linear-to-r from-indigo-600 to-black-600 shadow-lg text-white")} >
-                {/* Left: Logo / Menu */}
-                <div className="flex items-center gap-4">
-                    <span className={clsx(THEME.text.primary(lightMode), "text-2xl font-bold tracking-tight")}>OwnDrive</span>
-                </div>
-
-                {/* Center: Navigation + Search */}
-                <div className=" md:flex items-center gap-6">
-                    <nav className="flex gap-4">
-                        {!jwt &&
-                            <Button className={clsx(THEME.button.secondary)}><Link to="/login">{t("login.log-in")}</Link></Button>
-                        }
-                        {jwt &&
-                            <>
-                                <button className={clsx(THEME.button.secondary)} onClick={() => handleHomeClick()}>{t("home.home")}</button>
-                            </>
-
-                        }
-                    </nav>
-                </div>
-
-                {/* Right */}
-                <div className="flex items-center justify-between gap-6">
-                    <LanguageDropdown />
-                    {jwt && <SettingsDropdownMenu />}
-
-                </div>
-            </header>
-        )
+    const handleHomeClick = () => {
+        console.log("Home button clicked")
+        navigate("/home")
     }
 
-    export default Header
+    return (
+        <header className={clsx(
+            THEME.background.page(lightMode),
+            "flex items-center justify-between fixed top-0 left-0 w-full z-50 backdrop-blur-md transition-colors duration-300",
+            THEME.responsive.header
+        )}>
+            {/* Left: Logo */}
+            <div className="flex items-center gap-4 cursor-pointer" onClick={handleHomeClick}>
+                <span className={clsx(THEME.text.primary(lightMode), "text-2xl font-bold tracking-tight")}>
+                    OwnDrive
+                </span>
+            </div>
+
+            {/* Center: Navigation */}
+            <div className="md:flex items-center gap-6">
+                <nav className="flex gap-4">
+                    {!jwt && (
+                        <Button className={clsx(THEME.button.secondary(lightMode))}>
+                            <Link to="/login">{t("login.log-in")}</Link>
+                        </Button>
+                    )}
+                </nav>
+            </div>
+
+            {/* Right: Language & Settings */}
+            <div className="flex items-center gap-4">
+                <LanguageDropdown />
+                {jwt && <SettingsDropdownMenu />}
+            </div>
+
+            {/* Mobile Hamburger */}
+            <div className="flex md:hidden">
+                <Button className={clsx(THEME.button.secondary(lightMode))} onClick={() => setMobileMenuOpen(true)}>
+                    <LucideMenu className="w-5 h-5" />
+                </Button>
+            </div>
+        </header>
+    )
+}
+
+export default Header

@@ -14,13 +14,15 @@ import { Switch } from "../ui/switch"
 import { Button } from "../ui/button"
 import { useTranslation } from 'react-i18next';
 import { THEME } from "../../theme"
-const { lightMode } = useAppContext()
-{clsx(THEME.menu.item(!lightMode), 
+import { useAppContext } from '../context/globalContext';
+import clsx from 'clsx';
 
 
 const AppleNotAvailablePopup = () => {
 
-  const {t} = useTranslation()
+  const { t } = useTranslation()
+
+  const { lightMode } = useAppContext()
   const [open, setOpen] = useState<boolean>(false)
 
   return (
@@ -35,15 +37,15 @@ const AppleNotAvailablePopup = () => {
 
           <div className="flex flex-col gap-4">
 
-            <Label>{("This feature is not available yet.")}</Label>
-            
-            <Label>
-{("Maybe one day.\nWondering why? This feature would cost $99.")}</Label>
-          
+            <Label className={clsx(THEME.text.primary(lightMode),)} >{("This feature is not available yet.")}</Label>
+
+            <Label className={clsx(THEME.text.primary(lightMode),)}>
+              {("Maybe one day.\nWondering why? This feature would cost $99.")}</Label>
+
           </div>
-            <DialogClose asChild>
-              <Button variant="outline">OK</Button>
-            </DialogClose>
+          <DialogClose asChild>
+            <Button className={clsx(THEME.button.highlightedPrimary(lightMode),)} variant="outline">OK</Button>
+          </DialogClose>
 
         </DialogContent>
       </Dialog>

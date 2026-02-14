@@ -12,10 +12,14 @@ import { IUserTest, IFileTest } from "../../App"
 import { useTranslation } from 'react-i18next'
 import { ProtectedRoute } from './ProtectedRoute'
 import { useAppContext } from '../context/globalContext'
+import clsx from 'clsx'
+import { THEME } from '../../theme'
+import {useTheme} from "../context/ThemeContext"
 
 
 const Body = () => {
   const { t } = useTranslation()
+  const {lightMode} = useTheme()
   const jwt = localStorage.getItem("token")
 
   const { currentFileId, getFile, currentFile, user, editorReady, userLoading, filesLoading } = useAppContext()
@@ -50,7 +54,7 @@ const Body = () => {
   }
 
   return (
-    <div className='mt-20'>
+    <div className={clsx(THEME.background.page(lightMode), 'mt-20')}>
 
       <Routes key={jwt}>
         <Route path="/login" element={<Login />} ></Route>

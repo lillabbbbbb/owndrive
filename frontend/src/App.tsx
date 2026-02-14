@@ -7,6 +7,10 @@ import { Toaster } from "sonner";
 import { useEffect } from 'react'
 import CustomCursor from './components/CustomCursor'
 import axios from 'axios'
+import {ThemeProvider} from "../src/components/context/ThemeContext"
+import clsx from 'clsx'
+import { THEME } from './theme'
+import {useTheme} from "../src/components/context/ThemeContext"
 
 //tailwind css class hardcoded variables can come here
 
@@ -44,26 +48,30 @@ const cursorSrc = "/cursor.png"
 
 function App() {
 
+  const {lightMode} = useTheme()
+
   useEffect(() => {
-  axios.interceptors.request.use(config => {
-    const token = localStorage.getItem("token");
-    if (token && config.headers) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-  });
-}, []);
+    axios.interceptors.request.use(config => {
+      const token = localStorage.getItem("token");
+      if (token && config.headers) config.headers.Authorization = `Bearer ${token}`;
+      return config;
+    });
+  }, []);
 
 
   return (
     <>
-      <div style={{ cursor: "none" }}>
-        <CustomCursor src={undefined} size={30} />
-        <AppProvider>
-          <BrowserRouter>
-            <Header />
-            <Body />
+      <div  style={{ cursor: "none" }}>
+        <ThemeProvider>
+          <AppProvider>
+            <CustomCursor src={undefined} size={30} />
+            <BrowserRouter>
+              <Header />
+              <Body />
 
-          </BrowserRouter>
-        </AppProvider>
+            </BrowserRouter>
+          </AppProvider>
+        </ThemeProvider>
 
         <Toaster />
       </div>

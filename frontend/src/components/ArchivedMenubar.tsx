@@ -5,11 +5,12 @@ import { useAppContext } from './context/globalContext'
 import { useTranslation } from 'react-i18next'
 import { THEME } from "../theme"
 import clsx from 'clsx'
+import {useTheme} from "../components/context/ThemeContext"
 
 const ArchivedMenubar = () => {
 
   const {t} = useTranslation()
-const { lightMode } = useAppContext()
+const { lightMode } = useTheme()
     const {updateFile, deleteFile, currentFileId} = useAppContext()
 
     const handleDelete = () => {

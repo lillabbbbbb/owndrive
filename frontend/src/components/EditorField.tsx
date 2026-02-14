@@ -14,6 +14,7 @@ import React, { useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import * as mammoth from "mammoth";
 import { THEME } from "../theme"
+import { useTheme } from "../components/context/ThemeContext"
 
 const BRIGHT_BUTTON_CLASS = "rounded bg-sky-600 px-4 py-2 text-sm text-white data-active:bg-sky-700 data-hover:bg-sky-500"
 const DISABLED_BUTTON = "opacity-50 cursor-not-allowed"
@@ -24,7 +25,7 @@ const extensions = [TextStyleKit, StarterKit]
 function EditorMenu({ editor }: { editor: Editor }) {
 
   const { t } = useTranslation()
-  const { lightMode } = useAppContext()
+  const { lightMode } = useTheme()
   const jwt = localStorage.getItem("token")
 
   const editorState = useEditorState({
@@ -61,9 +62,9 @@ function EditorMenu({ editor }: { editor: Editor }) {
 
 
   return (
-    <div className="control-group">
+    <div className={clsx("flex-1 p-4 rounded-2xl", "control-group")} >
       <div className="button-group">
-        <Button className={clsx( THEME.button.primary(lightMode),
+        <Button className={clsx(THEME.button.primary(lightMode),
           BRIGHT_BUTTON_CLASS,
           !editor?.isEditable && DISABLED_BUTTON,
           editorState.isBold && 'is-active'
@@ -253,6 +254,7 @@ type EditorFieldProps = {
 const EditorField = forwardRef<HTMLDivElement, EditorFieldProps>(({ content, setContent, editable }, ref) => {
 
   const { currentFile } = useAppContext()
+  const { lightMode } = useTheme()
   console.log(currentFile)
 
 
@@ -357,10 +359,10 @@ const EditorField = forwardRef<HTMLDivElement, EditorFieldProps>(({ content, set
         <div>File not saved yet</div>
         <div>
           <EditorMenu editor={editor} />
-          <div ref={ref}>
+          <div className={clsx(THEME.editorField.base(lightMode))} ref={ref}>
             <EditorContent editor={editor} className="tiptap-editor prose prose-slate dark:prose-invert" />
-            <div>Word count: {content ? content.trim().split(/\s+/).filter(Boolean).length : 0}</div>
           </div>
+          <div>Word count: {content ? content.trim().split(/\s+/).filter(Boolean).length : 0}</div>
         </div>
       </>)
   }

@@ -20,6 +20,7 @@ import { Label } from "./ui/label"
 import { Button } from "./ui/button"
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
+import {useTheme} from "../components/context/ThemeContext"
 
 interface EditorButtonsProps {
   htmlContent: string
@@ -28,7 +29,7 @@ interface EditorButtonsProps {
 const EditorButtons = ({ htmlContent }: EditorButtonsProps) => {
 
   const { t } = useTranslation()
-const { lightMode } = useAppContext()
+const { lightMode } = useTheme()
   const { downloadPDF, currentFileId, createFile, updateFile, filesLoading, filesError } = useAppContext()
   const [PDFDialogOpen, setPDFDialogOpen] = useState<boolean>(false)
 
@@ -68,7 +69,7 @@ const { lightMode } = useAppContext()
           <SharePopup />
 
         </TooltipTrigger>
-        <TooltipContent className={clsx(THEME.tooltip(lightMode),)} side="top">
+        <TooltipContent className={clsx(THEME.tooltip.base(lightMode),)} side="top">
           {t("editor-buttons.share")}
         </TooltipContent>
       </Tooltip>
@@ -77,7 +78,7 @@ const { lightMode } = useAppContext()
         <TooltipTrigger asChild>
           <ClonePopup />
         </TooltipTrigger>
-        <TooltipContent className={clsx(THEME.tooltip(lightMode),)} side="top">
+        <TooltipContent className={clsx(THEME.tooltip.base(lightMode),)} side="top">
           {t("editor-buttons.clone")}
         </TooltipContent>
       </Tooltip>
@@ -92,7 +93,7 @@ const { lightMode } = useAppContext()
             {("PDF")}
           </button>
         </TooltipTrigger>
-        <TooltipContent className={clsx(THEME.tooltip(lightMode),)} side="top">
+        <TooltipContent className={clsx(THEME.tooltip.base(lightMode),)} side="top">
           {t("editor-buttons.download-PDF")}
         </TooltipContent>
       </Tooltip>
@@ -128,7 +129,7 @@ const { lightMode } = useAppContext()
             D
           </button>
         </TooltipTrigger>
-        <TooltipContent className={clsx(THEME.tooltip(lightMode),)} side="top">
+        <TooltipContent className={clsx(THEME.tooltip.base(lightMode),)} side="top">
           {t("archive.delete")}
         </TooltipContent>
       </Tooltip>

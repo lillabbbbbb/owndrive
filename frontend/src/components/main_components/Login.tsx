@@ -6,12 +6,12 @@ import { useAppContext } from "../context/globalContext";
 import { useTranslation } from "react-i18next";
 import { THEME } from "../../theme"
 import clsx from "clsx";
-const { lightMode } = useAppContext()
 
 
 const Login = () => {
 
     const { t } = useTranslation()
+    const { lightMode } = useAppContext()
     const navigate = useNavigate()
     const { login } = useAppContext()
 
@@ -72,7 +72,7 @@ const Login = () => {
                         />
                         <label
                             htmlFor="name"
-                            className={clsx(THEME.text.secondary(lightMode),"absolute left-3 top-2.5 text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base peer-focus:top-2.5 peer-focus:text-sm peer-focus:text-blue-500")}
+                            className={clsx(THEME.text.secondary(lightMode), "absolute left-3 top-2.5 text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base peer-focus:top-2.5 peer-focus:text-sm peer-focus:text-blue-500")}
                         >
                             {t("login.email")}
                         </label>
@@ -87,11 +87,11 @@ const Login = () => {
                             onChange={(e) => setPassword(e.target.value)}
                             required
                             placeholder=" "
-                            className={clsx(THEME.input.field(lightMode),"peer block w-full rounded-md border border-gray-300 px-3 pt-5 pb-2 text-gray-900 placeholder-transparent focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none")}
+                            className={clsx(THEME.input.field(lightMode), "peer block w-full rounded-md border border-gray-300 px-3 pt-5 pb-2 text-gray-900 placeholder-transparent focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none")}
                         />
                         <label
                             htmlFor="password"
-                            className={clsx(THEME.text.secondary(lightMode),"absolute left-3 top-2.5 text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base peer-focus:top-2.5 peer-focus:text-sm peer-focus:text-blue-500")}
+                            className={clsx(THEME.text.secondary(lightMode), "absolute left-3 top-2.5 text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base peer-focus:top-2.5 peer-focus:text-sm peer-focus:text-blue-500")}
                         >
                             {t("login.password")}
                         </label>
@@ -110,7 +110,7 @@ const Login = () => {
                 <div className="flex justify-between gap-2">
                     <button
                         type="button"
-                        className={clsx(THEME.button.back(lightMode),"flex-1 border border-gray-300 py-2 rounded-md hover:bg-gray-100 transition")}
+                        className={clsx(THEME.button.back(lightMode), "flex-1 border border-gray-300 py-2 rounded-md hover:bg-gray-100 transition")}
                         onClick={() => handleGoogleClick()}
                     >
                         Google

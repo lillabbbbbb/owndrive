@@ -16,6 +16,7 @@ import { IFileFrontend } from "../types/File";
 import { useTranslation } from "react-i18next";
 import { THEME } from "../theme"
 import clsx from "clsx";
+import {useTheme} from "../components/context/ThemeContext"
 
 
 type TableProps = {
@@ -30,7 +31,7 @@ const COLUMN_NAMES = ["filename", "file_type", "created_by", "last_edited_at", "
 export default function FilesTable({ onRowClick, sortedFilteredData }: TableProps) {
 
   const { t } = useTranslation()
-const { lightMode } = useAppContext()
+  const { lightMode } = useTheme()
   const { getAllUsernames } = useAppContext()
 
   //console.log('📊 TABLE RECEIVED:', sortedFilteredData?.length, 'items');
@@ -93,7 +94,7 @@ const { lightMode } = useAppContext()
       </div>
 
       {/* Results summary */}
-      <div className={clsx(THEME.background.page(lightMode), "flex justify-between items-center px-1")} >
+      <div className={clsx(THEME.background.dashboard(lightMode), "flex justify-between items-center px-1")} >
         <div className="text-sm text-gray-600">
           {currentRows.length === 0 ? (
             t("home.no-results")
@@ -108,9 +109,8 @@ const { lightMode } = useAppContext()
       {/* Table */}
       {sortedFilteredData.length > 0 && <div className="inline-block overflow-x-auto border rounded-md">
         <Table>
-          <TableHeader>
-            <TableRow >
-
+          <TableHeader className={clsx(THEME.table.header(lightMode))}>
+            <TableRow className={clsx(THEME.table.hover(lightMode))}>
               {columns.includes(COLUMN_NAMES[0]) && <TableHead>{t(COLUMN_NAMES[0])}</TableHead>}
               {columns.includes(COLUMN_NAMES[1]) && <TableHead>{t(COLUMN_NAMES[1])}</TableHead>}
               {columns.includes(COLUMN_NAMES[2]) && <TableHead>{t(COLUMN_NAMES[2])}</TableHead>}
@@ -122,7 +122,7 @@ const { lightMode } = useAppContext()
           <TableBody>
             {(currentRows || []).map((file) => (
 
-              <TableRow className="text-left w-auto whitespace-nowrap px-4 py-2" key={file._id} onClick={() => onRowClick(file)} onDoubleClick={() => handleRowDoubleClick(file)}>
+              <TableRow className={clsx(THEME.table.row(lightMode),THEME.table.hover(lightMode),"text-left w-auto whitespace-nowrap px-4 py-2")} key={file._id} onClick={() => onRowClick(file)} onDoubleClick={() => handleRowDoubleClick(file)}>
                 {columns.includes(COLUMN_NAMES[0]) && <TableCell className="whitespace-nowrap pr-16 py-2">{`${file.filename} (${file._id})`}</TableCell>}
                 {columns.includes(COLUMN_NAMES[1]) && <TableCell className="whitespace-nowrap pr-16 py-2">{file.file_type}</TableCell>}
                 {columns.includes(COLUMN_NAMES[3]) && <TableCell className="whitespace-nowrap pr-16 py-2">{usernamesMap[file.created_by]}</TableCell>}
@@ -137,17 +137,17 @@ const { lightMode } = useAppContext()
       {/* Pagination controls */}
       <div className="flex justify-center gap-2 items-center">
         <button
-          className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
+          className={clsx(THEME.button.primary(lightMode),"px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50")}
           disabled={currentPage === 1}
           onClick={() => setCurrentPage((p) => p - 1)}
         >
           t(Previous)
         </button>
-        <span>
+        <span className={clsx(THEME.text.muted(lightMode))}>
           t(Page) {currentPage}/{totalPages}
         </span>
         <button
-          className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
+          className={clsx(THEME.button.primary(lightMode),"px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50")}
           disabled={currentPage === totalPages}
           onClick={() => setCurrentPage((p) => p + 1)}
         >

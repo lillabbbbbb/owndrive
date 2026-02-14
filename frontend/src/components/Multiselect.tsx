@@ -16,6 +16,7 @@ import { useTranslation } from "react-i18next"
 import { THEME } from "../theme"
 import { useAppContext } from "./context/globalContext"
 import clsx from "clsx"
+import {useTheme} from "../components/context/ThemeContext"
 
 
 interface MultiSelectProps {
@@ -27,7 +28,7 @@ interface MultiSelectProps {
 export function MultiSelect({ options, value, onChange }: MultiSelectProps) {
 
   const { t } = useTranslation()
-  const { lightMode } = useAppContext()
+  const { lightMode } = useTheme()
   const toggle = (val: string) => {
     const next = new Set(value) // copy the current Set from props
     if (next.has(val)) next.delete(val) // remove if already selected
@@ -41,7 +42,7 @@ export function MultiSelect({ options, value, onChange }: MultiSelectProps) {
         <Button
           variant="outline"
           role="combobox"
-          className={clsx(THEME.menu.item(lightMode), "w-48 justify-between")}
+          className={clsx(THEME.dropdown.item(lightMode), "w-48 justify-between")}
         >
           {value.size
             ? `${value.size} selected`
@@ -50,7 +51,7 @@ export function MultiSelect({ options, value, onChange }: MultiSelectProps) {
         </Button>
       </PopoverTrigger>
 
-      <PopoverContent className={clsx(THEME.background(lightMode), "w-48 p-0")} >
+      <PopoverContent className={clsx(THEME.background.popup(lightMode), "w-48 p-0")} >
         <Command>
           <CommandEmpty>{t("home.no-results")}</CommandEmpty>
           <CommandGroup>

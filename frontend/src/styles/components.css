@@ -1,0 +1,41 @@
+.btn {
+  @apply px-4 py-2 font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary;
+}
+
+.btn-primary {
+  @apply btn bg-primary text-primary-foreground hover:brightness-110 active:scale-95;
+}
+
+.btn-secondary {
+  @apply btn bg-muted text-foreground hover:bg-accent;
+}
+
+
+
+
+.input {
+  @apply bg-muted text-foreground border border-border rounded-xl px-3 py-2 
+         focus:ring-2 focus:ring-primary focus:border-primary
+         transition-all duration-200;
+}
+
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px hsl(var(--background)) inset !important;
+  -webkit-text-fill-color: hsl(var(--foreground)) !important;
+}
+
+
+
+.card {
+  @apply bg-card text-foreground rounded-xl shadow-md border border-border p-6;
+}
+
+
+
+.dropdown {
+  @apply bg-popover border border-border rounded-xl shadow-lg;
+}
+
+.dropdown-item {
+  @apply px-3 py-2 rounded-lg hover:bg-accent transition-colors;
+}
