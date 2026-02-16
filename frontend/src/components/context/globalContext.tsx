@@ -5,7 +5,7 @@ import { useFiles } from "../../hooks/useFiles";
 import { IUserFrontend } from "../../types/User";
 import { IFileFrontend } from "../../types/File";
 import { IImageFrontend } from "../../types/Image";
-import {MODES, LANGUAGES} from "../../types/other"
+import { MODES, LANGUAGES } from "../../types/other"
 import { model } from "mongoose";
 
 export interface AppContextType {
@@ -18,7 +18,7 @@ export interface AppContextType {
   currentFile: { file: IFileFrontend, permissions: string[], base64data: string } | null;
 
   lightMode: boolean;
-  setMode :(isLight: boolean) => void;
+  setMode: (isLight: boolean) => void;
   lang: string;
   setLang: (lang: string) => void;
 
@@ -28,8 +28,8 @@ export interface AppContextType {
   // User actions
   setUser: (user: IUserFrontend | null) => void;
   getUser: () => Promise<IUserFrontend | null>;
-  getUsername: (userId : string) => Promise<string | null>
-  getAllUsernames: () => Promise<{_id: string, email: string}[] | null>
+  getUsername: (userId: string) => Promise<string | null>
+  getAllUsernames: () => Promise<{ _id: string, email: string }[] | null>
   getProfilePic: () => Promise<IImageFrontend | null>;
   updateUser: (changes: Partial<IUserFrontend>) => Promise<IUserFrontend | null>;
   updateProfilePic: (file: File, description?: string) => Promise<IImageFrontend | null>;
@@ -96,7 +96,6 @@ export const AppProvider = ({ children }: AppProviderProps) => {
 
 
 
-
   //wait till user and currentFile is loaded first when page is rendered. Only reroute after that
   useEffect(() => {
     const initApp = async () => {
@@ -107,8 +106,8 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         if (token) {
           const userRes = await userHook.getUser();
           // validate backend response
-          
-            setUser(u)
+
+          setUser(u)
         }
 
         // 2️⃣ Load file
@@ -116,8 +115,8 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         if (fileId) {
           const f = await filesHook.getFile(fileId);
           if (f) {
-            setCurrentFile(f);
             setCurrentFileId(fileId);
+
           }
         }
       } catch (err) {
@@ -132,6 +131,19 @@ export const AppProvider = ({ children }: AppProviderProps) => {
 
     initApp();
   }, []);
+
+  useEffect(() => {
+    const load = async () => {
+      if (currentFileId) {
+          const f = await filesHook.getFile(currentFileId);
+          if (f) {
+            setCurrentFile(f);
+            
+          }
+        }
+    }
+    load()
+  }, [currentFileId])
 
 
   const getCurrentFile = async () => {

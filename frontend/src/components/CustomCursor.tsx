@@ -29,12 +29,12 @@ export default function CustomCursor({ src, size = 40 }: CustomCursorProps) {
         },
         pointer: {
             size: 40,
-            color: lightMode ? "rgba(249, 115, 22, 1)" : "rgba(251, 146, 60, 1)", // Solid orange
+            color: lightMode ? "rgba(249, 115, 22, 0.8)" : "rgba(251, 146, 60, 0.8)", // Solid orange
             scale: 1.2,
         },
         text: {
             size: 4,
-            color: lightMode ? "rgba(249, 115, 22, 0.9)" : "rgba(251, 146, 60, 0.9)",
+            color: lightMode ? "rgba(249, 115, 22, 0.5)" : "rgba(251, 146, 60, 0.5)",
             scale: 1,
         },
         disabled: {

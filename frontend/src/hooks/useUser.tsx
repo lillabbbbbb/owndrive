@@ -129,8 +129,9 @@ export function useUser(): UseUserReturn {
   setLoading(true);
   setError(null);
   try {
+    console.log(file)
     const formData = new FormData();
-    formData.append("image", file);
+    formData.append("file", file);
     if (description) formData.append("description", description);
 
     console.log("📤 Sending PATCH request to /api/users/me")

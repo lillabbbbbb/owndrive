@@ -9,7 +9,6 @@ const Image_1 = require("../models/Image");
 const User_1 = require("../models/User");
 const multer_config_1 = __importDefault(require("../middleware/multer-config"));
 const userValidation_1 = require("../middleware/userValidation");
-const fs_1 = __importDefault(require("fs"));
 const userRouter = (0, express_1.Router)();
 userRouter.use(userValidation_1.validateUserToken);
 //route to anything else: handled in frontend
@@ -50,7 +49,7 @@ userRouter.get("/me", async (req, res) => {
     }
 });
 //UPDATE Upload or change profile picture
-userRouter.patch("/me", multer_config_1.default.single("image"), async (req, res) => {
+userRouter.patch("/me", multer_config_1.default.single("file"), async (req, res) => {
     try {
         console.log("🔥 PATCH /me endpoint HIT!");
         console.log("Has file?", !!req.file);
@@ -58,21 +57,8 @@ userRouter.patch("/me", multer_config_1.default.single("image"), async (req, res
             return res.status(400).json({ message: "No file uploaded" });
         }
         // ✅ TEST LOGGING
-        console.log("=================== MULTER TEST ===================");
-        console.log("File uploaded:", req.file.filename);
-        console.log("File path:", req.file.path);
-        console.log("File size:", req.file.size);
-        console.log("Mimetype:", req.file.mimetype);
-        console.log("process.cwd():", process.cwd());
-        console.log("__dirname:", __dirname);
-        // Check if file exists
-        if (fs_1.default.existsSync(req.file.path)) {
-            console.log("✅ File EXISTS at:", req.file.path);
-        }
-        else {
-            console.log("❌ File NOT FOUND at:", req.file.path);
-        }
-        console.log("===================================================");
+        const filename = req.file.originalname.split('.').slice(0, -1).join('.');
+        const fileType = req.file.originalname.split('.').pop() || '';
         const customReq = req;
         if (!customReq.user)
             return res.status(401).json({ message: "Unauthorized" });
@@ -82,10 +68,10 @@ userRouter.patch("/me", multer_config_1.default.single("image"), async (req, res
         if (!user)
             return res.status(404).json({ message: 'User not found' });
         // Prepare image data
-        const imgPath = `/images/${req.file.filename}`;
+        const imgPath = `/images/${req.file.originalname}`;
         const imageData = {
-            filename: req.file.filename,
-            description: req.body.description,
+            filename: filename,
+            description: "profile pic",
             path: imgPath,
             createdAt: new Date()
         };

@@ -15,7 +15,7 @@ const ThemeContext = createContext<ThemeContextType>({
 export const useTheme = () => useContext(ThemeContext);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [lightMode, setMode] = useState(true);
+  const [lightMode, setMode] = useState(localStorage.getItem("lightMode") === "true");
 
   const toggle = () => {
     setMode((prev) => !prev)

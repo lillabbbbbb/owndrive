@@ -38,24 +38,23 @@ const EditorButtons = ({ htmlContent }: EditorButtonsProps) => {
   useEffect(() => {
     toast.error(filesError)
     if (filesLoading) {
-      toast.loading("Loading...")
     }
   }, [filesError, filesLoading])
 
   const handlePDFButtonClick = () => {
-    console.log("PDF button clicked, cool sonner banner should appear after successful download")
+    //console.log("PDF button clicked, cool sonner banner should appear after successful download")
 
     //setPDFDialogOpen(true)
 
     //Handle PDF download logic
-    console.log(htmlContent)
+    //console.log(htmlContent)
     downloadPDF(htmlContent)
 
     //display sonner
 
   }
   const handleDeleteButtonClick = () => {
-    console.log("Delete button clicked, reassuring window should pop up")
+    //console.log("Delete button clicked, reassuring window should pop up")
     //set file's status to "archived"
     updateFile(currentFileId!, { status: "archived" })
   }

@@ -74,7 +74,7 @@ const Home = () => {
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
   const [showingArchives, setShowingArchives] = useState<boolean>(false)
 
-  console.log(localStorage.getItem("token"))
+  //console.log(localStorage.getItem("token"))
 
   useEffect(() => {
     getFiles();
@@ -85,7 +85,6 @@ const Home = () => {
   useEffect(() => {
     toast.error(filesError)
     if (filesLoading || userLoading) {
-      toast.loading("Loading...")
     }
     toast.error(userError)
   }, [filesError, filesLoading, userError, userLoading])
@@ -157,7 +156,7 @@ const Home = () => {
   //console.log(selectedSorting)
   //apply sorting to the table data and set the sortedData's new state
   const sortTable = (files: IFileFrontend[], sorting?: string) => {
-    console.log("sorting the data in progress..")
+    //console.log("sorting the data in progress..")
 
 
     let sortedArray: IFileFrontend[] = []
@@ -346,122 +345,118 @@ const Home = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
 
         {/* Search, Sorting, and Filter - all on same row */}
-<div className="flex flex-wrap sm:flex-nowrap gap-2 sm:gap-3 mb-6 items-center">
-  {/* Sorting and Filter buttons - LEFT SIDE */}
-  <div className="flex gap-2 sm:gap-3 shrink-0 order-2 sm:order-1">
-    <SortingDropdown value={selectedSorting} onChange={handleChangeSorting} />
-    <ControlledFilterDialog
-      filters={filterConfigs}
-      onChange={(newFilters: Filters) => setFilters(newFilters)}
-    />
-  </div>
-
-  {/* Search bar with icon on right - TAKES REMAINING SPACE */}
-  <div className="relative flex-1 w-full sm:w-auto order-1 sm:order-2">
-    <Input
-      type="text"
-      placeholder={t("home.search-placeholder")}
-      value={searchKeyword}
-      onChange={handleSearchChange}
-      className={clsx(
-        THEME.input.field(lightMode),
-        "w-full text-sm sm:text-base pr-10"
-      )}
-    />
-    
-    {/* Search icon on the right */}
-    {!searchKeyword && (
-      <svg
-        className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400 pointer-events-none"
-        fill="none"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-      </svg>
-    )}
-    
-    {/* Clear button */}
-    {searchKeyword && (
-      <button
-        onClick={() => setSearchKeyword("")}
-        className={clsx(
-          "absolute right-3 top-1/2 -translate-y-1/2 transition-colors rounded-full p-1",
-          lightMode 
-            ? "text-gray-400 hover:text-gray-600 hover:bg-gray-100" 
-            : "text-gray-500 hover:text-gray-300 hover:bg-gray-700"
-        )}
-        aria-label="Clear search"
-      >
-        <svg 
-          className="w-4 h-4" 
-          fill="none" 
-          strokeLinecap="round" 
-          strokeLinejoin="round" 
-          strokeWidth="2" 
-          viewBox="0 0 24 24" 
-          stroke="currentColor"
-        >
-          <path d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-    )}
-  </div>
-</div>
-
-      {/* ===== Action Buttons ===== */}
-      <div className="flex flex-wrap gap-2 sm:gap-3 items-center mb-6">
-        {!showingArchives && (
-          <>
-            <Button
-              className={clsx(THEME.button.highlightedPrimary(lightMode), "text-sm sm:text-base px-3 sm:px-4 py-2")}
-              onClick={handleCreateNewClick}
-            >
-              {t("home.create-new")}
-            </Button>
-            <UploadFileDialog />
-          </>
-        )}
-
-        {showingArchives && (
-          <>
-            <Button
-              className={clsx(THEME.button.secondary(lightMode), "text-sm sm:text-base px-3 sm:px-4 py-2")}
-              onClick={handleRestoreAll}
-            >
-              {t("archive.restore-all")}
-            </Button>
-            <Button
-              className={clsx(THEME.button.dangerous(lightMode), "text-sm sm:text-base px-3 sm:px-4 py-2")}
-              onClick={handleDeleteAll}
-            >
-              {t("archive.delete-all")}
-            </Button>
-          </>
-        )}
-      </div>
-
-      {/* ===== Files Table / Main Content ===== */}
-      <div className="w-full overflow-x-auto">
-        {sortedFilteredData.length > 0 ? (
-          <FilesTable
-            sortedFilteredData={sortedFilteredData}
-          />
-        ) : (
-          <div className="text-center py-12 sm:py-20">
-            <p className={clsx(
-              THEME.text.muted(lightMode),
-              "text-sm sm:text-base"
-            )}>
-              {t("home.no-results")}
-            </p>
+        <div className="flex flex-wrap sm:flex-nowrap gap-2 sm:gap-3 mb-6 items-center">
+          {/* Sorting and Filter buttons - LEFT SIDE */}
+          <div className="flex gap-2 sm:gap-3 shrink-0 order-1 sm:order-2">
+            <SortingDropdown value={selectedSorting} onChange={handleChangeSorting} />
+            <ControlledFilterDialog
+              filters={filterConfigs}
+              onChange={(newFilters: Filters) => setFilters(newFilters)}
+            />
           </div>
-        )}
+
+          {/* Search bar with icon on right - TAKES REMAINING SPACE */}
+          <div className="relative flex-1 w-full sm:w-auto order-2 sm:order-1">
+            <Input
+              type="text"
+              placeholder={t("home.search-placeholder")}
+              value={searchKeyword}
+              onChange={handleSearchChange}
+              className={clsx(
+                THEME.input.field(lightMode),
+                "w-full text-sm sm:text-base pr-10"
+              )}
+            />
+
+            {/* Search icon on the right */}
+            {!searchKeyword && (
+              <svg
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400 pointer-events-none"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            )}
+
+            {/* Clear button */}
+            {searchKeyword && (
+              <button
+                onClick={() => setSearchKeyword("")}
+                className={clsx(
+                  "absolute right-3 top-1/2 -translate-y-1/2 transition-colors rounded-full p-1",
+                 )}
+                aria-label="Clear search"
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
+          {/* ===== Action Buttons ===== */}
+          <div className="relative flex-1 sm:w-auto order-3 sm:order-3">
+            {!showingArchives && (
+              <>
+                <Button
+                  className={clsx(THEME.button.primary(lightMode), "text-sm sm:text-base px-3 sm:px-4 py-2")}
+                  onClick={handleCreateNewClick}
+                >
+                  {t("home.create-new")}
+                </Button>
+                <UploadFileDialog />
+              </>
+            )}
+
+            {showingArchives && (
+              <>
+                <Button
+                  className={clsx(THEME.button.secondary(lightMode), "text-sm sm:text-base px-3 sm:px-4 py-2")}
+                  onClick={handleRestoreAll}
+                >
+                  {t("archive.restore-all")}
+                </Button>
+                <Button
+                  className={clsx(THEME.button.dangerous(lightMode), "text-sm sm:text-base px-3 sm:px-4 py-2")}
+                  onClick={handleDeleteAll}
+                >
+                  {t("archive.delete-all")}
+                </Button>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* ===== Files Table / Main Content ===== */}
+        <div className="w-full overflow-x-auto">
+          {sortedFilteredData.length > 0 ? (
+            <FilesTable
+              sortedFilteredData={sortedFilteredData}
+            />
+          ) : (
+            <div className="text-center py-12 sm:py-20">
+              <p className={clsx(
+                THEME.text.muted(lightMode),
+                "text-sm sm:text-base"
+              )}>
+                {t("home.no-results")}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
     </div >
   )
 }

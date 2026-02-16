@@ -240,23 +240,14 @@ const Editor = () => {
                 </div>
             </div>
 
-            {/* Main content */}
-            <div className="flex flex-1 gap-6 p-6">
+            <EditorField
+                ref={editorRef}
+                content={content}
+                setContent={setContent}
+                editable={editable}
+            />
 
-                {/* Left editor column */}
-                <div className="flex flex-col gap-4">
-                    <div ref={targetRef} className="flex flex-col gap-4">
-                        <EditorField
-                            ref={editorRef}
-                            content={content}
-                            setContent={setContent}
-                            editable={editable}
-                        />
-                    </div>
-                </div>
-
-                {!editable && <ConcurrentEditingPopup />}
-            </div>
+            {!editable && <ConcurrentEditingPopup />}
 
             {/* Guest login dialog */}
             {!jwt && (

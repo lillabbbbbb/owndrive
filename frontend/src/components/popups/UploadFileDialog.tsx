@@ -27,7 +27,6 @@ const { lightMode } = useAppContext()
   useEffect(() => {
     toast.error(filesError)
     if (filesLoading) {
-      toast.loading("Loading...")
     }
   }, [filesError, filesLoading])
 

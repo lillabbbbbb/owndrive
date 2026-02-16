@@ -28,11 +28,11 @@ export const THEME = {
       isLight ? "bg-white text-gray-800 shadow-inner" : "bg-black text-white shadow-lg",
     card: (isLight: boolean) =>
       isLight
-        ? "bg-white backdrop-blur-md text-gray-800 shadow-lg rounded-2xl"
-        : "bg-black backdrop-blur-md text-white shadow-xl rounded-2xl",
+        ? "bg-white/50 backdrop-blur-md text-gray-800 shadow-lg rounded-2xl"
+        : "bg-black/80 backdrop-blur-md text-white shadow-xl rounded-2xl",
     modal: (isLight: boolean) =>
       isLight
-        ? "bg-white/70 backdrop-blur-md text-gray-800 shadow-2xl rounded-2xl"
+        ? "bg-white/50 backdrop-blur-md text-gray-800 shadow-2xl rounded-2xl"
         : "bg-black/70 backdrop-blur-md text-white shadow-2xl rounded-2xl",
     tooltip: (isLight: boolean) =>
       isLight
@@ -66,7 +66,7 @@ export const THEME = {
     // --------------------
     primary: (isLight: boolean) =>
       isLight
-        ? "bg-orange-200/30 border-2 border-orange-500 text-orange-500 hover:bg-orange-500/90 hover:text-white hover:shadow-[0_0_15px_rgba(255,165,0,0.5)] shadow-md rounded-2xl px-5 py-2 transition-all duration-300 backdrop-blur-md"
+        ? "bg-white-50  border-orange-400 text-gray-800 placeholder-gray-400 border rounded-xl px-3 py-2 shadow-sm transition-all duration-300 focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 hover:bg-orange-400 transition-all duration-300 backdrop-blur-md"
         : "bg-orange-200/30 border-2 border-orange-500 text-orange-500 hover:bg-orange-500/90 hover:text-white hover:shadow-[0_0_15px_rgba(255,165,0,0.5)] shadow-lg rounded-2xl px-5 py-2 transition-all duration-300 backdrop-blur-md",
 
     // --------------------
@@ -74,16 +74,16 @@ export const THEME = {
     // --------------------
     secondary: (isLight: boolean) =>
       isLight
-        ? "bg-gray-100/20 border-2 border-gray-400 text-gray-800 hover:bg-gray-400/90 hover:text-white shadow-md rounded-2xl px-4 py-2 transition-all duration-300 backdrop-blur-md"
-        : "bg-gray-800/20 border-2 border-gray-600 text-white hover:bg-gray-600/90 hover:text-white shadow-lg rounded-2xl px-4 py-2 transition-all duration-300 backdrop-blur-md",
+        ? "bg-white-50 text-gray-800 placeholder-gray-400 border border-gray-200 rounded-xl px-3 py-2 shadow-sm transition-all duration-300 focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 hover:border-orange-400"
+        : "bg-gradient-to-br from-gray-900 to-gray-800 text-gray-50 placeholder-gray-500 border border-gray-600 rounded-xl px-3 py-2 shadow-2xl shadow-black/40 transition-all duration-300 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 focus:shadow-orange-500/20 focus:from-gray-800 focus:to-gray-700 hover:border-orange-400 hover:shadow-orange-500/10",
 
     // --------------------
     // Highlighted Primary: Stronger orange base → Solid fill
     // --------------------
     highlightedPrimary: (isLight: boolean) =>
       isLight
-        ? "bg-orange-300/40 border-2 border-orange-600 text-orange-600 hover:bg-orange-600/90 hover:text-white hover:shadow-[0_0_20px_rgba(255,165,0,0.5)] shadow-lg rounded-2xl px-5 py-2 transition-all duration-300"
-        : "bg-orange-300/40 border-2 border-orange-600 text-orange-600 hover:bg-orange-600/90 hover:text-white hover:shadow-[0_0_20px_rgba(255,165,0,0.5)] shadow-xl rounded-2xl px-5 py-2 transition-all duration-300",
+        ? "hover:bg-orange-300/40 border-2 hover:border-orange-600 hover:text-orange-600 bg-orange-600/90 text-white shadow-[0_0_20px_rgba(255,165,0,0.5)] shadow-lg rounded-2xl px-5 py-2 transition-all duration-300"
+        : "bg-orange-500 border-2 border-orange-500 text-orange-600 hover:bg-gray-500/60 text-white shadow-[0_0_20px_rgba(255,165,0,0.5)] shadow-xl rounded-2xl px-5 py-2 transition-all duration-300",
 
     // --------------------
     // Highlighted Secondary: Hollow gray → Solid gray
@@ -106,6 +106,10 @@ export const THEME = {
         ? "bg-gray-100/20 border-2 border-gray-400 text-gray-800 hover:bg-red-500/40 hover:border-red-400 hover:text-red-900 shadow-md rounded-2xl px-4 py-2 transition-all duration-300 backdrop-blur-md"
         : "bg-orange-300/40 border-2 border-orange-600 text-orange-600 hover:bg-red-600/80 hover:text-red hover:shadow-[0_0_20px_rgba(255,165,0,0.5)] shadow-xl rounded-2xl px-5 py-2 transition-all duration-300",
 
+    editor: (isLight: boolean) =>
+      isLight
+        ? "border-gray-400/50 text-gray-400 placeholder-gray-400 border rounded-xl px-3 py-2 shadow-sm transition-all duration-300 focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 hover:border-orange-400/60 hover:bg-orange-400/60 transition-all duration-300 backdrop-blur-md"
+        : "bg-gradient-to-r from-gray-900 to-gray-800 text-gray-50 hover:bg-orange-400 placeholder-gray-500 border border-gray-600 rounded-xl px-3 py-2 shadow-2xl shadow-black/40 transition-all duration-300 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 focus:shadow-orange-500/20 focus:from-gray-800 focus:to-gray-700 hover:border-orange-400 hover:shadow-orange-500/10",
 
   },
 
@@ -118,7 +122,7 @@ export const THEME = {
   input: {
     field: (isLight: boolean) =>
       isLight
-        ? "bg-gray-50 text-gray-800 placeholder-gray-400 border border-gray-200 rounded-xl px-3 py-2 shadow-sm transition-all duration-300 focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 hover:border-orange-400"
+        ? "bg-white-50 text-gray-800 placeholder-gray-400 border border-gray-200 rounded-xl px-3 py-2 shadow-sm transition-all duration-300 focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 hover:border-orange-400"
         : "bg-gradient-to-br from-gray-900 to-gray-800 text-gray-50 placeholder-gray-500 border border-gray-600 rounded-xl px-3 py-2 shadow-2xl shadow-black/40 transition-all duration-300 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 focus:shadow-orange-500/20 focus:from-gray-800 focus:to-gray-700 hover:border-orange-400 hover:shadow-orange-500/10",
     hover: (isLight: boolean) =>
       isLight
@@ -152,8 +156,8 @@ export const THEME = {
   dropdown: {
     menu: (isLight: boolean) =>
       isLight
-        ? "bg-white text-gray-800 shadow-lg rounded-xl transition-all duration-300"
-        : "bg-gray-800 text-gray-100 shadow-xl rounded-xl transition-all duration-300",
+        ? "bg-white/60 backdrop-blur-md text-gray-800 shadow-lg rounded-2xl"
+        : "bg-black/60 backdrop-blur-md text-white shadow-xl rounded-2xl",
 
     item: (isLight: boolean) =>
       isLight
@@ -162,13 +166,13 @@ export const THEME = {
 
     trigger: (isLight: boolean) =>
       isLight
-        ? "bg-transparent border-none text-orange-500 hover:text-orange-600 transition-colors duration-300 cursor-pointer"
-        : "bg-transparent border-none text-orange-500 hover:text-orange-600 transition-colors duration-300 cursor-pointer",
+        ? "bg-transparent border-none  text-orange-500 hover:text-black transition-colors duration-300 cursor-pointer"
+        : "bg-transparent border-none text-orange-500 hover:text-white transition-colors duration-300 cursor-pointer",
     tick: (isLight: boolean) =>
       isLight ? "text-orange-500" : "text-orange-500",
 
     text: (isLight: boolean) =>
-      isLight ? "text-gray-800" : "text-gray-100",
+      isLight ? "text-gray-200" : "text-gray-100",
   },
 
   // --------------------
@@ -185,7 +189,7 @@ export const THEME = {
   table: {
     header: (isLight: boolean) =>
       isLight
-        ? "bg-gradient-to-r from-gray-50 to-gray-100 text-gray-900 font-semibold border-b-2 border-orange-200 backdrop-blur-sm"
+        ? "bg-gradient-to-r from-orange-50 to-orange-100 text-gray-900 font-semibold border-orange-200"
         : "bg-gradient-to-r from-gray-900 to-gray-800 text-gray-50 font-semibold border-b-2 border-orange-500/30 backdrop-blur-sm",
     row: (isLight: boolean) =>
       isLight
@@ -193,8 +197,13 @@ export const THEME = {
         : "bg-gray-800/50 backdrop-blur-sm text-gray-100 border-b border-gray-700/50 transition-all duration-200",
     hover: (isLight: boolean) =>
       isLight
-        ? "hover:bg-orange-50/50 hover:shadow-sm  hover:border-orange-200/50 cursor-pointer"
-        : "hover:bg-gray-700/50 hover:shadow-lg hover:shadow-orange-500/5  hover:border-orange-500/20 cursor-pointer",
+        ? "hover:bg-orange-50/50 hover:shadow-sm  hover:border-orange-200/50 cursor-pointer transition-all duration-200"
+        : "hover:bg-gray-700/50 hover:shadow-lg hover:shadow-orange-500/5  hover:border-orange-500/20 cursor-pointer transition-all duration-200",
+    headerHover: (isLight: boolean) =>
+      isLight
+        ? "hover:bg-orange-300 hover:shadow-sm  hover:border-orange-200 cursor-pointer"
+        : "hover:bg-gray-700 hover:shadow-lg hover:shadow-orange-500  hover:border-orange-500/20 cursor-pointer",
+
     tick: (isLight: boolean) =>
       isLight
         ? "text-orange-500 drop-shadow-sm"

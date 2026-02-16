@@ -58,7 +58,6 @@ export function ClonePopup() {
   useEffect(() => {
         toast.error(filesError)
         if(filesLoading){
-            toast.loading("Loading...")
         }
     }, [filesError, filesLoading])
 

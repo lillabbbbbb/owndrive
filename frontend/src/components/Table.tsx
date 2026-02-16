@@ -35,7 +35,7 @@ export default function FilesTable({ sortedFilteredData }: TableProps) {
   const { getAllUsernames } = useAppContext()
 
   //console.log('📊 TABLE RECEIVED:', sortedFilteredData?.length, 'items');
-  console.log('Table data:', sortedFilteredData);
+  //console.log('Table data:', sortedFilteredData);
 
   const navigate = useNavigate()
   const { setCurrentFileId, user } = useAppContext()
@@ -106,15 +106,15 @@ export default function FilesTable({ sortedFilteredData }: TableProps) {
               "group-hover:scale-110 group-active:scale-95",
               columns.includes(col)
                 ? lightMode
-                  ? "bg-orange-500 border-orange-500 shadow-md shadow-orange-200"
-                  : "bg-orange-400 border-orange-400 shadow-md shadow-orange-900/30"
+                  ? "bg-orange-200 border-orange-200 group-hover:border-orange-400 group-hover:bg-orange-400 shadow-md shadow-grey-200"
+                  : "bg-gray-900 border-gray-900 group-hover:border-orange-400 group-hover:bg-orange-400 shadow-md shadow-grey-900/30"
                 : lightMode
-                  ? "border-gray-300 bg-white group-hover:border-orange-400 group-hover:bg-orange-50"
-                  : "border-gray-600 bg-gray-800 group-hover:border-orange-400 group-hover:bg-gray-700"
+                  ? "border-orange-200 bg-white group-hover:border-orange-400 group-hover:bg-orange-50"
+                  : "border-gray-600 bg-gray-900 group-hover:border-orange-400 group-hover:bg-gray-700"
             )}>
               {/* Ripple effect on click */}
               <div className={clsx(
-                "absolute inset-0 rounded bg-orange-400 opacity-0 group-active:opacity-30 transition-opacity duration-150"
+                "absolute inset-0 rounded bg-grey-400 opacity-0 group-active:opacity-30 transition-opacity duration-150"
               )} />
 
               {/* Custom tick/checkmark with animation */}
@@ -138,11 +138,7 @@ export default function FilesTable({ sortedFilteredData }: TableProps) {
 
             {/* Label text with hover effect */}
             <span className={clsx(
-              "transition-colors duration-200",
-              columns.includes(col)
-                ? lightMode ? "text-orange-600" : "text-orange-400"
-                : "group-hover:text-orange-500"
-            )}>
+              "transition-colors duration-200", THEME.text.muted(lightMode), "hover:text-orange-400 transition-colors duration-300")}>
               {t(col)}
             </span>
           </label>
@@ -153,7 +149,7 @@ export default function FilesTable({ sortedFilteredData }: TableProps) {
       {sortedFilteredData.length > 0 && <div className="flex justify-center w-full overflow-x-auto px-4 rounded-md">
         <Table className="w-auto mx-auto">
           <TableHeader className={clsx(THEME.table.header(lightMode))}>
-            <TableRow className={clsx(THEME.table.hover(lightMode))}>
+            <TableRow className={clsx()}>
               {columns.includes(COLUMN_NAMES[0]) && <TableHead>{t(COLUMN_NAMES[0])}</TableHead>}
               {columns.includes(COLUMN_NAMES[1]) && <TableHead>{t(COLUMN_NAMES[1])}</TableHead>}
               {columns.includes(COLUMN_NAMES[2]) && <TableHead>{t(COLUMN_NAMES[2])}</TableHead>}
@@ -193,7 +189,7 @@ export default function FilesTable({ sortedFilteredData }: TableProps) {
       {/* Pagination controls */}
       <div className="flex justify-center gap-2 items-center">
         <button
-          className={clsx(THEME.button.primary(lightMode), "px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50")}
+          className={clsx(THEME.button.secondary(lightMode), THEME.text.muted(lightMode), "px-3 py-1 disabled:opacity-50")}
           disabled={currentPage === 1}
           onClick={() => setCurrentPage((p) => p - 1)}
         >
@@ -203,7 +199,7 @@ export default function FilesTable({ sortedFilteredData }: TableProps) {
           {t("home.pagination.page")} {currentPage}/{totalPages}
         </span>
         <button
-          className={clsx(THEME.button.primary(lightMode), "px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50")}
+          className={clsx(THEME.button.secondary(lightMode), "px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50")}
           disabled={currentPage === totalPages}
           onClick={() => setCurrentPage((p) => p + 1)}
         >

@@ -83,7 +83,6 @@ const { lightMode } = useAppContext()
   useEffect(() => {
     toast.error(filesError)
     if (filesLoading) {
-      toast.loading("Loading...")
     }
   }, [filesLoading, filesError])
 
@@ -96,7 +95,7 @@ const { lightMode } = useAppContext()
     };
 
     loadFile();
-    console.log(file)
+    //console.log(file)
   }, [currentFileId, getFile]);
 
 
@@ -156,7 +155,7 @@ const { lightMode } = useAppContext()
               isMulti
               options={options}
               onInputChange={(value) => {
-                console.log(value)
+                //console.log(value)
                 if (value.length < 6) {
                   // hide dropdown
                   setAddUsersMenuOpen(false);

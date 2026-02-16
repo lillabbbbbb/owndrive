@@ -77,14 +77,10 @@ function App() {
 
         {/* Floating Circle */}
         <motion.div
-          className="fixed w-[500px] h-[500px] rounded-full blur-[140px] pointer-events-none"
+          className="fixed w-300 h-200 rounded-full blur-[240px] pointer-events-none"
           style={{
-            backgroundColor: lightMode ? 'rgba(254, 215, 170, 0.8)' : 'rgba(253, 186, 116, 0.8)',  // More opaque
+            backgroundColor: lightMode ? 'rgba(254, 215, 170, 0.8)' : 'rgba(253, 146, 116, 0.2)',  // More opaque
             zIndex: -10
-          }}
-          animate={{
-            x: [0, 150, -100, 0],
-            y: [0, 80, -50, 0],
           }}
           transition={{ duration: 25, repeat: Infinity, repeatType: "mirror" }}
         />

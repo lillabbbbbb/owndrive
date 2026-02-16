@@ -45,7 +45,7 @@ export function useFiles() {
       console.log("Fetched files IDs:", data.map(f => f._id));
       setFiles(data)
       console.log("Files:")
-      console.log(data)
+      //console.log(data)
       return data;
     } catch (err) {
       handleError(err);

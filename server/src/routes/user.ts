@@ -3,7 +3,7 @@
 import { Request, Response, Router } from "express"
 import { IImage, Image } from "../models/Image"
 import { User } from "../models/User"
-import uploadToDisk from "../middleware/multer-config"
+import uploadToMemory from "../middleware/multer-config"
 import { CustomRequest, validateUserToken } from "../middleware/userValidation"
 import fs from "fs"
 
@@ -62,7 +62,7 @@ userRouter.get("/me", async (req: Request, res: Response) => {
 
 
 //UPDATE Upload or change profile picture
-userRouter.patch("/me", uploadToDisk.single("image"), async (req: Request, res: Response) => {
+userRouter.patch("/me", uploadToMemory.single("file"), async (req: Request, res: Response) => {
     try {
         console.log("🔥 PATCH /me endpoint HIT!")
         console.log("Has file?", !!req.file)
@@ -71,22 +71,9 @@ userRouter.patch("/me", uploadToDisk.single("image"), async (req: Request, res: 
         }
 
         // ✅ TEST LOGGING
-        console.log("=================== MULTER TEST ===================")
-        console.log("File uploaded:", req.file.filename)
-        console.log("File path:", req.file.path)
-        console.log("File size:", req.file.size)
-        console.log("Mimetype:", req.file.mimetype)
-        console.log("process.cwd():", process.cwd())
-        console.log("__dirname:", __dirname)
 
-        // Check if file exists
-        if (fs.existsSync(req.file.path)) {
-            console.log("✅ File EXISTS at:", req.file.path)
-        } else {
-            console.log("❌ File NOT FOUND at:", req.file.path)
-        }
-        console.log("===================================================")
-
+        const filename = req.file.originalname.split('.').slice(0, -1).join('.');
+        const fileType = req.file.originalname.split('.').pop() || '';
 
         const customReq = req as CustomRequest;
         if (!customReq.user) return res.status(401).json({ message: "Unauthorized" })
@@ -96,10 +83,10 @@ userRouter.patch("/me", uploadToDisk.single("image"), async (req: Request, res: 
         const user = await User.findById(userId).select("profile_pic")
         if (!user) return res.status(404).json({ message: 'User not found' })
         // Prepare image data
-        const imgPath = `/images/${req.file.filename}`
+        const imgPath = `/images/${req.file.originalname}`
         const imageData = {
-            filename: req.file.filename,
-            description: req.body.description,
+            filename: filename,
+            description: "profile pic",
             path: imgPath,
             createdAt: new Date()
         }

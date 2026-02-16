@@ -37,7 +37,7 @@ const LanguageDropdown = () => {
 
 
     return (
-        <div className={clsx(THEME.background.card(lightMode))}>
+        <div className={clsx( "bg-transparent")}>
             <Select value={lang} onValueChange={(lang) => {
                 setLang(lang)
                 changeLanguage(lang.toLocaleLowerCase())

@@ -51,9 +51,9 @@ const Login = () => {
                 {/* Login Form */}
                 <form 
                     onSubmit={handleSubmit} 
-                    className="bg-white p-6 sm:p-8 rounded-2xl shadow-lg w-full flex flex-col gap-4 sm:gap-6"
+                    className={clsx(THEME.background.card(lightMode), "p-6 sm:p-8 rounded-2xl shadow-lg w-full flex flex-col gap-4 sm:gap-6")}
                 >
-                    <h2 className="text-xl sm:text-2xl font-bold text-gray-800 text-center">
+                    <h2 className={clsx(THEME.text.primary, "text-xl sm:text-2xl font-bold  text-center")} >
                         {t('login.log-in')}
                     </h2>
 

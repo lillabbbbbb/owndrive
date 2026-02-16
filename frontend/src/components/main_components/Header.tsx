@@ -37,9 +37,7 @@ const Header = () => {
         <nav
             className={clsx(
                 "fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 backdrop-blur-md transition-colors duration-300",
-                THEME.responsive.main,
-                lightMode ? "bg-white/20" : "bg-black/20" // semi-transparent background
-            )}
+                THEME.responsive.main)}
         >
             {/* Left: Logo */}
             <div className="flex items-center gap-4 cursor-pointer" onClick={handleHomeClick}>
