@@ -9,7 +9,7 @@ import { IUser } from "../../../../server/src/models/User"
 import { IUserTest, IFileTest } from "../../App"
 import SettingsDropdownMenu from "../SettingsDropdownMenu"
 import LanguageDropdown from "../LanguageDropdown"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import clsx from "clsx"
 import { useAppContext } from "../context/globalContext"
@@ -22,6 +22,7 @@ const Header = () => {
     const { lightMode } = useAppContext()
     const navigate = useNavigate()
     const jwt = localStorage.getItem("token")
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
     useEffect(() => {
         console.log("jwt changed")
@@ -33,14 +34,16 @@ const Header = () => {
     }
 
     return (
-        <header className={clsx(
-            THEME.background.page(lightMode),
-            "flex items-center justify-between fixed top-0 left-0 w-full z-50 backdrop-blur-md transition-colors duration-300",
-            THEME.responsive.header
-        )}>
+        <nav
+            className={clsx(
+                "fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 backdrop-blur-md transition-colors duration-300",
+                THEME.responsive.main,
+                lightMode ? "bg-white/20" : "bg-black/20" // semi-transparent background
+            )}
+        >
             {/* Left: Logo */}
             <div className="flex items-center gap-4 cursor-pointer" onClick={handleHomeClick}>
-                <span className={clsx(THEME.text.primary(lightMode), "text-2xl font-bold tracking-tight")}>
+                <span className={clsx(THEME.text.logo(lightMode), "text-2xl font-bold tracking-tight")}>
                     OwnDrive
                 </span>
             </div>
@@ -61,14 +64,7 @@ const Header = () => {
                 <LanguageDropdown />
                 {jwt && <SettingsDropdownMenu />}
             </div>
-
-            {/* Mobile Hamburger */}
-            <div className="flex md:hidden">
-                <Button className={clsx(THEME.button.secondary(lightMode))} onClick={() => setMobileMenuOpen(true)}>
-                    <LucideMenu className="w-5 h-5" />
-                </Button>
-            </div>
-        </header>
+        </nav>
     )
 }
 

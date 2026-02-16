@@ -8,7 +8,7 @@ import { usePDF } from 'react-to-pdf';
 import { useAppContext } from "./context/globalContext";
 import CustomDialog from './popups/CustomDialog';
 import { toast } from 'sonner';
-import { THEME } from "../theme" 
+import { THEME } from "../theme"
 import {
   Dialog,
   DialogContent,
@@ -20,7 +20,7 @@ import { Label } from "./ui/label"
 import { Button } from "./ui/button"
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-import {useTheme} from "../components/context/ThemeContext"
+import { useTheme } from "../components/context/ThemeContext"
 
 interface EditorButtonsProps {
   htmlContent: string
@@ -29,8 +29,8 @@ interface EditorButtonsProps {
 const EditorButtons = ({ htmlContent }: EditorButtonsProps) => {
 
   const { t } = useTranslation()
-const { lightMode } = useTheme()
-  const { downloadPDF, currentFileId, createFile, updateFile, filesLoading, filesError } = useAppContext()
+  const { lightMode } = useTheme()
+  const { downloadPDF, currentFileId, currentFile, createFile, updateFile, filesLoading, filesError } = useAppContext()
   const [PDFDialogOpen, setPDFDialogOpen] = useState<boolean>(false)
 
   console.log(currentFileId)
@@ -87,13 +87,12 @@ const { lightMode } = useTheme()
         <TooltipTrigger asChild>
           <button
             onClick={() => handlePDFButtonClick()}
-            className={clsx(THEME.button.primary(lightMode),
-              "rounded bg-sky-600 px-4 py-2 text-sm text-white data-active:bg-sky-700 data-hover:bg-sky-500")}
+            className={clsx(THEME.button.primary(lightMode),)}
           >
             {("PDF")}
           </button>
         </TooltipTrigger>
-        <TooltipContent className={clsx(THEME.tooltip.base(lightMode),)} side="top">
+        <TooltipContent className={clsx(THEME.tooltip.base(lightMode))} side="top">
           {t("editor-buttons.download-PDF")}
         </TooltipContent>
       </Tooltip>
@@ -119,22 +118,38 @@ const { lightMode } = useTheme()
         </DialogContent>
       </Dialog>
 
+      {currentFile?.file.status === "active" ? 
       <Tooltip>
         <TooltipTrigger asChild>
           <button
             onClick={() => handleDeleteButtonClick()}
-            className={clsx(THEME.button.primary(lightMode),
-              "rounded bg-sky-600 px-4 py-2 text-sm text-white data-active:bg-sky-700 data-hover:bg-sky-500")}
+            className={clsx(THEME.button.dangerous(lightMode),)}
           >
-            D
+            Delete
           </button>
         </TooltipTrigger>
         <TooltipContent className={clsx(THEME.tooltip.base(lightMode),)} side="top">
           {t("archive.delete")}
         </TooltipContent>
       </Tooltip>
+        :
+        <Tooltip>
+      <TooltipTrigger asChild>
+          <button
+            onClick={() => handleDeleteButtonClick()}
+            className={clsx(THEME.button.secondary(lightMode),)}
+          >
+            Restore
+          </button>
+        </TooltipTrigger>
+        <TooltipContent className={clsx(THEME.tooltip.base(lightMode),)} side="top">
+          {t("archive.restore")}
+        </TooltipContent>
+      </Tooltip>
+      }
+      
 
-    </div>
+    </div >
   )
 }
 

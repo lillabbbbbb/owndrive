@@ -30,6 +30,8 @@
         }
     },
     "editor": {
+        "save": "Save",
+        "saving": "Saving...",
         "word-count": "Word count"
     },
     "clone-window": {},
@@ -65,29 +67,36 @@
         "restore-all": "Restore all"
     },
     "editor-buttons": {
-        "share_button": "Share",
-        "download_PDF": "Download PDF",
-        "generate_shareable_link": "Generate shareable link",
-        "invite_others": "Invite others",
-        "clone_button": "Clone",
+        "share-button": "Share",
+        "download-PDF": "Download PDF",
+        "generate-shareable-link": "Generate shareable link",
+        "invite-others": "Invite others",
+        "clone-button": "Clone",
         "rename": "Rename",
-        "edit_permissions": "Edit permissions",
-        "make_private": "Make private (Hide file from guests and all shared users)",
+        "edit-permissions": "Edit permissions",
+        "make-private": "Make private (Hide file from guests and all shared users)",
         "delete": "Delete"
     },
     "share": {
-        "copy_link": "Copy link",
-        "show_for_guests:toggle": "Show to guests (Allow guests to see file)",
-        "or_add_by_username": "Or add by username",
-        "type_username_placeholder": "Type the username...",
-        "add_user_button": "Add user"
+        "copy-link": "Copy link",
+        "show-for-guests:toggle": "Show to guests (Allow guests to see file)",
+        "or-add-by-username": "Or add by username",
+        "type-username-placeholder": "Type the username...",
+        "add-user-button": "Add user"
     },
     "change-profile-pic": {},
     "filter-options": {
         "by-file-type": "By file type",
         "by-owner": "By owner",
         "by-date": "By date",
-        "date-options": {},
+        "date-options": {
+            "none": "None",
+            "edited-today": "Edited today",
+            "edited-30-days": "Edited this month",
+            "edited-6-months": "Edited in 6 months",
+            "edited-1-year": "Edited in a year",
+            "older-than-1-year": "Older than a year"
+        },
         "by-status": "By status",
         "status": {
             "active": "Active",

@@ -23,17 +23,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   useEffect(() => {
     localStorage.setItem("lightMode", String(lightMode))
-
-    const root = document.documentElement; // <html>
-    if (lightMode) {
-      root.classList.remove("dark"); // optional if you have Tailwind dark mode
-      root.classList.add("bg-white"); // or THEME.background.page(lightMode)
-    } else {
-      root.classList.remove("bg-white");
-      root.classList.add("bg-gray-900"); // dark page bg
-    }
-    const html = document.documentElement; // <html> element
-    html.className = THEME.background.page(lightMode); // apply Tailwind classes
   }, [lightMode])
 
 

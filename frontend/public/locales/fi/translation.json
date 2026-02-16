@@ -30,6 +30,8 @@
         }
     },
     "editor": {
+        "save": "Tallenna",
+        "saving": "Tallenna...",
         "word-count": "Sanojen määrä"
     },
     "clone-window": {},
@@ -65,29 +67,36 @@
         "restore-all": "Palauta kaikki"
     },
     "editor-buttons": {
-        "share_button": "Jaa",
-        "download_PDF": "Lataa PDF",
-        "generate_shareable_link": "Luo jaettava linkki",
-        "invite_others": "Kutsu muita",
-        "clone_button": "Kloonaa",
+        "share-button": "Jaa",
+        "download-PDF": "Lataa PDF",
+        "generate-shareable-link": "Luo jaettava linkki",
+        "invite-others": "Kutsu muita",
+        "clone-button": "Kloonaa",
         "rename": "Nimeä uudelleen",
-        "edit_permissions": "Muokkaa käyttöoikeuksia",
-        "make_private": "Tee yksityiseksi (Piilota tiedosto vierailta ja kaikilta jaetuilta käyttäjiltä)",
+        "edit-permissions": "Muokkaa käyttöoikeuksia",
+        "make-private": "Tee yksityiseksi (Piilota tiedosto vierailta ja kaikilta jaetuilta käyttäjiltä)",
         "delete": "Poista"
     },
     "share": {
-        "copy_link": "Kopioi linkki",
-        "show_for_guests:toggle": "Näytä vieraille (Salli vieraiden nähdä tiedosto)",
-        "or_add_by_username": "Tai lisää käyttäjätunnuksen mukaan",
-        "type_username_placeholder": "Kirjoita käyttäjätunnus...",
-        "add_user_button": "Lisää käyttäjä"
+        "copy-link": "Kopioi linkki",
+        "show-for-guests:toggle": "Näytä vieraille (Salli vieraiden nähdä tiedosto)",
+        "or-add-by-username": "Tai lisää käyttäjätunnuksen mukaan",
+        "type-username-placeholder": "Kirjoita käyttäjätunnus...",
+        "add-user-button": "Lisää käyttäjä"
     },
     "change-profile-pic": {},
     "filter-options": {
         "by-file-type": "Tiedostotyypin mukaan",
         "by-owner": "Omistajan mukaan",
         "by-date": "Päivämäärän mukaan",
-        "date-options": {},
+        "date-options": {
+            "none": "Ei mitään",
+            "edited-today": "Muokattu tänään",
+            "edited-30-days": "Muokattu tässä kuussa",
+            "edited-6-months": "Muokattu 6 kuukaudessa",
+            "edited-1-year": "Muokattu vuodessa",
+            "older-than-1-year": "Vanhempi kuin vuosi"
+        },
         "by-status": "Tilanteen mukaan",
         "status": {
             "active": "Aktiivinen",

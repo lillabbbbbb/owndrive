@@ -16,19 +16,19 @@ import { IFileFrontend } from "../types/File";
 import { useTranslation } from "react-i18next";
 import { THEME } from "../theme"
 import clsx from "clsx";
-import {useTheme} from "../components/context/ThemeContext"
+import { useTheme } from "../components/context/ThemeContext"
 
 
 type TableProps = {
-  onRowClick: (info: IFileFrontend) => void;
+  onRowClick?: (info: IFileFrontend) => void;
   sortedFilteredData: IFileFrontend[];
   fileName?: string,
   setFileName?: (newFileName: string) => void;
 }
 
-const COLUMN_NAMES = ["filename", "file_type", "created_by", "last_edited_at", "created_at"]
+const COLUMN_NAMES = ["home.table-header.doc-name", "home.table-header.file-type", "home.table-header.created-by", "home.table-header.last-edited-at", "home.table-header.created-at"]
 
-export default function FilesTable({ onRowClick, sortedFilteredData }: TableProps) {
+export default function FilesTable({ sortedFilteredData }: TableProps) {
 
   const { t } = useTranslation()
   const { lightMode } = useTheme()
@@ -64,6 +64,13 @@ export default function FilesTable({ onRowClick, sortedFilteredData }: TableProp
     navigate(`/${file.created_by}/${file._id}`)
   }
 
+  const handleRowSingleClick = (file: IFileFrontend) => {
+    console.log(`${file.filename} single-clicked, marked as currect file`)
+
+    sessionStorage.setItem("fileId", file._id);
+    setCurrentFileId(file._id)
+  }
+
   const toggleColumn = (col: string) => {
     setColumns((prev) =>
       prev.includes(col) ? prev.filter((c) => c !== col) : [...prev, col]
@@ -79,36 +86,72 @@ export default function FilesTable({ onRowClick, sortedFilteredData }: TableProp
   return (
     <div className="space-y-4">
       {/* Column selectors */}
-      <div className="flex gap-2 flex-wrap">
+      <div className="flex gap-2 sm:gap-3 flex-wrap">
         {COLUMN_NAMES.map((col) => (
-          <label key={col} className="flex items-center gap-1">
+          <label
+            key={col}
+            className="flex items-center gap-1.5 sm:gap-2 cursor-pointer text-sm sm:text-base group select-none"
+          >
+            {/* Hidden native checkbox */}
             <input
               type="checkbox"
               checked={columns.includes(col)}
               onChange={() => toggleColumn(col)}
-              className={clsx(THEME.input.field(lightMode), "accent-blue-500")}
+              className="sr-only peer"
             />
-            {col.toUpperCase()}
+
+            {/* Custom checkbox with animations */}
+            <div className={clsx(
+              "relative w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200",
+              "group-hover:scale-110 group-active:scale-95",
+              columns.includes(col)
+                ? lightMode
+                  ? "bg-orange-500 border-orange-500 shadow-md shadow-orange-200"
+                  : "bg-orange-400 border-orange-400 shadow-md shadow-orange-900/30"
+                : lightMode
+                  ? "border-gray-300 bg-white group-hover:border-orange-400 group-hover:bg-orange-50"
+                  : "border-gray-600 bg-gray-800 group-hover:border-orange-400 group-hover:bg-gray-700"
+            )}>
+              {/* Ripple effect on click */}
+              <div className={clsx(
+                "absolute inset-0 rounded bg-orange-400 opacity-0 group-active:opacity-30 transition-opacity duration-150"
+              )} />
+
+              {/* Custom tick/checkmark with animation */}
+              <svg
+                className={clsx(
+                  "w-3.5 h-3.5 text-white transition-all duration-200 relative z-10",
+                  columns.includes(col)
+                    ? "opacity-100 scale-100 rotate-0"
+                    : "opacity-0 scale-50 -rotate-45"
+                )}
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="3"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+
+            {/* Label text with hover effect */}
+            <span className={clsx(
+              "transition-colors duration-200",
+              columns.includes(col)
+                ? lightMode ? "text-orange-600" : "text-orange-400"
+                : "group-hover:text-orange-500"
+            )}>
+              {t(col)}
+            </span>
           </label>
         ))}
       </div>
 
-      {/* Results summary */}
-      <div className={clsx(THEME.background.dashboard(lightMode), "flex justify-between items-center px-1")} >
-        <div className="text-sm text-gray-600">
-          {currentRows.length === 0 ? (
-            t("home.no-results")
-          ) : (
-            <>
-              {t("home.results-num") + sortedFilteredData.length}
-            </>
-          )}
-        </div>
-      </div>
-
       {/* Table */}
-      {sortedFilteredData.length > 0 && <div className="inline-block overflow-x-auto border rounded-md">
-        <Table>
+      {sortedFilteredData.length > 0 && <div className="flex justify-center w-full overflow-x-auto px-4 rounded-md">
+        <Table className="w-auto mx-auto">
           <TableHeader className={clsx(THEME.table.header(lightMode))}>
             <TableRow className={clsx(THEME.table.hover(lightMode))}>
               {columns.includes(COLUMN_NAMES[0]) && <TableHead>{t(COLUMN_NAMES[0])}</TableHead>}
@@ -122,7 +165,7 @@ export default function FilesTable({ onRowClick, sortedFilteredData }: TableProp
           <TableBody>
             {(currentRows || []).map((file) => (
 
-              <TableRow className={clsx(THEME.table.row(lightMode),THEME.table.hover(lightMode),"text-left w-auto whitespace-nowrap px-4 py-2")} key={file._id} onClick={() => onRowClick(file)} onDoubleClick={() => handleRowDoubleClick(file)}>
+              <TableRow className={clsx(THEME.table.row(lightMode), THEME.table.hover(lightMode), "text-left w-auto whitespace-nowrap px-4 py-2")} key={file._id} onClick={() => handleRowSingleClick(file)} onDoubleClick={() => handleRowDoubleClick(file)}>
                 {columns.includes(COLUMN_NAMES[0]) && <TableCell className="whitespace-nowrap pr-16 py-2">{`${file.filename} (${file._id})`}</TableCell>}
                 {columns.includes(COLUMN_NAMES[1]) && <TableCell className="whitespace-nowrap pr-16 py-2">{file.file_type}</TableCell>}
                 {columns.includes(COLUMN_NAMES[3]) && <TableCell className="whitespace-nowrap pr-16 py-2">{usernamesMap[file.created_by]}</TableCell>}
@@ -133,25 +176,38 @@ export default function FilesTable({ onRowClick, sortedFilteredData }: TableProp
           </TableBody>
         </Table>
       </div>}
+      
+      {/* Results summary */}
+      <div className={clsx("flex justify-between items-center px-1")} >
+        <div className={clsx("text-sm text-gray-600", THEME.text.muted)}>
+          {currentRows.length === 0 ? (
+            t("home.no-results")
+          ) : (
+            <>
+              {t("home.results-num") + ` ${sortedFilteredData.length}`}
+            </>
+          )}
+        </div>
+      </div>
 
       {/* Pagination controls */}
       <div className="flex justify-center gap-2 items-center">
         <button
-          className={clsx(THEME.button.primary(lightMode),"px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50")}
+          className={clsx(THEME.button.primary(lightMode), "px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50")}
           disabled={currentPage === 1}
           onClick={() => setCurrentPage((p) => p - 1)}
         >
-          t(Previous)
+          {t("home.pagination.previous")}
         </button>
         <span className={clsx(THEME.text.muted(lightMode))}>
-          t(Page) {currentPage}/{totalPages}
+          {t("home.pagination.page")} {currentPage}/{totalPages}
         </span>
         <button
-          className={clsx(THEME.button.primary(lightMode),"px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50")}
+          className={clsx(THEME.button.primary(lightMode), "px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50")}
           disabled={currentPage === totalPages}
           onClick={() => setCurrentPage((p) => p + 1)}
         >
-          t(Next)
+          {t("home.pagination.next")}
         </button>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import axios from "axios";
 import { IFileFrontend } from "../types/File";
-import { statusEnum } from "../components/main_components/Home";
+import { statuses } from "../components/main_components/Home";
 import {toast} from "sonner"
 
 export function useFiles() {
@@ -144,8 +144,8 @@ export function useFiles() {
     setError(null);
     try {
 
-      const filters = { status: statusEnum.ARCHIVED };
-      const updates = { status: statusEnum.ACTIVE }
+      const filters = { status: statuses.ARCHIVED.value };
+      const updates = { status: statuses.ACTIVE.value }
 
       const res = await batchUpdateFiles(filters, updates)
       console.log("Archives successfully restored")
@@ -161,7 +161,7 @@ export function useFiles() {
     setLoading(true);
     setError(null);
     try {
-      const filters = { status: statusEnum.ARCHIVED };
+      const filters = { status: statuses.ARCHIVED.value };
 
       const res = await axios.delete("api/files/", { data: filters })
       console.log("Archives successfully deleted")

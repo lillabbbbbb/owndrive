@@ -11,18 +11,18 @@ import CustomDialog from './popups/CustomDialog';
 import { useTranslation } from "react-i18next"
 import { IUserFrontend } from "../types/User"
 import { toast } from "sonner"
-import {MODES, LANGUAGES} from "../types/other"
+import { MODES, LANGUAGES } from "../types/other"
 import { LIGHT_MENUITEM_CLASSES, DARK_MENUITEM_CLASSES } from "../types/classNames"
 import clsx from "clsx"
 import { THEME } from "../theme"
-import {useTheme} from "../components/context/ThemeContext"
+import { useTheme } from "../components/context/ThemeContext"
 
 
 function SettingsDropdownMenu() {
 
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const {lightMode, toggle} = useTheme()
+  const { lightMode, toggle } = useTheme()
 
   const { getProfilePic, logout, getUser, userLoading, userError } = useAppContext()
   const [user, setUser] = useState<IUserFrontend | null>(null)
@@ -95,22 +95,24 @@ function SettingsDropdownMenu() {
 
   return (
     <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Avatar className="cursor-pointer">
-            <AvatarImage
-              src={profilePic ?? undefined}
-            />
-            <AvatarFallback>{user?.email ? user.email[0].toUpperCase() : "U"}</AvatarFallback>
-          </Avatar>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="bg-white text-black">
-          <DropdownMenuItem className={THEME.dropdown.item(lightMode)} onSelect={(e) => handleProfilePic(e)}><LucideUser className="mr-2" /> {t("settings.profile-picture")}</DropdownMenuItem>
-          <ProfilePicDialog open={openProfilePicDialog} setOpen={setOpenProfilePicDialog} />
-          <DropdownMenuItem className={THEME.dropdown.item(lightMode)} onClick={() => handleModeChange()}><LucideSettings className="mr-2" /> {lightMode ? t("settings.dark-mode") : t("settings.light-mode")}</DropdownMenuItem>
-          <DropdownMenuItem className={THEME.dropdown.item(lightMode)} onClick={() => handleLogout()}><LucideLogOut className="mr-2" /> {t("settings.log-out")}</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <div className={clsx(THEME.avatar.base, THEME.avatar.hover, THEME.avatar.hoverGlow,)}>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Avatar className="cursor-pointer">
+              <AvatarImage
+                src={profilePic ?? undefined}
+              />
+              <AvatarFallback>{user?.email ? user.email[0].toUpperCase() : "U"}</AvatarFallback>
+            </Avatar>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className={THEME.background.card(lightMode)}>
+            <DropdownMenuItem className={THEME.dropdown.item(lightMode)} onSelect={(e) => handleProfilePic(e)}><LucideUser className="mr-2" /> {t("settings.profile-picture")}</DropdownMenuItem>
+            <ProfilePicDialog open={openProfilePicDialog} setOpen={setOpenProfilePicDialog} />
+            <DropdownMenuItem className={THEME.dropdown.item(lightMode)} onClick={() => handleModeChange()}><LucideSettings className="mr-2" /> {lightMode ? t("settings.dark-mode") : t("settings.light-mode")}</DropdownMenuItem>
+            <DropdownMenuItem className={THEME.dropdown.item(lightMode)} onClick={() => handleLogout()}><LucideLogOut className="mr-2" /> {t("settings.log-out")}</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </>
   )
 }

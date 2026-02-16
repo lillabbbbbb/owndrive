@@ -131,7 +131,7 @@ export function ClonePopup() {
               <Button
                 type="submit"
                 disabled={!isValidAndUnique()}
-                className={clsx(THEME.input.field(lightMode), !isValidAndUnique() ? "opacity-50 cursor-not-allowed" : "")}
+                className={clsx(THEME.button.secondary(lightMode), !isValidAndUnique() ? "opacity-50 cursor-not-allowed" : "")}
               >
                 {t("dialog.clone.save-copy")}
               </Button>

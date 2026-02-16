@@ -30,6 +30,8 @@
         }
     },
     "editor": {
+        "save": "Mentés",
+        "saving": "Mentés folyamatban...",
         "word-count": "Szavak száma"
     },
     "clone-window": {},
@@ -65,29 +67,36 @@
         "restore-all": "Összes visszaállítása"
     },
     "editor-buttons": {
-        "share_button": "Megosztás",
-        "download_PDF": "PDF letöltése",
-        "generate_shareable_link": "Megosztható link lekérése",
-        "invite_others": "Mások meghívása",
-        "clone_button": "Megkettőzés",
+        "share-button": "Megosztás",
+        "download-PDF": "PDF letöltése",
+        "generate-shareable-link": "Megosztható link lekérése",
+        "invite-others": "Mások meghívása",
+        "clone-button": "Megkettőzés",
         "rename": "Átnevezés",
-        "edit_permissions": "Jogosultságok szerkesztése",
-        "make_private": "Priváttá tétel (Ezzel a művelettel elrejted a fájlt vendégek és minden megosztott felhasználó elől)",
+        "edit-permissions": "Jogosultságok szerkesztése",
+        "make-private": "Priváttá tétel (Ezzel a művelettel elrejted a fájlt vendégek és minden megosztott felhasználó elől)",
         "delete": "Törlés"
     },
     "share": {
-        "copy_link": "Link másolása",
-        "show_for_guests:toggle": "Mutatás vendégeknek (Vendégek látni fogják a fájlt)",
-        "or_add_by_username": "Vagy adj hozzá felhasználónév alapján",
-        "type_username_placeholder": "Írd be a felhasználónevet...",
-        "add_user_button": "Felhasználó hozzáadása"
+        "copy-link": "Link másolása",
+        "show-for-guests:toggle": "Mutatás vendégeknek (Vendégek látni fogják a fájlt)",
+        "or-add-by-username": "Vagy adj hozzá felhasználónév alapján",
+        "type-username-placeholder": "Írd be a felhasználónevet...",
+        "add-user-button": "Felhasználó hozzáadása"
     },
     "change-profile-pic": {},
     "filter-options": {
         "by-file-type": "Fájl típus szerint",
         "by-owner": "Tulajdonos szerint",
-        "by-date": "Dátum szerint",
-        "date-options": {},
+        "by-date": "Utolsó módosítás dátuma",
+        "date-options": {
+            "none": "Válassz egy opciót",
+            "edited-today": "Ma",
+            "edited-30-days": "Ebben a hónapban",
+            "edited-6-months": "Max. 6 hónapja",
+            "edited-1-year": "Ebben az évben",
+            "older-than-1-year": "Egy évnél korábban"
+        },
         "by-status": "Állapot szerint",
         "status": {
             "active": "Aktív",

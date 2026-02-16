@@ -23,11 +23,11 @@ import { THEME } from "../../theme"
 import clsx from 'clsx';
 
 export const sortingTypes = {
-  by_last_modified: "Last modified",
-  by_name_ascending: "By Name (Z-A)",
-  by_name_descending: "By Name (A-Z)",
-  by_user_descending: "By User (A-Z)",
-  by_user_ascending: "By User (Z-A)"
+  by_last_modified: "home.sort-option.last-modified",
+  by_name_ascending: "home.sort-option.by-name-ascending",
+  by_name_descending: "home.sort-option.by-name-descending",
+  by_user_descending: "home.sort-option.by-creator-descending",
+  by_user_ascending: "home.sort-option.by-creator-ascending"
 }
 
 const DEFAULT_FILE_NAME = "New file"
@@ -48,17 +48,17 @@ export interface Filters {
   status: string
 }
 
-export enum statusEnum {
-  ACTIVE = "active",
-  ARCHIVED = "archived"
-}
+export const statuses = {
+  ACTIVE: { label: "filter-options.status.active", value: "Active" },
+  ARCHIVED: { label: "filter-options.status.archived", value: "Archived" }
+} as const;
 enum datesEnum {
-  NONE = "None",
-  EDITED_TODAY = "Edited today",
-  EDITED_30_DAYS = "Edited this month",
-  EDITED_6_MONTHS = "Edited in 6 months",
-  EDITED_1_YEAR = "Edited in a year",
-  OLDER_THAN_1_YEAR = "Older than a year"
+  NONE = "filter-options.date-options.none",
+  EDITED_TODAY = "filter-options.date-options.edited-today",
+  EDITED_30_DAYS = "filter-options.date-options.edited-30-days",
+  EDITED_6_MONTHS = "filter-options.date-options.edited-6-months",
+  EDITED_1_YEAR = "filter-options.date-options.edited-1-year",
+  OLDER_THAN_1_YEAR = "filter-options.date-options.older-than-1-year"
 }
 
 const Home = () => {
@@ -100,11 +100,11 @@ const Home = () => {
     fileTypes: new Set(),
     owners: new Set(),
     date: datesEnum.NONE,
-    status: statusEnum.ACTIVE
+    status: statuses.ACTIVE.value
   })
 
   const fileTypeFilter: Filter<customOption> = {
-    label: "By file type:",
+    label: "filter-options.by-file-type",
     options: fileTypes.map(fileType => ({      // fileTypes = [...new Set(data.map(d => d.file_type))]
       label: fileType,
       value: fileType,
@@ -117,7 +117,7 @@ const Home = () => {
     }
   }
   const ownerFilter: Filter<customOption> = {
-    label: "By owner:",
+    label: "filter-options.by-owner",
     options: ownerNames.map(owner => ({      // fileTypes = [...new Set(data.map(d => d.file_type))]
       label: owner,
       value: owner,
@@ -130,7 +130,7 @@ const Home = () => {
     }
   }
   const dateFilter: Filter<customOption> = {
-    label: "By date:",
+    label: "filter-options.by-date",
     options: Object.values(datesEnum).map(date => ({      // fileTypes = [...new Set(data.map(d => d.file_type))]
       label: date,
       value: date,
@@ -143,11 +143,8 @@ const Home = () => {
     }
   }
   const statusFilter: Filter<customOption> = {
-    label: "By status:",
-    options: Object.values(statusEnum).map(status => ({      // fileTypes = [...new Set(data.map(d => d.file_type))]
-      label: status,
-      value: status,
-    })),
+    label: "filter-options.by-status",
+    options: Object.values(statuses),
     type: "single",
     selected: filters.status,
     onChange: (newValue) => {
@@ -241,7 +238,9 @@ const Home = () => {
 
   const applyFilters = (files: IFileFrontend[], passedFilters: Filters = filters) => {
     // First, determine if we're showing archives
-    setShowingArchives(passedFilters.status === statusEnum.ARCHIVED)
+    setShowingArchives(passedFilters.status === statuses.ARCHIVED.value)
+    console.log(passedFilters.status)
+    console.log(statuses.ARCHIVED.value)
 
     const filteredFiles = files.filter(file => {
       const fileTypeMatch =
@@ -275,7 +274,7 @@ const Home = () => {
           dateMatch = true
       }
 
-      const statusMatch = passedFilters.status === file.status
+      const statusMatch = passedFilters.status.toLowerCase() === file.status
 
       console.log(file.filename)
       console.log(file.status)
@@ -311,11 +310,6 @@ const Home = () => {
 
   }
 
-
-  const handleRowClick = () => {
-    setClicked(true) //file-scoped menu appears now
-  }
-
   const handleChangeSorting = (sorting: string) => {
     setSelectedSorting(sorting)
   }
@@ -348,77 +342,127 @@ const Home = () => {
 
 
   return (
-    <>
-      <div className={clsx("min-h-screen flex flex-col gap-6 p-6", THEME.background.page(lightMode))}>
+    <div className="min-h-screen bg-transparent">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
 
-        {/* ===== Header / Top Controls ===== */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <Input
-            type="text"
-            placeholder={t("home.search-placeholder")}
-            value={searchKeyword}
-            onChange={handleSearchChange}
-            className={clsx(THEME.input.field(lightMode), "flex-1 md:max-w-md")}
-          />
+        {/* Search, Sorting, and Filter - all on same row */}
+<div className="flex flex-wrap sm:flex-nowrap gap-2 sm:gap-3 mb-6 items-center">
+  {/* Sorting and Filter buttons - LEFT SIDE */}
+  <div className="flex gap-2 sm:gap-3 shrink-0 order-2 sm:order-1">
+    <SortingDropdown value={selectedSorting} onChange={handleChangeSorting} />
+    <ControlledFilterDialog
+      filters={filterConfigs}
+      onChange={(newFilters: Filters) => setFilters(newFilters)}
+    />
+  </div>
 
-          <div className="flex gap-2">
-            <SortingDropdown value={selectedSorting} onChange={handleChangeSorting} />
-            
-            <ControlledFilterDialog
-              filters={filterConfigs}
-              onChange={(newFilters: Filters) => setFilters(newFilters)}
-            />
-          </div>
-        </div>
+  {/* Search bar with icon on right - TAKES REMAINING SPACE */}
+  <div className="relative flex-1 w-full sm:w-auto order-1 sm:order-2">
+    <Input
+      type="text"
+      placeholder={t("home.search-placeholder")}
+      value={searchKeyword}
+      onChange={handleSearchChange}
+      className={clsx(
+        THEME.input.field(lightMode),
+        "w-full text-sm sm:text-base pr-10"
+      )}
+    />
+    
+    {/* Search icon on the right */}
+    {!searchKeyword && (
+      <svg
+        className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400 pointer-events-none"
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+    )}
+    
+    {/* Clear button */}
+    {searchKeyword && (
+      <button
+        onClick={() => setSearchKeyword("")}
+        className={clsx(
+          "absolute right-3 top-1/2 -translate-y-1/2 transition-colors rounded-full p-1",
+          lightMode 
+            ? "text-gray-400 hover:text-gray-600 hover:bg-gray-100" 
+            : "text-gray-500 hover:text-gray-300 hover:bg-gray-700"
+        )}
+        aria-label="Clear search"
+      >
+        <svg 
+          className="w-4 h-4" 
+          fill="none" 
+          strokeLinecap="round" 
+          strokeLinejoin="round" 
+          strokeWidth="2" 
+          viewBox="0 0 24 24" 
+          stroke="currentColor"
+        >
+          <path d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    )}
+  </div>
+</div>
 
-        {/* ===== Action Buttons ===== */}
-        <div className="flex flex-wrap gap-2 items-center">
-          {!showingArchives && (
-            <>
-              <Button
-                className={clsx(THEME.button.highlightedPrimary(lightMode))}
-                onClick={handleCreateNewClick}
-              >
-                {t("home.create-new")}
-              </Button>
-              <UploadFileDialog />
-            </>
-          )}
+      {/* ===== Action Buttons ===== */}
+      <div className="flex flex-wrap gap-2 sm:gap-3 items-center mb-6">
+        {!showingArchives && (
+          <>
+            <Button
+              className={clsx(THEME.button.highlightedPrimary(lightMode), "text-sm sm:text-base px-3 sm:px-4 py-2")}
+              onClick={handleCreateNewClick}
+            >
+              {t("home.create-new")}
+            </Button>
+            <UploadFileDialog />
+          </>
+        )}
 
-          {showingArchives && (
-            <>
-              <Button
-                className={clsx(THEME.button.primary(lightMode))}
-                onClick={handleRestoreAll}
-              >
-                {t("restore-all")}
-              </Button>
-              <Button
-                className={clsx(THEME.button.highlightedSecondary(lightMode))}
-                onClick={handleDeleteAll}
-              >
-                {t("delete-all")}
-              </Button>
-            </>
-          )}
-        </div>
-
-        {/* ===== Files Table / Main Content ===== */}
-        <div className={clsx(
-        )}>
-          {sortedFilteredData.length > 0 ? (
-            <FilesTable
-              onRowClick={handleRowClick}
-              sortedFilteredData={sortedFilteredData}
-            />
-          ) : (
-            <p className="text-gray-500 dark:text-gray-400 text-center py-20">
-              {t("home.no-files")}
-            </p>
-          )}
-        </div>
+        {showingArchives && (
+          <>
+            <Button
+              className={clsx(THEME.button.secondary(lightMode), "text-sm sm:text-base px-3 sm:px-4 py-2")}
+              onClick={handleRestoreAll}
+            >
+              {t("archive.restore-all")}
+            </Button>
+            <Button
+              className={clsx(THEME.button.dangerous(lightMode), "text-sm sm:text-base px-3 sm:px-4 py-2")}
+              onClick={handleDeleteAll}
+            >
+              {t("archive.delete-all")}
+            </Button>
+          </>
+        )}
       </div>
-    </>
+
+      {/* ===== Files Table / Main Content ===== */}
+      <div className="w-full overflow-x-auto">
+        {sortedFilteredData.length > 0 ? (
+          <FilesTable
+            sortedFilteredData={sortedFilteredData}
+          />
+        ) : (
+          <div className="text-center py-12 sm:py-20">
+            <p className={clsx(
+              THEME.text.muted(lightMode),
+              "text-sm sm:text-base"
+            )}>
+              {t("home.no-results")}
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+    </div >
   )
 }
 

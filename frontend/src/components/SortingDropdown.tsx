@@ -26,7 +26,7 @@ const { lightMode } = useTheme()
 
   return (
     <Select onValueChange={onChange} value={value}>
-      <SelectTrigger className={clsx(THEME.button.secondary(lightMode), "w-48")} >
+      <SelectTrigger className={clsx(THEME.button.secondary(lightMode), "w-flex")} >
         <SelectValue placeholder="Select an option" className={clsx(THEME.dropdown.text(lightMode))}/>
       </SelectTrigger>
       <SelectContent className={clsx(THEME.dropdown.menu(lightMode))}>

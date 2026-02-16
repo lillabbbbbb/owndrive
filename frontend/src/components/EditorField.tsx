@@ -16,7 +16,7 @@ import * as mammoth from "mammoth";
 import { THEME } from "../theme"
 import { useTheme } from "../components/context/ThemeContext"
 
-const BRIGHT_BUTTON_CLASS = "rounded bg-sky-600 px-4 py-2 text-sm text-white data-active:bg-sky-700 data-hover:bg-sky-500"
+const BRIGHT_BUTTON_CLASS = ""
 const DISABLED_BUTTON = "opacity-50 cursor-not-allowed"
 
 
@@ -64,7 +64,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
   return (
     <div className={clsx("flex-1 p-4 rounded-2xl", "control-group")} >
       <div className="button-group">
-        <Button className={clsx(THEME.button.primary(lightMode),
+        <Button className={clsx(THEME.button.secondary(lightMode),
           BRIGHT_BUTTON_CLASS,
           !editor?.isEditable && DISABLED_BUTTON,
           editorState.isBold && 'is-active'
@@ -77,7 +77,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
         <Button
           onClick={() => editor.chain().focus().toggleItalic().run()}
           disabled={!editor?.isEditable}
-          className={clsx(THEME.button.primary(lightMode),
+          className={clsx(THEME.button.secondary(lightMode),
             BRIGHT_BUTTON_CLASS,
             !editor?.isEditable && DISABLED_BUTTON,
             editorState.isItalic && 'is-active'
@@ -88,7 +88,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
         <Button
           onClick={() => editor.chain().focus().toggleStrike().run()}
           disabled={!editor?.isEditable}
-          className={clsx(THEME.button.primary(lightMode),
+          className={clsx(THEME.button.secondary(lightMode),
             BRIGHT_BUTTON_CLASS,
             !editor?.isEditable && DISABLED_BUTTON,
             editorState.isStrike && 'is-active'
@@ -101,7 +101,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
         <Button
           onClick={() => editor.chain().focus().toggleCode().run()}
           disabled={!editor?.isEditable}
-          className={clsx(THEME.button.primary(lightMode),
+          className={clsx(THEME.button.secondary(lightMode),
             BRIGHT_BUTTON_CLASS,
             !editor?.isEditable && DISABLED_BUTTON,
             editorState.isCode && 'is-active'
@@ -115,7 +115,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
         <button
           onClick={() => editor.chain().focus().setParagraph().run()}
           disabled={!editor?.isEditable}
-          className={clsx(THEME.button.primary(lightMode),
+          className={clsx(THEME.button.secondary(lightMode),
             BRIGHT_BUTTON_CLASS,
             !editor?.isEditable && DISABLED_BUTTON,
             editorState.isParagraph && 'is-active'
@@ -126,7 +126,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
           disabled={!editor?.isEditable}
-          className={clsx(THEME.button.primary(lightMode),
+          className={clsx(THEME.button.secondary(lightMode),
             BRIGHT_BUTTON_CLASS,
             !editor?.isEditable && DISABLED_BUTTON,
             editorState.isHeading1 && 'is-active'
@@ -137,7 +137,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           disabled={!editor?.isEditable}
-          className={clsx(THEME.button.primary(lightMode),
+          className={clsx(THEME.button.secondary(lightMode),
             BRIGHT_BUTTON_CLASS,
             !editor?.isEditable && DISABLED_BUTTON,
             editorState.isHeading2 && 'is-active'
@@ -148,7 +148,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
           disabled={!editor?.isEditable}
-          className={clsx(THEME.button.primary(lightMode),
+          className={clsx(THEME.button.secondary(lightMode),
             BRIGHT_BUTTON_CLASS,
             !editor?.isEditable && DISABLED_BUTTON,
             editorState.isHeading3 && 'is-active'
@@ -159,7 +159,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
           disabled={!editor?.isEditable}
-          className={clsx(THEME.button.primary(lightMode),
+          className={clsx(THEME.button.secondary(lightMode),
             BRIGHT_BUTTON_CLASS,
             !editor?.isEditable && DISABLED_BUTTON,
             editorState.isHeading4 && 'is-active'
@@ -170,7 +170,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()}
           disabled={!editor?.isEditable}
-          className={clsx(THEME.button.primary(lightMode),
+          className={clsx(THEME.button.secondary(lightMode),
             BRIGHT_BUTTON_CLASS,
             !editor?.isEditable && DISABLED_BUTTON,
             editorState.isHeading5 && 'is-active'
@@ -181,7 +181,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 6 }).run()}
           disabled={!editor?.isEditable}
-          className={clsx(THEME.button.primary(lightMode),
+          className={clsx(THEME.button.secondary(lightMode),
             BRIGHT_BUTTON_CLASS,
             !editor?.isEditable && DISABLED_BUTTON,
             editorState.isHeading6 && 'is-active'
@@ -192,7 +192,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
         <button
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           disabled={!editor?.isEditable}
-          className={clsx(THEME.button.primary(lightMode),
+          className={clsx(THEME.button.secondary(lightMode),
             BRIGHT_BUTTON_CLASS,
             !editor?.isEditable && DISABLED_BUTTON,
             editorState.isBulletList && 'is-active'
@@ -203,7 +203,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
         <button
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           disabled={!editor?.isEditable}
-          className={clsx(THEME.button.primary(lightMode),
+          className={clsx(THEME.button.secondary(lightMode),
             BRIGHT_BUTTON_CLASS,
             !editor?.isEditable && DISABLED_BUTTON,
             editorState.isOrderedList && 'is-active'
@@ -214,7 +214,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
         <button
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
           disabled={!editor?.isEditable}
-          className={clsx(THEME.button.primary(lightMode),
+          className={clsx(THEME.button.secondary(lightMode),
             BRIGHT_BUTTON_CLASS,
             !editor?.isEditable && DISABLED_BUTTON,
             editorState.isCodeBlock && 'is-active'
@@ -225,7 +225,7 @@ function EditorMenu({ editor }: { editor: Editor }) {
         <button
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           disabled={!editor?.isEditable}
-          className={clsx(THEME.button.primary(lightMode),
+          className={clsx(THEME.button.secondary(lightMode),
             BRIGHT_BUTTON_CLASS,
             !editor?.isEditable && DISABLED_BUTTON,
             editorState.isBlockquote && 'is-active'
@@ -233,12 +233,12 @@ function EditorMenu({ editor }: { editor: Editor }) {
         >
           Blockquote
         </button>
-        <button className={clsx(THEME.button.primary(lightMode),)} onClick={() => editor.chain().focus().setHorizontalRule().run()} disabled={!editor?.isEditable}>Horizontal rule</button>
-        <button className={clsx(THEME.button.primary(lightMode),)} onClick={() => editor.chain().focus().setHardBreak().run()} disabled={!editor?.isEditable}>Hard break</button>
-        <button className={clsx(THEME.button.primary(lightMode),)} onClick={() => editor.chain().focus().undo().run()} disabled={!editor?.isEditable}>
+        <button className={clsx(THEME.button.secondary(lightMode),)} onClick={() => editor.chain().focus().setHorizontalRule().run()} disabled={!editor?.isEditable}>Horizontal rule</button>
+        <button className={clsx(THEME.button.secondary(lightMode),)} onClick={() => editor.chain().focus().setHardBreak().run()} disabled={!editor?.isEditable}>Hard break</button>
+        <button className={clsx(THEME.button.secondary(lightMode),)} onClick={() => editor.chain().focus().undo().run()} disabled={!editor?.isEditable}>
           Undo
         </button>
-        <button className={clsx(THEME.button.primary(lightMode),)} onClick={() => editor.chain().focus().redo().run()} disabled={!editor?.isEditable}>
+        <button className={clsx(THEME.button.secondary(lightMode),)} onClick={() => editor.chain().focus().redo().run()} disabled={!editor?.isEditable}>
           Redo
         </button>
       </div>
@@ -359,7 +359,7 @@ const EditorField = forwardRef<HTMLDivElement, EditorFieldProps>(({ content, set
         <div>File not saved yet</div>
         <div>
           <EditorMenu editor={editor} />
-          <div className={clsx(THEME.editorField.base(lightMode))} ref={ref}>
+          <div className={clsx(THEME.editorField.base(lightMode), THEME.editorField.hover(lightMode))} ref={ref}>
             <EditorContent editor={editor} className="tiptap-editor prose prose-slate dark:prose-invert" />
           </div>
           <div>Word count: {content ? content.trim().split(/\s+/).filter(Boolean).length : 0}</div>
@@ -376,10 +376,10 @@ const EditorField = forwardRef<HTMLDivElement, EditorFieldProps>(({ content, set
         return (
           <div>
             <EditorMenu editor={editor} />
-            <div ref={ref}>
+            <div className={clsx(THEME.editorField.base(lightMode))} ref={ref}>
               <EditorContent editor={editor} className="tiptap-editor prose prose-slate dark:prose-invert" />
-              <div>Word count: {content ? content.trim().split(/\s+/).filter(Boolean).length : 0}</div>
             </div>
+            <div>Word count: {content ? content.trim().split(/\s+/).filter(Boolean).length : 0}</div>
           </div>
         );
       } else {

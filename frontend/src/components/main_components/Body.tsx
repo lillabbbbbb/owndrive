@@ -54,7 +54,7 @@ const Body = () => {
   }
 
   return (
-    <div className={clsx(THEME.background.page(lightMode), 'mt-20')}>
+    <div className='bg-transparent'>
 
       <Routes key={jwt}>
         <Route path="/login" element={<Login />} ></Route>

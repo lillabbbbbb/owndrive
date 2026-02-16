@@ -46,20 +46,18 @@ const Login = () => {
     }
 
     return (
-        <div>
-            {/*
-            Login
-            //email
-            //password
-            //login button
-            //google auth button
-            //icloud auth button
-            //small text route to registration*/}
+        <div className="min-h-screen flex items-center justify-center bg-transparent px-4 py-8">
+            <div className="w-full max-w-md">
+                {/* Login Form */}
+                <form 
+                    onSubmit={handleSubmit} 
+                    className="bg-white p-6 sm:p-8 rounded-2xl shadow-lg w-full flex flex-col gap-4 sm:gap-6"
+                >
+                    <h2 className="text-xl sm:text-2xl font-bold text-gray-800 text-center">
+                        {t('login.log-in')}
+                    </h2>
 
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl shadow-lg w-96 flex flex-col gap-6">
-                    <h2 className="text-2xl font-bold text-gray-800 text-center">{t('login.log-in')}</h2>
-
+                    {/* Email input with floating label */}
                     <div className="relative">
                         <input
                             type="text"
@@ -68,11 +66,17 @@ const Login = () => {
                             onChange={(e) => setEmail(e.target.value)}
                             required
                             placeholder=" "
-                            className={clsx(THEME.input.field(lightMode), "peer block w-full rounded-md border border-gray-300 px-3 pt-5 pb-2 text-gray-900 placeholder-transparent focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none")}
+                            className={clsx(
+                                THEME.input.field(lightMode), 
+                                "peer block w-full rounded-md border border-gray-300 px-3 pt-5 pb-2 text-gray-900 placeholder-transparent focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none text-sm sm:text-base"
+                            )}
                         />
                         <label
                             htmlFor="name"
-                            className={clsx(THEME.text.secondary(lightMode), "absolute left-3 top-2.5 text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base peer-focus:top-2.5 peer-focus:text-sm peer-focus:text-blue-500")}
+                            className={clsx(
+                                THEME.text.secondary(lightMode), 
+                                "absolute left-3 top-2.5 text-gray-400 text-xs sm:text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-sm sm:peer-placeholder-shown:text-base peer-focus:top-2.5 peer-focus:text-xs sm:peer-focus:text-sm peer-focus:text-blue-500"
+                            )}
                         >
                             {t("login.email")}
                         </label>
@@ -87,11 +91,17 @@ const Login = () => {
                             onChange={(e) => setPassword(e.target.value)}
                             required
                             placeholder=" "
-                            className={clsx(THEME.input.field(lightMode), "peer block w-full rounded-md border border-gray-300 px-3 pt-5 pb-2 text-gray-900 placeholder-transparent focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none")}
+                            className={clsx(
+                                THEME.input.field(lightMode), 
+                                "peer block w-full rounded-md border border-gray-300 px-3 pt-5 pb-2 text-gray-900 placeholder-transparent focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none text-sm sm:text-base"
+                            )}
                         />
                         <label
                             htmlFor="password"
-                            className={clsx(THEME.text.secondary(lightMode), "absolute left-3 top-2.5 text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base peer-focus:top-2.5 peer-focus:text-sm peer-focus:text-blue-500")}
+                            className={clsx(
+                                THEME.text.secondary(lightMode), 
+                                "absolute left-3 top-2.5 text-gray-400 text-xs sm:text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-sm sm:peer-placeholder-shown:text-base peer-focus:top-2.5 peer-focus:text-xs sm:peer-focus:text-sm peer-focus:text-blue-500"
+                            )}
                         >
                             {t("login.password")}
                         </label>
@@ -100,27 +110,35 @@ const Login = () => {
                     {/* Submit button */}
                     <button
                         type="submit"
-                        className={clsx(THEME.button.primary(lightMode), "w-full bg-blue-500 text-white py-2 rounded-md font-semibold hover:bg-blue-600 transition")}
-
-                    >{t("login.log-in")}
-                    </button>
-                </form>
-
-                {/* Additional buttons outside of the form*/}
-                <div className="flex justify-between gap-2">
-                    <button
-                        type="button"
-                        className={clsx(THEME.button.back(lightMode), "flex-1 border border-gray-300 py-2 rounded-md hover:bg-gray-100 transition")}
-                        onClick={() => handleGoogleClick()}
+                        className={clsx(
+                            THEME.button.primary(lightMode), 
+                        )}
                     >
-                        Google
+                        {t("login.log-in")}
                     </button>
-                    <AppleNotAvailablePopup />
 
-                    <p className={clsx(THEME.text.muted(lightMode))}><Link to="/register">{t("Or register here")}</Link>
+                    {/* OAuth buttons */}
+                    <div className="flex flex-col sm:flex-row justify-between gap-2 sm:gap-3">
+                        <button
+                            type="button"
+                            className={clsx(
+                                THEME.button.back(lightMode), 
+                                "flex-1 border border-gray-300 py-2 sm:py-2.5 rounded-md hover:bg-gray-100 transition text-sm sm:text-base"
+                            )}
+                            onClick={() => handleGoogleClick()}
+                        >
+                            Google
+                        </button>
+                        <AppleNotAvailablePopup />
+                    </div>
 
+                    {/* Register link */}
+                    <p className={clsx(THEME.text.muted(lightMode), "text-center text-sm sm:text-base mt-2")}>
+                        <Link to="/register" className="hover:underline">
+                            {t("Or register here")}
+                        </Link>
                     </p>
-                </div>
+                </form>
             </div>
         </div>
     )
