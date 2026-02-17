@@ -34,7 +34,6 @@ const Editor = () => {
     const [guestDialogOpen, setGuestDialogOpen] = useState<boolean>(true)
 
     const [jwt, setJwt] = useState<string | null>(null)
-    const [file, setFile] = useState<{ file: IFileFrontend, permissions: string[], base64data: string } | null>(null)
     const [filename, setFilename] = useState<string>("New file")
     const [beingUsed, setBeingUsed] = useState<boolean>(false)
     const [usedBy, setUsedBy] = useState<string | null>(null)
@@ -53,11 +52,6 @@ const Editor = () => {
         setEditable(!isOtherUser)
     }, [beingUsed, usedBy])
 
-    // PDF hook
-    const { toPDF, targetRef } = usePDF({
-        filename: filename,
-        page: { margin: 20 }
-    });
 
     // Use this ref to forward to EditorField
     const editorRef = useRef<HTMLDivElement>(null);
@@ -65,56 +59,42 @@ const Editor = () => {
 
 
     const navigate = useNavigate()
-    const { user, currentFileId, setCurrentFileId, getCurrentFile, getFile, createFile, updateFile, lockFile, userLoading, userError, filesLoading, filesError } = useAppContext()
+    const { user, currentFileId, currentFile, setCurrentFileId, getFile, createFile, updateFile, lockFile, userLoading, userError, filesLoading, filesError } = useAppContext()
 
     useEffect(() => {
         setJwt(localStorage.getItem("token"))
     }, [user])
 
     useEffect(() => {
-        if (!currentFileId) {
+        console.log("Current file updated:", currentFile);
+        if (!currentFileId || !currentFile) {
             //this means that this is a new file
             setCurrentFileId(sessionStorage.getItem("fileId"))
             setContent("Write here...")
         } else {
-            const loadFile = async () => {
-                if (!currentFileId) return
-                const fetchedFile = await getCurrentFile(currentFileId)
-                if (fetchedFile) {
-                    setFilename(fetchedFile.file.filename)
-                    setBeingUsed(true) // while testing
-                    setFile(fetchedFile)
-                    setVisibleToGuest(fetchedFile.file.visibleToGuests)
-                    setCanEdit(fetchedFile.file.canEdit)
-                    setCanView(fetchedFile.file.canView)
-                    setIsPrivate(fetchedFile.file.private)
 
-                    console.log(fetchedFile.file.content)
-                    console.log(fetchedFile)
-                }
+            const loadFile = async () => {
+                setFilename(currentFile.file.filename)
+                setBeingUsed(true) // while testing
+                setVisibleToGuest(currentFile.file.visibleToGuests)
+                setCanEdit(currentFile.file.canEdit)
+                setCanView(currentFile.file.canView)
+                setIsPrivate(currentFile.file.private)
+
+                console.log(currentFile.file.content)
+                console.log(currentFile)
             }
             loadFile()
         }
-    }, [currentFileId])
+    }, [currentFile])
 
-    useEffect(() => {
-        console.log("Current file updated:", file);
-    }, [file]);
-
-    // Update local content when file changes
-    useEffect(() => {
-        if (file) {
-            setContent(file.file.content ?? ""); // empty string fallback
-        }
-        console.log(`Content set to ${content}`)
-    }, [file]);
 
     const username = user?.username || user?.email
 
 
     console.log(`File content is now: ${content}`)
     console.log(`File name is now: ${filename}`)
-    console.log(`File name is now: ${file?.file.filename}`)
+    console.log(`File name is now: ${currentFile?.file.filename}`)
 
     useEffect(() => {
         if (currentFileId && user) {

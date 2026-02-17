@@ -375,10 +375,10 @@ const EditorField = forwardRef<HTMLDivElement, EditorFieldProps>(({ content, set
         return (
           <div>
             <EditorMenu editor={editor} />
-            <div className={clsx(THEME.editorField.base(lightMode))} ref={ref}>
+            <div className={clsx(THEME.editorField.base(lightMode), THEME.text.secondary(lightMode))} ref={ref}>
               <EditorContent editor={editor} className="tiptap-editor prose prose-slate dark:prose-invert" />
             </div>
-            <div>Word count: {content ? content.trim().split(/\s+/).filter(Boolean).length : 0}</div>
+            <div className={clsx(THEME.text.secondary(lightMode))} >Word count: {content ? content.trim().split(/\s+/).filter(Boolean).length : 0}</div>
           </div>
         );
       } else {

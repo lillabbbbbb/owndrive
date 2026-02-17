@@ -199,7 +199,7 @@ export default function FilesTable({ sortedFilteredData }: TableProps) {
           {t("home.pagination.page")} {currentPage}/{totalPages}
         </span>
         <button
-          className={clsx(THEME.button.secondary(lightMode), "px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50")}
+          className={clsx(THEME.button.secondary(lightMode), "px-3 py-1 disabled:opacity-50")}
           disabled={currentPage === totalPages}
           onClick={() => setCurrentPage((p) => p + 1)}
         >

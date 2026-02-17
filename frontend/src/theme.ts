@@ -74,8 +74,8 @@ export const THEME = {
     // --------------------
     secondary: (isLight: boolean) =>
       isLight
-        ? "bg-white-50 text-gray-800 placeholder-gray-400 border border-gray-200 rounded-xl px-3 py-2 shadow-sm transition-all duration-300 focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 hover:border-orange-400"
-        : "bg-gradient-to-br from-gray-900 to-gray-800 text-gray-50 placeholder-gray-500 border border-gray-600 rounded-xl px-3 py-2 shadow-2xl shadow-black/40 transition-all duration-300 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 focus:shadow-orange-500/20 focus:from-gray-800 focus:to-gray-700 hover:border-orange-400 hover:shadow-orange-500/10",
+        ? "bg-white-50 text-gray-800 placeholder-gray-400 border border-gray-200 rounded-xl px-3 py-2 shadow-sm transition-all duration-300 focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 hover:border-orange-400 disabled:border-gray-400"
+        : "bg-gradient-to-br from-gray-900 to-gray-800 text-gray-50 placeholder-gray-500 border border-gray-600 rounded-xl px-3 py-2 shadow-2xl shadow-black/40 transition-all duration-300 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 focus:shadow-orange-500/20 focus:from-gray-800 focus:to-gray-700 hover:border-orange-400 hover:shadow-orange-500/10 disabled:border-gray-400",
 
     // --------------------
     // Highlighted Primary: Stronger orange base → Solid fill
@@ -217,7 +217,7 @@ export const THEME = {
     base: (isLight: boolean) =>
       isLight
         ? `bg-white text-black shadow-md rounded-2xl p-4 min-h-[300px] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-400`
-        : `bg-gray-900 text-white shadow-inner rounded-2xl p-4 min-h-[300px] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500`,
+        : `bg-gray-900 text-white shadow-inner rounded-2xl p-4 min-h-[300px] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:shadow:white`,
     hover: (isLight: boolean) =>
       isLight
         ? `hover:shadow-lg`

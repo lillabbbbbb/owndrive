@@ -107,7 +107,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
           const userRes = await userHook.getUser();
           // validate backend response
 
-          setUser(u)
+          setUser(userRes)
         }
 
         // 2️⃣ Load file
@@ -154,6 +154,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     setCurrentFileId(fileId)
     return file;
   };
+
   const getUserIdFromToken = (token: string | null) => {
     if (!token) {
       console.log("token not found")
@@ -191,8 +192,9 @@ export const AppProvider = ({ children }: AppProviderProps) => {
       console.log("File successfully created")
       sessionStorage.setItem("fileId", createdFileFromHook._id);
       setCurrentFileId(createdFileFromHook._id)
-
+      
     }
+    return createdFileFromHook;
   }
 
   const updateProfilePic = async (file: File) => {

@@ -55,7 +55,7 @@ export function ControlledFilterDialog({ filters, onChange }: FilterDialogProps)
 
   return (
     <>
-      <Button className={clsx(THEME.button.secondary(lightMode))} onClick={() => setOpen(true)}>{t("home.filter-button")}</Button>
+      <Button className={clsx(THEME.button.secondary(lightMode), THEME.text.muted(lightMode))} onClick={() => setOpen(true)}>{t("home.filter-button")}</Button>
 
       <div className={clsx(THEME.background.card(lightMode))}>
         <Dialog open={open} onOpenChange={setOpen}>

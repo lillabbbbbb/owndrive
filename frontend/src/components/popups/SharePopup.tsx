@@ -145,9 +145,9 @@ const { lightMode } = useAppContext()
                 <FieldDescription>
                   ...
                 </FieldDescription>
-              </FieldContent>
+              </FieldContent> 
 
-              <Switch id="visible-to-guest" onCheckedChange={(c) => updateFile(currentFileId!, { visibleToGuests: c })} /> //visible to guest
+              <Switch id="visible-to-guest" className={clsx(THEME.toggle.track(lightMode), THEME.toggle.thumb(lightMode), THEME.toggle.focus)} onCheckedChange={(c) => updateFile(currentFileId!, { visibleToGuests: c })} /> //visible to guest
             </Field>
 
 
