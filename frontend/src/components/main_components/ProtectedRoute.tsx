@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
-import { useAppContext } from "../context/globalContext";
 
 type ProtectedRouteProps = {
   children: ReactNode

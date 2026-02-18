@@ -3,6 +3,7 @@ import axios from "axios";
 import { IFileFrontend } from "../types/File";
 import { statuses } from "../components/main_components/Home";
 import {toast} from "sonner"
+import {fileType} from "../../src/types/File"
 
 export function useFiles() {
   const [files, setFiles] = useState<IFileFrontend[] | []>([])
@@ -59,7 +60,7 @@ export function useFiles() {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.get<Promise<{file: IFileFrontend, permissions: string[], base64data: string } | null>>(`/api/files/${id}`);
+      const res = await axios.get<Promise< fileType | null>>(`/api/files/${id}`);
       return res.data;
     } catch (err) {
       handleError(err);

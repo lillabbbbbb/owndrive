@@ -6,7 +6,6 @@ import {
     SelectTrigger,
     SelectValue
 } from "./ui/select";
-import { changeLanguage } from "i18next"
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from './context/globalContext';
 import { LANGUAGES } from '../types/other';

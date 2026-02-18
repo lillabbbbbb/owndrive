@@ -1,7 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { THEME } from "../theme"
-import { useAppContext } from "./context/globalContext";
-import clsx from "clsx";
+import { useState, useEffect } from "react";
 import { useTheme } from "../components/context/ThemeContext"
 
 type CustomCursorProps = {

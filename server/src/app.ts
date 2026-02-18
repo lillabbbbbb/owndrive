@@ -57,8 +57,7 @@ app.use(cors());
 app.use(bodyParser.json({ limit: "10mb" }));
 
 
-app.use('/images', express.static(path.join(__dirname, 'public/images')))
-app.use(express.static(path.join(__dirname, "../public")))
+app.use('/images', express.static(path.join(__dirname, '../public/images')))
 app.use("/api/", router)
 app.use("/api/users/", userRouter)
 app.use("/api/files/", fileRouter)

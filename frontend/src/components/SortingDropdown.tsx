@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Select,
   SelectContent,
@@ -9,7 +8,6 @@ import {
 import { sortingTypes } from "./main_components/Home";
 import { useTranslation } from "react-i18next";
 import { THEME } from "../theme"
-import { useAppContext } from "./context/globalContext";
 import clsx from "clsx";
 import {useTheme} from "../components/context/ThemeContext"
 

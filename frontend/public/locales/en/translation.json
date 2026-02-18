@@ -79,7 +79,7 @@
     },
     "share": {
         "copy-link": "Copy link",
-        "show-for-guests:toggle": "Show to guests (Allow guests to see file)",
+        "show-for-guests": "Show to guests (Allow guests to see file)",
         "or-add-by-username": "Or add by username",
         "type-username-placeholder": "Type the username...",
         "add-user-button": "Add user"

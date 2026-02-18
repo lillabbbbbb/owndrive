@@ -5,8 +5,8 @@ import { useFiles } from "../../hooks/useFiles";
 import { IUserFrontend } from "../../types/User";
 import { IFileFrontend } from "../../types/File";
 import { IImageFrontend } from "../../types/Image";
-import { MODES, LANGUAGES } from "../../types/other"
-import { model } from "mongoose";
+import {  LANGUAGES } from "../../types/other"
+import { fileType } from "../../types/File";
 
 export interface AppContextType {
   user: IUserFrontend | null;
@@ -15,7 +15,7 @@ export interface AppContextType {
   filesLoading: boolean;
   filesError: string | null;
   files: IFileFrontend[] | [];
-  currentFile: { file: IFileFrontend, permissions: string[], base64data: string } | null;
+  currentFile: fileType | null;
 
   lightMode: boolean;
   setMode: (isLight: boolean) => void;
@@ -37,9 +37,9 @@ export interface AppContextType {
   logout: () => Promise<void>;
 
   // File actions
-  getCurrentFile: (currentFileId: string) => Promise<{ file: IFileFrontend, permissions: string[], base64data: string } | null>;
+  getCurrentFile: (currentFileId: string) => Promise<fileType | null>;
   getFiles: () => Promise<IFileFrontend[] | null>;
-  getFile: (id: string) => Promise<{ file: IFileFrontend, permissions: string[], base64data: string } | null>;
+  getFile: (id: string) => Promise<fileType | null>;
   createFile: (fileData: Partial<IFileFrontend>) => Promise<IFileFrontend | null>;
   uploadFile: (file: File) => Promise<{ uploadedFile: IFileFrontend, category: string } | null>
   updateFile: (id: string, updates: Partial<IFileFrontend>) => Promise<IFileFrontend | null>;
@@ -72,7 +72,7 @@ interface AppProviderProps {
 export const AppProvider = ({ children }: AppProviderProps) => {
   const userHook = useUser();
   const filesHook = useFiles();
-  const [currentFile, setCurrentFile] = useState<{ file: IFileFrontend, permissions: string[], base64data: string } | null>(null)
+  const [currentFile, setCurrentFile] = useState< fileType| null>(null)
   const [currentFileId, setCurrentFileId] = useState<string | null>(null)
   const [user, setUser] = useState<IUserFrontend | null>(null)
   const [editorReady, setEditorReady] = useState(false);

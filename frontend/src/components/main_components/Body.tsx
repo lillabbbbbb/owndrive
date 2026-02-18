@@ -1,19 +1,11 @@
-import React, { useState, useEffect } from 'react'
-import { Route, BrowserRouter, Routes } from "react-router-dom"
+import { Route, Routes } from "react-router-dom"
 import Login from './Login'
-import Header from "./Header"
-import { Navigate } from 'react-router-dom'
 import Register from './Register'
 import Home from './Home'
 import Editor from './Editor'
-import { IFile } from "../../../../server/src/models/File"
-import { IUser } from "../../../../server/src/models/User"
-import { IUserTest, IFileTest } from "../../App"
 import { useTranslation } from 'react-i18next'
 import { ProtectedRoute } from './ProtectedRoute'
 import { useAppContext } from '../context/globalContext'
-import clsx from 'clsx'
-import { THEME } from '../../theme'
 import {useTheme} from "../context/ThemeContext"
 
 
@@ -72,7 +64,7 @@ const Body = () => {
         } >
         </Route>
 
-          <Route path="*" element={<div>{t("home.not-found")!}</div>} />
+          <Route path="*" element={<Login />} />
 
       </Routes>
     </div>

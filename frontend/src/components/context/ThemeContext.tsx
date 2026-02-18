@@ -1,6 +1,5 @@
 // ThemeContext.tsx
 import React, { createContext, useState, useContext, useEffect } from "react";
-import { THEME } from "../../theme"
 
 interface ThemeContextType {
   lightMode: boolean;

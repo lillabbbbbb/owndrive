@@ -1,20 +1,14 @@
-import React, { ReactElement, useState, RefObject, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Tooltip, TooltipTrigger, TooltipContent } from "../components/ui/tooltip"
-import { HiShare } from "react-icons/hi2";
 import SharePopup from './popups/SharePopup';
 import { ClonePopup } from './popups/ClonePopup';
-import { useFiles } from '../hooks/useFiles'
-import { usePDF } from 'react-to-pdf';
 import { useAppContext } from "./context/globalContext";
-import CustomDialog from './popups/CustomDialog';
 import { toast } from 'sonner';
 import { THEME } from "../theme"
 import {
   Dialog,
   DialogContent,
   DialogClose,
-  DialogHeader,
-  DialogTitle,
 } from "./ui/dialog"
 import { Label } from "./ui/label"
 import { Button } from "./ui/button"
@@ -30,7 +24,7 @@ const EditorButtons = ({ htmlContent }: EditorButtonsProps) => {
 
   const { t } = useTranslation()
   const { lightMode } = useTheme()
-  const { downloadPDF, currentFileId, currentFile, createFile, updateFile, filesLoading, filesError } = useAppContext()
+  const { downloadPDF, currentFileId, currentFile, updateFile, filesLoading, filesError } = useAppContext()
   const [PDFDialogOpen, setPDFDialogOpen] = useState<boolean>(false)
 
   console.log(currentFileId)

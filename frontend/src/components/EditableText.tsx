@@ -1,6 +1,6 @@
 import { Input } from "./ui/input"
-import { useState, useRef, useEffect, useLayoutEffect } from "react"
-import { AppContext, useAppContext } from "./context/globalContext"
+import { useState, useRef, useLayoutEffect } from "react"
+import { useAppContext } from "./context/globalContext"
 import { THEME } from "../theme"
 import clsx from "clsx"
 import {useTheme} from "../components/context/ThemeContext"

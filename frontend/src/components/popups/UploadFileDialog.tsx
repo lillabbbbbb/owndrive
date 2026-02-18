@@ -1,14 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { Button } from "../ui/button"
-import { Group, Text } from '@mantine/core';
-import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import '@mantine/core/styles.css';
 // ‼️ import dropzone styles after core package styles
 import '@mantine/dropzone/styles.css';
-import { useFiles } from '../../hooks/useFiles';
 import { useAppContext } from "../context/globalContext";
-import CustomDialog from '../popups/CustomDialog';
 import { useNavigate } from 'react-router-dom';
 import { useDropzone } from "react-dropzone";
 import { useTranslation } from 'react-i18next';

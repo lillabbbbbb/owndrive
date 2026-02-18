@@ -35,9 +35,9 @@ fileRouter.get("/", async (req: Request, res: Response) => {
 
         const files = await File.find({
             $or: [
-                {created_by: userId},
-                {canView: userId},
-                {canEdit: userId}
+                { created_by: userId },
+                { canView: userId },
+                { canEdit: userId }
             ]
         })
 
@@ -183,10 +183,10 @@ fileRouter.post("/",
                 private: isPrivate = false
             } = req.body;
             let buffer
-            if(data) {
-                 buffer = Buffer.from(data);
-            }else{
-                 buffer = undefined
+            if (data) {
+                buffer = Buffer.from(data);
+            } else {
+                buffer = undefined
             }
 
             if (!filename) {
@@ -340,7 +340,7 @@ fileRouter.get("/:fileId",
         try {
 
             const customReq = req as CustomRequest;
-            if (!req.user) return res.status(401).json({ message: "Unauthorized" })
+            if (!req.user) console.log("Unauthorized")
             const userId = customReq.user?._id
 
 
@@ -349,6 +349,89 @@ fileRouter.get("/:fileId",
             //find owner of file
             const user = await User
                 .findOne({ _id: userId })
+
+            //if user not found
+            if (!user) return res.status(404).json({ message: `File's owner (user) not found` })
+
+            type TPermission = {
+                accessType: string,
+                private: boolean
+            }
+
+            const permissions: TPermission = {
+                accessType: "none",
+                private: existingFile.private
+            }
+
+            //CHECK IF TOKEN BELONGS TO ...
+            //(1) if the token belongs to the author of the file
+            if (existingFile.created_by === userId) {
+                permissions.accessType = "owner"
+                //RETURN HERE
+                return res.status(200).json(permissions)
+            }
+
+
+            //check if file is set to private
+            permissions.private = existingFile?.private
+
+            //(2) check if token is missing (=guest user) AND file not private
+            if(!existingFile.private && !req.user){
+                permissions.accessType = "guest"
+            }
+            //(3) check if otheruser AND haspermission (view or edit!)
+            if (existingFile?.canView.includes(userId)) permissions.accessType = "viewer"
+            else if (existingFile?.canView.includes(userId)) permissions.accessType = "editor"
+
+            const baseData = existingFile.data?.toString("base64") || null
+
+            return res.status(200).json({
+                permissions: permissions,
+                file: {
+                    _id: existingFile._id,
+                    filename: existingFile.filename,
+                    mime_type: existingFile.mime_type,
+                    file_type: existingFile.file_type,
+                    created_at: existingFile.created_at,
+                    created_by: existingFile.created_by,
+
+                    last_edited_at: existingFile.last_edited_at,
+                    content: existingFile.content,
+
+                    ...(userId ? {
+                        inUse: existingFile.inUse,
+                        usedBy: existingFile.usedBy,
+                        status: existingFile.status,
+                        visibleToGuests: existingFile.visibleToGuests,
+                        showsInHomeShared: existingFile.showsInHomeShared,
+                        private: existingFile.private,
+                        canView: existingFile.canView,
+                        canEdit: existingFile.canEdit,
+                    } : {}),
+                },
+                base64data: baseData
+            })
+
+        } catch (error: any) {
+            console.log(error)
+            return res.status(500).json({ "message": "Internal Server Error" })
+        }
+    })
+
+fileRouter.get("/:userId/:fileId",
+    async (req: CustomRequest, res: Response) => {
+        try {
+
+            const customReq = req as CustomRequest;
+            if (!req.user) console.log("Unauthorized")
+            const userId = customReq.user?._id
+
+
+            const existingFile: IFile | null = await File.findOne({ _id: req.params.userId })
+            if (!existingFile) return res.status(404).json({ "message": "File not found based on _id" })
+            //find owner of file
+            const user = await User
+                .findOne({ _id: req.params.userId })
 
             //if user not found
             if (!user) return res.status(404).json({ message: `File's owner (user) not found` })
@@ -387,8 +470,8 @@ fileRouter.get("/:fileId",
             else if (existingFile?.canView.includes(userId)) permissions.accessType = "editor"
 
             if (!existingFile) return res.status(404).json({ message: "File not found" })
-            
-                const baseData = existingFile.data?.toString("base64") || null
+
+            const baseData = existingFile.data?.toString("base64") || null
 
             return res.status(200).json({
                 permissions: permissions,

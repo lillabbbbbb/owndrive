@@ -1,28 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { usePDF } from 'react-to-pdf';
+import { useState, useEffect, useRef } from 'react'
 import EditorButtons from '../EditorButtons'
 import EditorField from "../EditorField"
-import { ControlledFilterDialog } from '../popups/FilterPopup';
-import { Label } from "../ui/label"
 import { Button } from "../ui/button"
-import {
-    Dialog,
-    DialogContent,
-    DialogClose,
-    DialogHeader,
-    DialogTitle,
-} from "../ui/dialog"
 import ConcurrentEditingPopup from '../popups/ConcurrentEditingPopup';
-import { IUserTest } from '../../App';
 import { EditableText } from '../EditableText';
-import CustomDialog from '../popups/CustomDialog';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from "../context/globalContext";
-import { IFileFrontend } from '../../types/File';
+import { isValidFilename } from '../../utils/validateFilename';
 import Login from './Login';
 import { useTranslation } from 'react-i18next';
-import PdfViewer from '../PDFViewer';
-import { toast } from 'sonner';
 import { THEME } from "../../theme"
 import clsx from 'clsx';
 
@@ -30,6 +16,9 @@ const Editor = () => {
 
     const { t } = useTranslation()
     const { lightMode } = useAppContext()
+    const navigate = useNavigate()
+    const { user, currentFileId, currentFile, setCurrentFileId, getFile, createFile, updateFile, lockFile } = useAppContext()
+
 
     const [guestDialogOpen, setGuestDialogOpen] = useState<boolean>(true)
 
@@ -47,19 +36,18 @@ const Editor = () => {
 
     useEffect(() => {
 
-        const isOtherUser: boolean = (!!beingUsed && !!user && usedBy != user._id)
+        const isOtherUser: boolean = (beingUsed && !!user && usedBy != user._id)
 
-        setEditable(!isOtherUser)
-    }, [beingUsed, usedBy])
+        setEditable(!isOtherUser || !!user)
+    }, [user, beingUsed, usedBy])
+
+    if (currentFile?.permissions.private) {
+        navigate("/login")
+    }
 
 
     // Use this ref to forward to EditorField
     const editorRef = useRef<HTMLDivElement>(null);
-
-
-
-    const navigate = useNavigate()
-    const { user, currentFileId, currentFile, setCurrentFileId, getFile, createFile, updateFile, lockFile, userLoading, userError, filesLoading, filesError } = useAppContext()
 
     useEffect(() => {
         setJwt(localStorage.getItem("token"))
@@ -89,27 +77,15 @@ const Editor = () => {
     }, [currentFile])
 
 
-    const username = user?.username || user?.email
-
-
-    console.log(`File content is now: ${content}`)
-    console.log(`File name is now: ${filename}`)
-    console.log(`File name is now: ${currentFile?.file.filename}`)
+    //console.log(`File content is now: ${content}`)
+    //console.log(`File name is now: ${filename}`)
+    //console.log(`File name is now: ${currentFile?.file.filename}`)
 
     useEffect(() => {
         if (currentFileId && user) {
             lockFile(currentFileId, user._id)
         }
     }, [])
-
-    const isValidFilename = (filename: string) => {
-
-        //check if there's any forbidden characters
-
-        //check for exact match between other files of user
-
-        return true
-    }
 
     const isExistingFile = async (id: string | null) => {
         if (!id) return false
@@ -202,12 +178,13 @@ const Editor = () => {
     }
 
     return (
-        <div className={clsx("min-h-screen w-full flex flex-col")}>
+        <div className={clsx("min-h-screen w-full flex-col")}>
 
             {/* Toolbar */}
             <div className={clsx("flex items-center justify-between px-6 py-4 shadow-md")}>
                 <EditableText
                     value={filename}
+                    validate={(v) => isValidFilename(v)}
                     onSave={(v) => setFilename(v)}
                     className="text-xl font-semibold"
                 />
@@ -227,12 +204,7 @@ const Editor = () => {
                 editable={editable}
             />
 
-            {!editable && <ConcurrentEditingPopup />}
-
-            {/* Guest login dialog */}
-            {!jwt && (
-                <Login />
-            )}
+            {(!editable && user) && <ConcurrentEditingPopup />}
 
         </div>
     );

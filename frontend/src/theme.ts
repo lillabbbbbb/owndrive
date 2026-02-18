@@ -82,8 +82,8 @@ export const THEME = {
     // --------------------
     highlightedPrimary: (isLight: boolean) =>
       isLight
-        ? "hover:bg-orange-300/40 border-2 hover:border-orange-600 hover:text-orange-600 bg-orange-600/90 text-white shadow-[0_0_20px_rgba(255,165,0,0.5)] shadow-lg rounded-2xl px-5 py-2 transition-all duration-300"
-        : "bg-orange-500 border-2 border-orange-500 text-orange-600 hover:bg-gray-500/60 text-white shadow-[0_0_20px_rgba(255,165,0,0.5)] shadow-xl rounded-2xl px-5 py-2 transition-all duration-300",
+        ? "hover:bg-orange-300/20 border-2 hover:border-orange-600 hover:text-orange-600 bg-orange-600/90 text-white shadow-[0_0_20px_rgba(255,165,0,0.5)] shadow-lg rounded-2xl px-5 py-2 transition-all duration-300"
+        : "hover:bg-orange-300/20 bg-orange-500 border-2 hover:text-orange-500 border-orange-500 text-white rounded-2xl px-5 py-2 transition-all duration-300",
 
     // --------------------
     // Highlighted Secondary: Hollow gray → Solid gray
@@ -229,9 +229,13 @@ export const THEME = {
   // --------------------
   toggle: {
     track: (isLight: boolean) =>
-      isLight ? "bg-gray-300 peer-checked:bg-orange-500 rounded-full" : "bg-gray-700 peer-checked:bg-orange-500 rounded-full",
+      isLight
+        ? "bg-gray-300 data-[state=checked]:bg-orange-500 rounded-full"
+        : "bg-gray-700 data-[state=checked]:bg-orange-500 rounded-full",
     thumb: (isLight: boolean) =>
-      isLight ? "bg-white peer-checked:bg-orange-400 rounded-full" : "bg-gray-300 peer-checked:bg-orange-400 rounded-full",
+      isLight
+        ? "bg-white data-[state=checked]:bg-orange-400 rounded-full"
+        : "bg-gray-300 data-[state=checked]:bg-orange-400 rounded-full",
     focus: "focus:ring-2 focus:ring-orange-500",
   },
 

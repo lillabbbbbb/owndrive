@@ -2,7 +2,6 @@ import { useState, useCallback, useEffect } from "react";
 import axios from "axios";
 import { IUserFrontend } from "../types/User";
 import { IImageFrontend } from "../types/Image";
-import { useAppContext } from "../components/context/globalContext";
 
 type UseUserReturn = {
   loading: boolean;
@@ -131,7 +130,7 @@ export function useUser(): UseUserReturn {
   try {
     console.log(file)
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("image", file);
     if (description) formData.append("description", description);
 
     console.log("📤 Sending PATCH request to /api/users/me")

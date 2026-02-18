@@ -3,7 +3,7 @@
 import { Request, Response, Router } from "express"
 import { IImage, Image } from "../models/Image"
 import { User } from "../models/User"
-import uploadToMemory from "../middleware/multer-config"
+import uploadToMemory, { uploadToDisk } from "../middleware/multer-config"
 import { CustomRequest, validateUserToken } from "../middleware/userValidation"
 import fs from "fs"
 
@@ -62,7 +62,7 @@ userRouter.get("/me", async (req: Request, res: Response) => {
 
 
 //UPDATE Upload or change profile picture
-userRouter.patch("/me", uploadToMemory.single("file"), async (req: Request, res: Response) => {
+userRouter.patch("/me", uploadToDisk.single("image"), async (req: Request, res: Response) => {
     try {
         console.log("🔥 PATCH /me endpoint HIT!")
         console.log("Has file?", !!req.file)
@@ -83,7 +83,7 @@ userRouter.patch("/me", uploadToMemory.single("file"), async (req: Request, res:
         const user = await User.findById(userId).select("profile_pic")
         if (!user) return res.status(404).json({ message: 'User not found' })
         // Prepare image data
-        const imgPath = `/images/${req.file.originalname}`
+        const imgPath = `/images/${req.file.filename}`
         const imageData = {
             filename: filename,
             description: "profile pic",

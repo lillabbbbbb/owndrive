@@ -47,3 +47,15 @@ export function getFrontendFileCategory(file: IFileFrontend): CategoryName {
   if (FILE_CATEGORIES.viewOnly.includes(file.mime_type)) return CATEGORY_NAMES.ViewOnly;
   return CATEGORY_NAMES.Other;
 }
+
+
+export interface permissionsType { 
+  private : false, 
+  accessType : string
+}
+
+export interface fileType {
+  file: IFileFrontend, 
+  permissions: permissionsType, 
+  base64data: string 
+}

@@ -1,5 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
-import React from 'react'
+import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom"
 import AppleNotAvailablePopup from "../popups/AppleNotAvailablePopup";
 import { useAppContext } from "../context/globalContext";
@@ -111,7 +110,7 @@ const Login = () => {
                     <button
                         type="submit"
                         className={clsx(
-                            THEME.button.primary(lightMode), 
+                            THEME.button.highlightedPrimary(lightMode), 
                         )}
                     >
                         {t("login.log-in")}
@@ -123,7 +122,7 @@ const Login = () => {
                             type="button"
                             className={clsx(
                                 THEME.button.back(lightMode), 
-                                "flex-1 border border-gray-300 py-2 sm:py-2.5 rounded-md hover:bg-gray-100 transition text-sm sm:text-base"
+                                "flex-1 border border-gray-300 py-2 sm:py-2.5 rounded-md transition text-sm sm:text-base"
                             )}
                             onClick={() => handleGoogleClick()}
                         >

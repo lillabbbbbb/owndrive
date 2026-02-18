@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { Link } from "react-router-dom"
 import { useTranslation } from 'react-i18next';
 import { THEME } from "../../theme"
+import AppleNotAvailablePopup from '../popups/AppleNotAvailablePopup';
 import clsx from 'clsx';
 import { useAppContext } from '../context/globalContext';
 
@@ -52,9 +53,9 @@ const Register = () => {
                 {/* Register Form */}
                 <form 
                     onSubmit={handleSubmit} 
-                    className="bg-white p-6 sm:p-8 rounded-2xl shadow-lg w-full flex flex-col gap-4 sm:gap-6"
+                    className={clsx(THEME.background.card(lightMode), "p-6 sm:p-8 rounded-2xl shadow-lg w-full flex flex-col gap-4 sm:gap-6")}
                 >
-                    <h2 className="text-xl sm:text-2xl font-bold text-gray-800 text-center">
+                    <h2 className={clsx(THEME.text.primary, "text-xl sm:text-2xl font-boldtext-center")} >
                         {t("register.register")}
                     </h2>
 
@@ -137,7 +138,7 @@ const Register = () => {
                     <button
                         type="submit"
                         className={clsx(
-                            THEME.button.primary(lightMode), 
+                            THEME.button.highlightedPrimary(lightMode), 
                             )}
                     >
                         {t("register.register")}
@@ -148,23 +149,15 @@ const Register = () => {
                         <button
                             type="button"
                             className={clsx(
-                                THEME.button.secondary(lightMode), 
-                                "flex-1 border border-gray-300 py-2 sm:py-2.5 rounded-md hover:bg-gray-100 transition text-sm sm:text-base"
+                                THEME.button.back(lightMode), 
+                                "flex-1 border py-2 sm:py-2.5 rounded-md transition text-sm sm:text-base"
                             )}
                             onClick={() => handleGoogleClick()}
                         >
                             Google
                         </button>
-                        <button
-                            type="button"
-                            className={clsx(
-                                THEME.button.secondary(lightMode), 
-                                "flex-1 border border-gray-300 py-2 sm:py-2.5 rounded-md hover:bg-gray-100 transition text-sm sm:text-base"
-                            )}
-                            onClick={() => handleAppleClick()}
-                        >
-                            Apple
-                        </button>
+                        
+                        <AppleNotAvailablePopup />
                     </div>
 
                     {/* Login link */}

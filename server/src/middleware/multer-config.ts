@@ -5,10 +5,10 @@ import fs from 'fs'
 const diskStorage: StorageEngine = multer.diskStorage({
     destination: function (req, file, cb) {
       // What's the actual path here?
-      console.log("🔍 Multer saving to:", path.join(__dirname, '../public/images'))
+      console.log("🔍 Multer saving to:", path.join(__dirname, '../../public/images'))
       console.log("🔍 __dirname is:", __dirname)
       
-      const uploadPath = path.join(__dirname, '../public/images')
+      const uploadPath = path.join(__dirname, '../../public/images')
       
       // Check if directory exists
       if (!fs.existsSync(uploadPath)) {
@@ -26,10 +26,10 @@ const diskStorage: StorageEngine = multer.diskStorage({
       cb(null, filename)
     }
 })
+export const uploadToDisk: Multer = multer({ storage: diskStorage })
+
 
 const memoryStorage: StorageEngine = multer.memoryStorage()
-  
-export const uploadToDisk: Multer = multer({ storage: diskStorage })
 const uploadToMemory: Multer = multer({ storage: memoryStorage })
 
 export default uploadToMemory

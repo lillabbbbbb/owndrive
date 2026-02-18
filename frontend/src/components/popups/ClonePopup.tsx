@@ -1,34 +1,21 @@
-import React from 'react'
 import { useState, useEffect } from "react"
-import Select, { components, createFilter } from 'react-select';
 //https://ui.shadcn.com/docs/components/radix/dialog
 import {
     Dialog,
     DialogContent,
-    DialogHeader,
-    DialogTitle,
 } from "../ui/dialog"
-import { Label } from "../ui/label"
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
 import { Filter, Filters } from '../main_components/Home';
 import {
     Field,
-    FieldContent,
     FieldDescription,
     FieldError,
     FieldGroup,
     FieldLabel,
-    FieldLegend,
-    FieldSeparator,
-    FieldSet,
-    FieldTitle,
 } from "../ui/field"
-
 import { useAppContext } from "../context/globalContext";
-import { useFiles } from '../../hooks/useFiles';
-import CustomDialog from '../popups/CustomDialog';
-import { isValidFileName } from '../../utils/validateFilename';
+import { isValidFilename } from '../../utils/validateFilename';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { THEME } from "../../theme"
@@ -43,8 +30,6 @@ type ClonePopupProps = {
     fileData?: Filter<customOption>[],
     onChange: (newFilters: Filters) => void   // callback to update parent
 }
-
-const fileName = "testFileNameNotreal"
 
 export function ClonePopup() {
   const {t} = useTranslation()
@@ -64,7 +49,7 @@ export function ClonePopup() {
   // Check if the input is valid & unique
   const isValidAndUnique = (): boolean => {
     if (!input) return false;
-    if (!isValidFileName(input)) return false;
+    if (!isValidFilename(input)) return false;
     // check uniqueness
     const existingNames = files?.map(f => f.filename) || [];
     return !existingNames.includes(input);

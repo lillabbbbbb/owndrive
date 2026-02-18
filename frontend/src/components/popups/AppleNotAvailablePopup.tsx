@@ -6,11 +6,8 @@ import {
   Dialog,
   DialogContent,
   DialogClose,
-  DialogHeader,
-  DialogTitle,
 } from "../ui/dialog"
 import { Label } from "../ui/label"
-import { Switch } from "../ui/switch"
 import { Button } from "../ui/button"
 import { useTranslation } from 'react-i18next';
 import { THEME } from "../../theme"
@@ -27,7 +24,10 @@ const AppleNotAvailablePopup = () => {
 
   return (
     <>
-      <Button onClick={() => setOpen(true)}>Apple</Button>
+      <Button 
+      onClick={() => setOpen(true)}
+      className={clsx(THEME.button.back(lightMode), "flex-1 border py-2 sm:py-2.5 rounded-md 0 transition text-sm sm:text-base")}
+      >Apple</Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>

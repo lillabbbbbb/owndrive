@@ -10,9 +10,9 @@ const fs_1 = __importDefault(require("fs"));
 const diskStorage = multer_1.default.diskStorage({
     destination: function (req, file, cb) {
         // What's the actual path here?
-        console.log("🔍 Multer saving to:", path_1.default.join(__dirname, '../public/images'));
+        console.log("🔍 Multer saving to:", path_1.default.join(__dirname, '../../public/images'));
         console.log("🔍 __dirname is:", __dirname);
-        const uploadPath = path_1.default.join(__dirname, '../public/images');
+        const uploadPath = path_1.default.join(__dirname, '../../public/images');
         // Check if directory exists
         if (!fs_1.default.existsSync(uploadPath)) {
             console.log("❌ Directory doesn't exist, creating it...");
@@ -28,8 +28,8 @@ const diskStorage = multer_1.default.diskStorage({
         cb(null, filename);
     }
 });
-const memoryStorage = multer_1.default.memoryStorage();
 exports.uploadToDisk = (0, multer_1.default)({ storage: diskStorage });
+const memoryStorage = multer_1.default.memoryStorage();
 const uploadToMemory = (0, multer_1.default)({ storage: memoryStorage });
 exports.default = uploadToMemory;
 //# sourceMappingURL=multer-config.js.map

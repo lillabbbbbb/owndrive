@@ -1,11 +1,8 @@
-import React from 'react'
 import { useState } from "react"
 //https://ui.shadcn.com/docs/components/radix/dialog
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
 } from "../ui/dialog"
 import {
   Select,
@@ -18,7 +15,6 @@ import { Label } from "../ui/label"
 import { Button } from "../ui/button"
 import { MultiSelect } from '../Multiselect'
 import { Filter, Filters } from '../main_components/Home';
-import { Text } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { THEME } from "../../theme"
 import { useAppContext } from '../context/globalContext';

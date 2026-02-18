@@ -1,18 +1,13 @@
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../components/ui/dropdown-menu"
-import { LucideMenu, LucideLogOut, LucideSettings, LucideUser } from "lucide-react"
-import { IUserTest, IFileTest } from "../App"
+import { LucideLogOut, LucideSettings, LucideUser } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import ProfilePicDialog from "./popups/ProfilePicDialog"
 import { useEffect, useState } from "react"
-import { useUser } from "../hooks/useUser"
 import { useAppContext } from "./context/globalContext";
-import CustomDialog from './popups/CustomDialog';
 import { useTranslation } from "react-i18next"
 import { IUserFrontend } from "../types/User"
 import { toast } from "sonner"
-import { MODES, LANGUAGES } from "../types/other"
-import { LIGHT_MENUITEM_CLASSES, DARK_MENUITEM_CLASSES } from "../types/classNames"
 import clsx from "clsx"
 import { THEME } from "../theme"
 import { useTheme } from "../components/context/ThemeContext"
@@ -38,16 +33,17 @@ function SettingsDropdownMenu() {
 
   useEffect(() => {
 
-    console.log("User has changed")
+    if (openProfilePicDialog) return
+
     const loadProfilePic = async () => {
       const pic = await getProfilePic()
       console.log(pic)
       if (pic) {
         setProfilePic(`http://localhost:8000${pic.path}`)
-        loadProfilePic()
       }
     }
-  }, [user])
+    loadProfilePic()
+  }, [user, openProfilePicDialog])
 
   useEffect(() => {
 
@@ -100,6 +96,7 @@ function SettingsDropdownMenu() {
           <DropdownMenuTrigger asChild>
             <Avatar className="cursor-pointer">
               <AvatarImage
+                key={profilePic}
                 src={profilePic ?? undefined}
               />
               <AvatarFallback>{user?.email ? user.email[0].toUpperCase() : "U"}</AvatarFallback>

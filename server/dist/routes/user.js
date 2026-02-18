@@ -1,13 +1,10 @@
 "use strict";
 //This file handles all requests that are sent when a user is authenticated
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const Image_1 = require("../models/Image");
 const User_1 = require("../models/User");
-const multer_config_1 = __importDefault(require("../middleware/multer-config"));
+const multer_config_1 = require("../middleware/multer-config");
 const userValidation_1 = require("../middleware/userValidation");
 const userRouter = (0, express_1.Router)();
 userRouter.use(userValidation_1.validateUserToken);
@@ -49,7 +46,7 @@ userRouter.get("/me", async (req, res) => {
     }
 });
 //UPDATE Upload or change profile picture
-userRouter.patch("/me", multer_config_1.default.single("file"), async (req, res) => {
+userRouter.patch("/me", multer_config_1.uploadToDisk.single("image"), async (req, res) => {
     try {
         console.log("🔥 PATCH /me endpoint HIT!");
         console.log("Has file?", !!req.file);
@@ -68,7 +65,7 @@ userRouter.patch("/me", multer_config_1.default.single("file"), async (req, res)
         if (!user)
             return res.status(404).json({ message: 'User not found' });
         // Prepare image data
-        const imgPath = `/images/${req.file.originalname}`;
+        const imgPath = `/images/${req.file.filename}`;
         const imageData = {
             filename: filename,
             description: "profile pic",

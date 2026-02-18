@@ -1,31 +1,21 @@
-import React from 'react'
 import { useState, useEffect } from "react"
-import Select, { components } from 'react-select';
+import Select from 'react-select';
 import type { MultiValue, ActionMeta } from "react-select";
 //https://ui.shadcn.com/docs/components/radix/dialog
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
 } from "../ui/dialog"
 import {
   Field,
   FieldContent,
   FieldDescription,
-  FieldGroup,
   FieldLabel,
 } from "../ui/field"
-import { Label } from "../ui/label"
 import { Switch } from "../ui/switch"
 import { Button } from "../ui/button"
-import { MultiSelect } from '../Multiselect'
-import { Filter, Filters } from '../main_components/Home';
-import { Text } from 'lucide-react';
 import { HiShare } from "react-icons/hi2";
-import { useFiles } from '../../hooks/useFiles';
 import { useAppContext } from "../context/globalContext";
-import CustomDialog from '../popups/CustomDialog';
 import { IFileFrontend } from '../../types/File';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -42,8 +32,8 @@ export type customOption = {
 export function SharePopup() {
 
   const { t } = useTranslation()
-const { lightMode } = useAppContext()
-  const { currentFileId, getFile, updateFile, getAllUsernames, filesLoading, filesError } = useAppContext()
+  const { lightMode } = useAppContext()
+  const { currentFileId, getFile, updateFile, getAllUsernames, user, filesLoading, filesError } = useAppContext()
 
 
   const [file, setFile] = useState<{ file: IFileFrontend, permissions: string[], base64data: string } | null>(null)
@@ -69,13 +59,17 @@ const { lightMode } = useAppContext()
   }, []);
 
   useEffect(() => {
+    setShortUrl(`http://localhost:3000/${user?._id}/${currentFileId}`)
+  }, [])
+
+  useEffect(() => {
     if (!file) return
 
     const filteredEmails = (file.file.canEdit).map(id => {
       const match = options.find(opt => opt.value === id);
       return match;
     })
-    .filter((match): match is customOption => !!match); // TypeScript now knows it's string[]
+      .filter((match): match is customOption => !!match); // TypeScript now knows it's string[]
 
     setSelectedEmails(filteredEmails)
   }, [])
@@ -122,64 +116,68 @@ const { lightMode } = useAppContext()
 
   return (
     file && <>
-      <Button className={clsx(THEME.button.primary(lightMode))}  onClick={() => setOpen(true)}><HiShare className="w-5 h-5" /></Button>
+
+      <Button className={clsx(THEME.button.primary(lightMode))} onClick={() => setOpen(true)}><HiShare className="w-5 h-5" /></Button>
+
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
+        <DialogContent
+          className={clsx(
+            THEME.background.card(lightMode),
+            "w-auto max-w-[95vw] sm:max-w-[500px] p-0"
+          )}
+        >
           {/*<DialogHeader>
             <DialogTitle>Yes</DialogTitle>
           </DialogHeader>*/}
 
-          <div className={clsx(THEME.background.popup(lightMode), "flex flex-col gap-4")} >
-
-            <Field orientation="horizontal" className='mt-5'>
-              <FieldContent>
-                <FieldLabel htmlFor="copy-link-text">{shortUrl}</FieldLabel>
-              </FieldContent>
-              <Button className={clsx(THEME.button.primary(lightMode))} onClick={() => handleCopy()}>{t("share.copy_link")}</Button>
-            </Field>
-
-            <Field orientation="horizontal">
-              <FieldContent>
-                <FieldLabel htmlFor="visible-to-guests">{t("share.show_for_guests:toggle")}</FieldLabel>
-                <FieldDescription>
-                  ...
-                </FieldDescription>
-              </FieldContent> 
-
-              <Switch id="visible-to-guest" className={clsx(THEME.toggle.track(lightMode), THEME.toggle.thumb(lightMode), THEME.toggle.focus)} onCheckedChange={(c) => updateFile(currentFileId!, { visibleToGuests: c })} /> //visible to guest
-            </Field>
-
-
-            <Select<customOption, true>
-              isMulti
-              options={options}
-              onInputChange={(value) => {
-                //console.log(value)
-                if (value.length < 6) {
-                  // hide dropdown
-                  setAddUsersMenuOpen(false);
-                  console.log("menu closed")
-                } else {
-                  setAddUsersMenuOpen(true);
-                }
-              }}
-              value={selectedEmails}
-              onChange={(newValue: MultiValue<customOption>, actionMeta: ActionMeta<customOption>) => {
-                updateFile(currentFileId!, { canEdit: newValue.map((v: customOption) => v.value) }) //set who can edit
-                setSelectedEmails ([...newValue])
-              }}
-
-              menuIsOpen={addUsersMenuOpen}
-              onBlur={() => setAddUsersMenuOpen(false)}
-            />
-          </div>
+          <Field orientation="horizontal" className='mt-5'>
+            <FieldContent>
+              <FieldLabel htmlFor="copy-link-text">{shortUrl}</FieldLabel>
+            </FieldContent>
+            <Button className={clsx(THEME.button.primary(lightMode))} onClick={() => handleCopy()}>{t("share.copy-link")}</Button>
+          </Field>
 
           <Field orientation="horizontal">
             <FieldContent>
-              <FieldLabel htmlFor="is-private">{t("editor-buttons.make_private")}</FieldLabel>
+              <FieldLabel htmlFor="visible-to-guests">{t("share.show-for-guests")}</FieldLabel>
               <FieldDescription>
-                {t("editor-buttons.make_private")}
+                ...
+              </FieldDescription>
+            </FieldContent>
+
+            <Switch id="visible-to-guest" className={clsx(THEME.toggle.track(lightMode), THEME.toggle.thumb(lightMode), THEME.toggle.focus, "[&>span]:bg-white [&>span]:data-[state=checked]:bg-orange-200")} onCheckedChange={(c) => updateFile(currentFileId!, { visibleToGuests: c })} />
+          </Field>
+
+
+          <Select<customOption, true>
+            isMulti
+            options={options}
+            onInputChange={(value) => {
+              //console.log(value)
+              if (value.length < 6) {
+                // hide dropdown
+                setAddUsersMenuOpen(false);
+                console.log("menu closed")
+              } else {
+                setAddUsersMenuOpen(true);
+              }
+            }}
+            value={selectedEmails}
+            onChange={(newValue: MultiValue<customOption>, actionMeta: ActionMeta<customOption>) => {
+              updateFile(currentFileId!, { canEdit: newValue.map((v: customOption) => v.value) }) //set who can edit
+              setSelectedEmails([...newValue])
+            }}
+
+            menuIsOpen={addUsersMenuOpen}
+            onBlur={() => setAddUsersMenuOpen(false)}
+          />
+
+          <Field orientation="horizontal">
+            <FieldContent>
+              <FieldLabel htmlFor="is-private">{t("editor-buttons.make-private")}</FieldLabel>
+              <FieldDescription>
+                {t("editor-buttons.make-private")}
               </FieldDescription>
             </FieldContent>
             <Switch
@@ -188,11 +186,8 @@ const { lightMode } = useAppContext()
               onCheckedChange={(c) => { updateFile(currentFileId!, { private: c }) }} //set is private
             />
           </Field>
-
-
-
         </DialogContent>
-      </Dialog>
+      </Dialog >
     </>
   )
 }

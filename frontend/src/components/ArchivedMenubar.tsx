@@ -1,6 +1,4 @@
-import React, { useState } from 'react'
 import { Button } from "./ui/button"
-import { IFileFrontend } from '../types/File'
 import { useAppContext } from './context/globalContext'
 import { useTranslation } from 'react-i18next'
 import { THEME } from "../theme"

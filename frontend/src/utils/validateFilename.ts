@@ -1,4 +1,4 @@
-export const isValidFileName = (filename: string) => {
+export const isValidFilename = (filename: string) => {
     if (!filename || filename.trim() === "") return false;
 
   // Only allow letters, numbers, spaces, dots, dashes, underscores

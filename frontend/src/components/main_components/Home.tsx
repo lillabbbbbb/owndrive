@@ -1,21 +1,13 @@
 import { useMemo, useState, useEffect, type ChangeEvent } from 'react'
-import { TextField, Autocomplete } from "@mui/material";
 import SortingDropdown from '../SortingDropdown';
 import FilesTable from '../Table';
-import EditorButtons from '../EditorButtons';
 import { Input } from "../ui/input";
 import { Button } from "../ui/button"
 import { ControlledFilterDialog } from '../popups/FilterPopup';
 import { customOption } from '../popups/FilterPopup';
 import UploadFileDialog from "../popups/UploadFileDialog"
-//import { IFile } from "../../../../server/src/models/File"
-//import { IUser } from "../../../../server/src/models/User"
 import { useNavigate } from "react-router-dom";
-import { useUser } from '../../hooks/useUser';
-import { useFiles } from '../../hooks/useFiles';
 import { useAppContext } from "../context/globalContext";
-import CustomDialog from '../popups/CustomDialog';
-import { config } from 'process';
 import { IFileFrontend } from '../../types/File';
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner';
@@ -194,21 +186,23 @@ const Home = () => {
   const matchSearch = (data: IFileFrontend[], keyword?: string) => {
 
     //show all results if no keyword is given
-    if (!keyword || keyword === "") return data
+    if (!keyword || keyword.trim() === "") return data
 
 
     return data.filter((file) => {
-      const filename = file.filename.toLowerCase();
-      const creator = file.created_by.toLowerCase();
+      const filename = file.filename.toLowerCase()
+      const creator = file.created_by.toLowerCase()
+      const content = file.content?.toLowerCase()
 
-      const matchesFilename = filename.includes(keyword);
-      const matchesCreator = creator.includes(keyword);
+      const matchesFilename = filename.includes(keyword.toLowerCase());
+      const matchesCreator = creator.includes(keyword.toLowerCase());
+      const matchesContent = content?.includes(keyword.toLowerCase()) || false;
 
       console.log(
-        `Checking user: filename="${filename}", creator="${creator}", keyword="${keyword}" => filenameMatch=${matchesFilename}, creatorMatch=${matchesCreator}`
+        `Checking user: filename="${filename}", creator="${creator}", content="${content}", keyword="${keyword}" => filenameMatch=${matchesFilename}, creatorMatch=${matchesCreator}, contentMatch=${matchesContent}`
       );
 
-      return matchesFilename || matchesCreator;
+      return matchesFilename || matchesCreator || matchesContent;
     });
 
   }
@@ -314,7 +308,7 @@ const Home = () => {
   }
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.trim()
+    const value = e.target.value
     setSearchKeyword(value)
     //console.log("Keyword changed to " + value)
 

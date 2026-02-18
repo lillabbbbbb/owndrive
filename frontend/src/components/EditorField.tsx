@@ -10,7 +10,7 @@ import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from './context/globalContext';
 import { getFileCategory } from "../../../server/src/types/file"
-import React, { useState } from "react";
+import { useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import * as mammoth from "mammoth";
 import { THEME } from "../theme"
