@@ -56,7 +56,7 @@ const Home = () => {
 
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const { user, files = [], getFiles, getFile, updateFile, setCurrentFileId, restoreAllArchived, deleteAllArchived, userLoading, userError, filesLoading, filesError } = useAppContext()
+  const { user, files = [], getFiles, getUsername, getFile, updateFile, setCurrentFileId, restoreAllArchived, deleteAllArchived, userLoading, userError, filesLoading, filesError } = useAppContext()
 
   const { lightMode } = useAppContext()
   const [isClicked, setClicked] = useState(false)
@@ -64,6 +64,7 @@ const Home = () => {
   const [searchKeyword, setSearchKeyword] = useState("")
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
   const [showingArchives, setShowingArchives] = useState<boolean>(false)
+  const [ownerOptions, setOwnerOptions] = useState<customOption[]>([]);
 
   //console.log(localStorage.getItem("token"))
 
@@ -78,6 +79,24 @@ const Home = () => {
   //console.log(fileTypes)
   //console.log(ownerNames)
   //console.log(files.toLocaleString)
+
+  useEffect(() => {
+  const loadOwners = async () => {
+    const results = await Promise.all(
+      ownerNames.map(async (id) => {
+        const name = await getUsername(id);
+        return {
+          label: name ?? "Unknown",
+          value: id,
+        };
+      })
+    );
+
+    setOwnerOptions(results);
+  };
+
+  loadOwners();
+}, [ownerNames]);
 
   const [filters, setFilters] = useState<Filters>({
     fileTypes: new Set(),
@@ -101,10 +120,7 @@ const Home = () => {
   }
   const ownerFilter: Filter<customOption> = {
     label: "filter-options.by-owner",
-    options: ownerNames.map(owner => ({      // fileTypes = [...new Set(data.map(d => d.file_type))]
-      label: owner,
-      value: owner,
-    })),
+    options: ownerOptions,
     type: "multi",
     selected: filters.owners,
     onChange: (newSet) => {

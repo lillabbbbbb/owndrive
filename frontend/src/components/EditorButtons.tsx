@@ -55,7 +55,7 @@ const EditorButtons = ({ htmlContent }: EditorButtonsProps) => {
 
         </TooltipTrigger>
         <TooltipContent className={clsx(THEME.tooltip.base(lightMode),)} side="top">
-          {t("editor-buttons.share")}
+          {t("editor-buttons.share-button")}
         </TooltipContent>
       </Tooltip>
 
