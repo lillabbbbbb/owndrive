@@ -10,7 +10,6 @@ import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/globalContext";
 import { IFileFrontend } from '../../types/File';
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner';
 import { THEME } from "../../theme"
 import clsx from 'clsx';
 
@@ -73,13 +72,6 @@ const Home = () => {
     setCurrentFileId(null)
     sessionStorage.removeItem("fileId")
   }, []);
-
-  useEffect(() => {
-    toast.error(filesError)
-    if (filesLoading || userLoading) {
-    }
-    toast.error(userError)
-  }, [filesError, filesLoading, userError, userLoading])
 
   const fileTypes = [...new Set((files || []).map((file: IFileFrontend) => file.file_type))]
   const ownerNames = [...new Set((files || []).map((file: IFileFrontend) => file.created_by))]

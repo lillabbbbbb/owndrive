@@ -130,7 +130,8 @@ export function useFiles() {
     setError(null);
     try {
       const res = await axios.patch<IFileFrontend>(`/api/files/${id}`, updates);
-      console.log("File successfully updated")
+      toast.success("File successfully updated")
+      
       return res.data;
     } catch (err) {
       handleError(err);

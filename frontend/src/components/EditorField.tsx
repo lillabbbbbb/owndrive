@@ -110,8 +110,8 @@ function EditorMenu({ editor }: { editor: Editor }) {
         >
           Code
         </Button>
-        <button onClick={() => editor.chain().focus().unsetAllMarks().run()}>Clear marks</button>
-        <button onClick={() => editor.chain().focus().clearNodes().run()}>Clear nodes</button>
+        <button className={clsx(THEME.button.editor(lightMode), !editor?.isEditable && DISABLED_BUTTON,)} onClick={() => editor.chain().focus().unsetAllMarks().run()} disabled={!editor?.isEditable}>Clear marks</button>
+        <button className={clsx(THEME.button.editor(lightMode), !editor?.isEditable && DISABLED_BUTTON,)} onClick={() => editor.chain().focus().clearNodes().run()} disabled={!editor?.isEditable}>Clear nodes</button>
         <button
           onClick={() => editor.chain().focus().setParagraph().run()}
           disabled={!editor?.isEditable}
@@ -233,12 +233,12 @@ function EditorMenu({ editor }: { editor: Editor }) {
         >
           Blockquote
         </button>
-        <button className={clsx(THEME.button.editor(lightMode),)} onClick={() => editor.chain().focus().setHorizontalRule().run()} disabled={!editor?.isEditable}>Horizontal rule</button>
-        <button className={clsx(THEME.button.editor(lightMode),)} onClick={() => editor.chain().focus().setHardBreak().run()} disabled={!editor?.isEditable}>Hard break</button>
-        <button className={clsx(THEME.button.editor(lightMode),)} onClick={() => editor.chain().focus().undo().run()} disabled={!editor?.isEditable}>
+        <button className={clsx(THEME.button.editor(lightMode),!editor?.isEditable && DISABLED_BUTTON,)} onClick={() => editor.chain().focus().setHorizontalRule().run()} disabled={!editor?.isEditable}>Horizontal rule</button>
+        <button className={clsx(THEME.button.editor(lightMode),!editor?.isEditable && DISABLED_BUTTON,)} onClick={() => editor.chain().focus().setHardBreak().run()} disabled={!editor?.isEditable}>Hard break</button>
+        <button className={clsx(THEME.button.editor(lightMode),!editor?.isEditable && DISABLED_BUTTON,)} onClick={() => editor.chain().focus().undo().run()} disabled={!editor?.isEditable}>
           Undo
         </button>
-        <button className={clsx(THEME.button.editor(lightMode),)} onClick={() => editor.chain().focus().redo().run()} disabled={!editor?.isEditable}>
+        <button className={clsx(THEME.button.editor(lightMode),!editor?.isEditable && DISABLED_BUTTON,)} onClick={() => editor.chain().focus().redo().run()} disabled={!editor?.isEditable}>
           Redo
         </button>
       </div>
@@ -307,7 +307,8 @@ const EditorField = forwardRef<HTMLDivElement, EditorFieldProps>(({ content, set
     async function loadFile() {
       switch (category) {
         case "editable":
-          if (currentFile?.file.file_type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+          if (currentFile?.file.mime_type === "application/json") {
+            setContent(currentFile.file.content ?? "");
             const content: string = "<your string>";
             const encoder = new TextEncoder();
             const buffer = encoder.encode(content); // Uint8Array
@@ -371,7 +372,6 @@ const EditorField = forwardRef<HTMLDivElement, EditorFieldProps>(({ content, set
   switch (category) {
     case "editable":
       if (currentFile.file.mime_type === "application/json") {
-        setContent(currentFile.file.content!)
         return (
           <div>
             <EditorMenu editor={editor} />

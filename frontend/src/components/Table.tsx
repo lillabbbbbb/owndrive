@@ -160,7 +160,7 @@ export default function FilesTable({ sortedFilteredData }: TableProps) {
             {(currentRows || []).map((file) => (
 
               <TableRow className={clsx(THEME.table.row(lightMode), THEME.table.hover(lightMode), "text-left w-auto whitespace-nowrap px-4 py-2")} key={file._id} onClick={() => handleRowSingleClick(file)} onDoubleClick={() => handleRowDoubleClick(file)}>
-                {columns.includes(COLUMN_NAMES[0]) && <TableCell className="whitespace-nowrap pr-16 py-2">{`${file.filename} (${file._id})`}</TableCell>}
+                {columns.includes(COLUMN_NAMES[0]) && <TableCell className="whitespace-nowrap pr-16 py-2">{`${file.filename}`}</TableCell>}
                 {columns.includes(COLUMN_NAMES[1]) && <TableCell className="whitespace-nowrap pr-16 py-2">{file.file_type}</TableCell>}
                 {columns.includes(COLUMN_NAMES[3]) && <TableCell className="whitespace-nowrap pr-16 py-2">{usernamesMap[file.created_by]}</TableCell>}
                 {columns.includes(COLUMN_NAMES[2]) && <TableCell className="whitespace-nowrap pr-16 py-2">{new Date(file.last_edited_at).toLocaleDateString()}</TableCell>}

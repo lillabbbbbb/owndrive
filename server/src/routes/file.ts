@@ -365,23 +365,23 @@ fileRouter.get("/:fileId",
 
             //CHECK IF TOKEN BELONGS TO ...
             //(1) if the token belongs to the author of the file
-            if (existingFile.created_by === userId) {
+            console.log(existingFile.created_by.toString())
+            console.log(userId)
+            if (existingFile.created_by.toString() === userId) {
                 permissions.accessType = "owner"
                 //RETURN HERE
-                return res.status(200).json(permissions)
             }
-
+            //(2) check if token is missing (=guest user) AND file not private
+            else if(!existingFile.private && !req.user){
+                permissions.accessType = "guest"
+            }
+            //(3) check if otheruser AND haspermission (view or edit!)
+            else if (existingFile?.canView.includes(userId)) permissions.accessType = "viewer"
+            else if (existingFile?.canView.includes(userId)) permissions.accessType = "editor"
 
             //check if file is set to private
             permissions.private = existingFile?.private
 
-            //(2) check if token is missing (=guest user) AND file not private
-            if(!existingFile.private && !req.user){
-                permissions.accessType = "guest"
-            }
-            //(3) check if otheruser AND haspermission (view or edit!)
-            if (existingFile?.canView.includes(userId)) permissions.accessType = "viewer"
-            else if (existingFile?.canView.includes(userId)) permissions.accessType = "editor"
 
             const baseData = existingFile.data?.toString("base64") || null
 

@@ -14,7 +14,6 @@ import {
 import { useAppContext } from "../context/globalContext";
 import { Button } from "../ui/button"
 import { useTranslation } from "react-i18next"
-import { toast } from "sonner"
 import { THEME } from "../../theme"
 import clsx from "clsx"
 import { LucideUpload, LucideSave } from "lucide-react"
@@ -47,10 +46,6 @@ const ProfilePicDialog = ({ open, setOpen }: ProfilePicDialogProps) => {
             setChosenFile(undefined)
         }
     }, [open])
-
-    useEffect(() => {
-        if (userError) toast.error(userError)
-    }, [userError])
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
         const file = e.target.files?.[0]

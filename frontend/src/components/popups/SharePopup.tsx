@@ -16,9 +16,8 @@ import { Switch } from "../ui/switch"
 import { Button } from "../ui/button"
 import { HiShare } from "react-icons/hi2";
 import { useAppContext } from "../context/globalContext";
-import { IFileFrontend } from '../../types/File';
+import { fileType, IFileFrontend } from '../../types/File';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
 import { THEME } from "../../theme"
 import clsx from 'clsx';
 
@@ -36,7 +35,7 @@ export function SharePopup() {
   const { currentFileId, getFile, updateFile, getAllUsernames, user, filesLoading, filesError } = useAppContext()
 
 
-  const [file, setFile] = useState<{ file: IFileFrontend, permissions: string[], base64data: string } | null>(null)
+  const [file, setFile] = useState<fileType | null>(null)
   const [open, setOpen] = useState<boolean>(false)
   const [copied, setCopied] = useState(false);
   const [shortUrl, setShortUrl] = useState(`http://localhost:3000/user/file`);
@@ -75,16 +74,11 @@ export function SharePopup() {
   }, [])
 
   useEffect(() => {
-    toast.error(filesError)
-    if (filesLoading) {
-    }
-  }, [filesLoading, filesError])
-
-  useEffect(() => {
     if (!currentFileId) return;
 
     const loadFile = async () => {
       const f = await getFile(currentFileId); // await the Promise
+      if(!f) return
       setFile(f);
     };
 

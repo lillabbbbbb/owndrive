@@ -3,15 +3,7 @@ import { Tooltip, TooltipTrigger, TooltipContent } from "../components/ui/toolti
 import SharePopup from './popups/SharePopup';
 import { ClonePopup } from './popups/ClonePopup';
 import { useAppContext } from "./context/globalContext";
-import { toast } from 'sonner';
 import { THEME } from "../theme"
-import {
-  Dialog,
-  DialogContent,
-  DialogClose,
-} from "./ui/dialog"
-import { Label } from "./ui/label"
-import { Button } from "./ui/button"
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { useTheme } from "../components/context/ThemeContext"
@@ -24,16 +16,10 @@ const EditorButtons = ({ htmlContent }: EditorButtonsProps) => {
 
   const { t } = useTranslation()
   const { lightMode } = useTheme()
-  const { downloadPDF, currentFileId, currentFile, updateFile, filesLoading, filesError } = useAppContext()
+  const { downloadPDF, currentFileId, currentFile, user, updateFile, filesLoading, filesError } = useAppContext()
   const [PDFDialogOpen, setPDFDialogOpen] = useState<boolean>(false)
 
   console.log(currentFileId)
-
-  useEffect(() => {
-    toast.error(filesError)
-    if (filesLoading) {
-    }
-  }, [filesError, filesLoading])
 
   const handlePDFButtonClick = () => {
     //console.log("PDF button clicked, cool sonner banner should appear after successful download")
@@ -90,28 +76,7 @@ const EditorButtons = ({ htmlContent }: EditorButtonsProps) => {
         </TooltipContent>
       </Tooltip>
 
-      <Dialog open={PDFDialogOpen} onOpenChange={setPDFDialogOpen}>
-        <DialogContent>
-          {/*<DialogHeader>
-            <DialogTitle>Yes</DialogTitle>
-          </DialogHeader>*/}
-
-          <div className="flex flex-col gap-4">
-
-            <Label>{("This feature is not available yet.")}</Label>
-
-            <Label>
-              ...</Label>
-
-          </div>
-          <DialogClose asChild>
-            <Button variant="outline">OK</Button>
-          </DialogClose>
-
-        </DialogContent>
-      </Dialog>
-
-      {currentFile?.file.status === "active" ? 
+      {user ? currentFile?.file.status === "active" ? 
       <Tooltip>
         <TooltipTrigger asChild>
           <button
@@ -139,7 +104,9 @@ const EditorButtons = ({ htmlContent }: EditorButtonsProps) => {
           {t("archive.restore")}
         </TooltipContent>
       </Tooltip>
-      }
+      :
+      <div></div>
+}
       
 
     </div >

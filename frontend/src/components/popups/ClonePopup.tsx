@@ -17,7 +17,6 @@ import {
 import { useAppContext } from "../context/globalContext";
 import { isValidFilename } from '../../utils/validateFilename';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
 import { THEME } from "../../theme"
 import clsx from 'clsx';
 
@@ -39,12 +38,6 @@ export function ClonePopup() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [isInvalidName, setIsInvalidName] = useState(false);
-
-  useEffect(() => {
-        toast.error(filesError)
-        if(filesLoading){
-        }
-    }, [filesError, filesLoading])
 
   // Check if the input is valid & unique
   const isValidAndUnique = (): boolean => {
@@ -81,7 +74,7 @@ export function ClonePopup() {
 
   return (
     <>
-      <Button onClick={() => setOpen(true)}>{t("dialog.clone.clone-action")}</Button>
+      <Button className={clsx(THEME.button.secondary(lightMode))} onClick={() => setOpen(true)}>{t("dialog.clone.clone-action")}</Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>

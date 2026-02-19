@@ -35,11 +35,15 @@ const Editor = () => {
     const [editable, setEditable] = useState<boolean>(false) //turn this into useEffect
 
     useEffect(() => {
-
+        console.log(usedBy)
         const isOtherUser: boolean = (beingUsed && !!user && usedBy != user._id)
-
-        setEditable(!isOtherUser || !!user)
+        const isOwner = currentFile?.permissions.accessType === "owner"
+        setEditable(isOwner && (!isOtherUser || !!user))
     }, [user, beingUsed, usedBy])
+
+    useEffect(() => {
+        console.log(editable)
+    }, [editable])
 
     if (currentFile?.permissions.private) {
         navigate("/login")
@@ -68,6 +72,7 @@ const Editor = () => {
                 setCanEdit(currentFile.file.canEdit)
                 setCanView(currentFile.file.canView)
                 setIsPrivate(currentFile.file.private)
+                setUsedBy(currentFile.file.usedBy?.toString() || null)
 
                 console.log(currentFile.file.content)
                 console.log(currentFile)
@@ -189,11 +194,11 @@ const Editor = () => {
                     className="text-xl font-semibold"
                 />
                 <div className="flex gap-2">
-                    <Button className={clsx(THEME.button.primary(lightMode))} onClick={handleSave}>
+                    {user && <Button className={clsx(THEME.button.primary(lightMode))} onClick={handleSave} disabled={!editable}>
                         {t("editor.save")}
-                    </Button>
+                    </Button>}
 
-                    <EditorButtons htmlContent={content} />
+                    <EditorButtons htmlContent={content}/>
                 </div>
             </div>
 

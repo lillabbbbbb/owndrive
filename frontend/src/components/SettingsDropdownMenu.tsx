@@ -7,7 +7,6 @@ import { useEffect, useState } from "react"
 import { useAppContext } from "./context/globalContext";
 import { useTranslation } from "react-i18next"
 import { IUserFrontend } from "../types/User"
-import { toast } from "sonner"
 import clsx from "clsx"
 import { THEME } from "../theme"
 import { useTheme } from "../components/context/ThemeContext"
@@ -23,13 +22,6 @@ function SettingsDropdownMenu() {
   const [user, setUser] = useState<IUserFrontend | null>(null)
   const [openProfilePicDialog, setOpenProfilePicDialog] = useState<boolean>(false)
   const [profilePic, setProfilePic] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (userLoading) {
-      toast.warning(userLoading);
-    }
-    toast.warning(userError)
-  }, [userError, userLoading]);
 
   useEffect(() => {
 

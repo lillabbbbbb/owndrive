@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-
 import { Button } from "../ui/button"
 import '@mantine/core/styles.css';
 // ‼️ import dropzone styles after core package styles
@@ -8,7 +6,6 @@ import { useAppContext } from "../context/globalContext";
 import { useNavigate } from 'react-router-dom';
 import { useDropzone } from "react-dropzone";
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
 import { THEME } from "../../theme" 
 import clsx from 'clsx';
 
@@ -19,12 +16,6 @@ const UploadFileDialog = () => {
   const navigate = useNavigate()
 const { lightMode } = useAppContext()
   const { user, setCurrentFileId, createFile, uploadFile, filesLoading, filesError } = useAppContext()
-
-  useEffect(() => {
-    toast.error(filesError)
-    if (filesLoading) {
-    }
-  }, [filesError, filesLoading])
 
   const handleFileUpload = async (file: File) => {
 
