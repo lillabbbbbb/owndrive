@@ -39,6 +39,12 @@ const EditorButtons = ({ htmlContent }: EditorButtonsProps) => {
     updateFile(currentFileId!, { status: "archived" })
   }
 
+  const handleRestoreButtonClick = () => {
+    //console.log("Delete button clicked, reassuring window should pop up")
+    //set file's status to "archived"
+    updateFile(currentFileId!, { status: "active" })
+  }
+
 
   return (
     <div>
@@ -94,7 +100,7 @@ const EditorButtons = ({ htmlContent }: EditorButtonsProps) => {
         <Tooltip>
       <TooltipTrigger asChild>
           <button
-            onClick={() => handleDeleteButtonClick()}
+            onClick={() => handleRestoreButtonClick()}
             className={clsx(THEME.button.secondary(lightMode),)}
           >
             Restore

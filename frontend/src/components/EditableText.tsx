@@ -54,6 +54,10 @@ const { lightMode } = useTheme()
           setEditing(true)
           setDraft(value)
         }}
+        onPointerUp={() => {
+          setEditing(true)
+          setDraft(value)
+        }}
         className="cursor-text"
       >
         {value}
