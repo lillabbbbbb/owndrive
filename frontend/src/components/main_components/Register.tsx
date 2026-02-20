@@ -8,18 +8,22 @@ import { useAppContext } from '../context/globalContext';
 
 const Register = () => {
 
+    //import variables and functions from hooks
     const { t } = useTranslation()
     const { lightMode } = useAppContext()
 
+    //States
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-
+    //Handle registration form submission
     const handleSubmit = async (e: FormEvent) => {
+        //Prvent default page reload
         e.preventDefault();
         console.log({ email, username, password });
 
+        //call API endpoint directly. Honestly I made this at the very beginning and haven't refactored, but this should be happening through a hook for consistency
         const response = await fetch("/api/auth/register", {
             method: "POST",
             headers: {
@@ -33,6 +37,7 @@ const Register = () => {
 
         })
 
+        //
         if (response.ok) {
             const data = await response.json()
             localStorage.setItem("token", data.token)

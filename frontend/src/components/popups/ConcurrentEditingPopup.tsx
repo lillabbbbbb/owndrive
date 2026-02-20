@@ -12,6 +12,7 @@ import clsx from 'clsx';
 
 const ConcurrentEditingPopup = () => {
 
+  //import variables and functions from hooks
   const { t } = useTranslation()
   const { lightMode } = useAppContext()
   const [open, setOpen] = useState<boolean>(true)

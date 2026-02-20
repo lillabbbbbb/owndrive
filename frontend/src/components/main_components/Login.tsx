@@ -9,31 +9,30 @@ import clsx from "clsx";
 
 const Login = () => {
 
+    //import variables and functions from hooks
     const { t } = useTranslation()
     const { lightMode } = useAppContext()
     const navigate = useNavigate()
     const { login } = useAppContext()
 
+    //States
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const jwt = localStorage.getItem("token")
 
-
+    //Handle login form submission
     const handleSubmit = async (e: FormEvent) => {
+        //Prevent page refresh
         e.preventDefault();
         console.log({ email, password });
-
         const token = await login(
             email,
             password)
 
         if (!token) {
-            // Handle error - don't navigate!
+            // Handle error, don't navigate
             return;
         }
         navigate("/home")
-
-        //display loading while localStorage.getItem("token") is not found
     };
 
     const handleGoogleClick = () => {

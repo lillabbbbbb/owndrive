@@ -25,12 +25,15 @@ type ProfilePicDialogProps = {
 
 const ProfilePicDialog = ({ open, setOpen }: ProfilePicDialogProps) => {
 
+    //import variables and functions from hooks
     const { t } = useTranslation()
     const { lightMode, updateProfilePic, getProfilePic, userLoading, userError } = useAppContext()
 
+    //States
     const [preview, setPreview] = useState<string | null>(null)
     const [chosenFile, setChosenFile] = useState<File>()
 
+    //Load preview of current profile pic, if found, upon page load
     useEffect(() => {
         const loadProfilePic = async () => {
             const pic = await getProfilePic()
@@ -40,6 +43,7 @@ const ProfilePicDialog = ({ open, setOpen }: ProfilePicDialogProps) => {
         loadProfilePic()
     }, [])
 
+    //Reset the image blob after closing the dialog (this is important so that a previously previewed image that was not saved should not be shown there next time.)
     useEffect(() => {
         if (!open) {
             setPreview(null)
@@ -47,6 +51,7 @@ const ProfilePicDialog = ({ open, setOpen }: ProfilePicDialogProps) => {
         }
     }, [open])
 
+    //Set the image preview according to the chosen file
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
         const file = e.target.files?.[0]
         if (!file) return
@@ -54,6 +59,7 @@ const ProfilePicDialog = ({ open, setOpen }: ProfilePicDialogProps) => {
         setPreview(URL.createObjectURL(file))
     }
 
+    //Event handler for saving profile pic change
     const handleSave = async () => {
         if (!chosenFile) return
         await updateProfilePic(chosenFile)

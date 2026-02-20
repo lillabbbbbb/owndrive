@@ -19,11 +19,13 @@ type UseUserReturn = {
 
 export function useUser(): UseUserReturn {
 
+  //States
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
 
+  //Helper arrow function to check if the token is valid (true) or not (e.g. expired)
   const isTokenValid = (token: string | null) => {
     if (!token) return false;
 
@@ -62,6 +64,7 @@ export function useUser(): UseUserReturn {
   }, []);
 
 
+  //Get all user's emails from DB (I know the function name is misleading)
   const getAllUsernames = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -76,6 +79,7 @@ export function useUser(): UseUserReturn {
     }
   }, []);
 
+  //Get the email of a specific user
   const getUsername = useCallback(async (userId : string) => {
     setLoading(true);
     setError(null);
@@ -155,6 +159,7 @@ export function useUser(): UseUserReturn {
     return
   }, []);
 
+  //Automatically log user out when the token changes and is no longer valid
   useEffect(() => {
 
     if (!isTokenValid(token)) {
@@ -164,6 +169,7 @@ export function useUser(): UseUserReturn {
   }, [token])
 
 
+  //Handle login
   const login = useCallback(async (email: string, password: string) => {
     setLoading(true);
     setError(null);

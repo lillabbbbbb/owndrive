@@ -31,10 +31,13 @@ type ClonePopupProps = {
 }
 
 export function ClonePopup() {
+
+  //import variables and functions from hooks
   const {t} = useTranslation()
   const { lightMode } = useAppContext()
   const { currentFileId, user, files, getFile, createFile, filesLoading, filesError } = useAppContext();
 
+  //States
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [isInvalidName, setIsInvalidName] = useState(false);
@@ -48,6 +51,7 @@ export function ClonePopup() {
     return !existingNames.includes(input);
   };
 
+  //Event handler for saving clone
   const handleSave = async () => {
     if (!user || !currentFileId) return;
 
@@ -57,8 +61,10 @@ export function ClonePopup() {
     }
 
     const originalFile = await getFile(currentFileId);
+    //If the file that is to be cloned does not exist, do not proceed
     if (!originalFile) return;
 
+    //Call appropriate hook to create the file
     await createFile({
       created_by: user._id,
       filename: input,

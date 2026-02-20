@@ -9,14 +9,15 @@ type CustomCursorProps = {
 type CursorState = 'default' | 'pointer' | 'text' | 'disabled' | 'loading';
 
 export default function CustomCursor({ src, size = 40 }: CustomCursorProps) {
+    //import variable from hook
     const { lightMode } = useTheme()
 
+    //States
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
     const [cursorState, setCursorState] = useState<CursorState>('default');
     const [cursorSize, setCursorSize] = useState(24);
 
-    // Define sizes and styles for different states
     // Define sizes and styles for different states
     const cursorConfig = {
         default: {
@@ -46,6 +47,7 @@ export default function CustomCursor({ src, size = 40 }: CustomCursorProps) {
         }
     };
 
+    //Update the style of the cursor based on its current target (what it is touching)
     useEffect(() => {
         const handleMouseMove = (e: MouseEvent) => {
             setMousePos({ x: e.clientX, y: e.clientY });

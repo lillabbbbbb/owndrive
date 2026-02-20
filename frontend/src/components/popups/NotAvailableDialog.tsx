@@ -15,8 +15,11 @@ import clsx from 'clsx';
 
 const NotAvailablePopup = () => {
 
-const {t} = useTranslation()
-const { lightMode } = useAppContext()
+    //import variables and functions from hooks
+    const { t } = useTranslation()
+    const { lightMode } = useAppContext()
+
+    //States
     const [open, setOpen] = useState<boolean>(false)
 
     return (

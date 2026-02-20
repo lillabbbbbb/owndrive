@@ -7,6 +7,7 @@ exports.uploadToDisk = void 0;
 const multer_1 = __importDefault(require("multer"));
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
+//Disk storage
 const diskStorage = multer_1.default.diskStorage({
     destination: function (req, file, cb) {
         // What's the actual path here?
@@ -29,6 +30,7 @@ const diskStorage = multer_1.default.diskStorage({
     }
 });
 exports.uploadToDisk = (0, multer_1.default)({ storage: diskStorage });
+//Memory storage
 const memoryStorage = multer_1.default.memoryStorage();
 const uploadToMemory = (0, multer_1.default)({ storage: memoryStorage });
 exports.default = uploadToMemory;

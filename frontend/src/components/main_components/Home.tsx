@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next'
 import { THEME } from "../../theme"
 import clsx from 'clsx';
 
+//the values of sortingTypes are strings displayed on the screen, they are written in accordance with the i18n logic
 export const sortingTypes = {
   by_last_modified: "home.sort-option.last-modified",
   by_name_ascending: "home.sort-option.by-name-ascending",
@@ -23,6 +24,7 @@ export const sortingTypes = {
 
 const DEFAULT_FILE_NAME = "New file"
 
+//Defining Filter type
 type FilterValue = string | Set<string>
 export interface Filter<customOption> {
   label: string,                    // human-readable label
@@ -32,17 +34,20 @@ export interface Filter<customOption> {
   onChange: (newValue: FilterValue) => void // update callback
 }
 
+//Interface that consists of all the existing filters
 export interface Filters {
   fileTypes: Set<string>
   owners: Set<string>
   date: string,
   status: string
 }
-
+//Statuses
 export const statuses = {
   ACTIVE: { label: "filter-options.status.active", value: "Active" },
   ARCHIVED: { label: "filter-options.status.archived", value: "Archived" }
 } as const;
+
+//Date filters
 enum datesEnum {
   NONE = "filter-options.date-options.none",
   EDITED_TODAY = "filter-options.date-options.edited-today",
@@ -54,32 +59,32 @@ enum datesEnum {
 
 const Home = () => {
 
+  //import variables and functions from hooks
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { user, files = [], getFiles, getUsername, getFile, updateFile, setCurrentFileId, restoreAllArchived, deleteAllArchived, userLoading, userError, filesLoading, filesError } = useAppContext()
 
+  //States
   const { lightMode } = useAppContext()
-  const [isClicked, setClicked] = useState(false)
-  const [selectedSorting, setSelectedSorting] = useState(sortingTypes.by_last_modified)
+  const [selectedSorting, setSelectedSorting] = useState(sortingTypes.by_last_modified) //the default sorting is "last modified"
   const [searchKeyword, setSearchKeyword] = useState("")
-  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
-  const [showingArchives, setShowingArchives] = useState<boolean>(false)
-  const [ownerOptions, setOwnerOptions] = useState<customOption[]>([]);
+  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null); //handling results search debounce
+  const [showingArchives, setShowingArchives] = useState<boolean>(false) //this is used to decide what action buttons should be visible
+  const [ownerOptions, setOwnerOptions] = useState<customOption[]>([]); //owner filter's options
 
-  //console.log(localStorage.getItem("token"))
 
+  //Reset the selected file to null
   useEffect(() => {
     getFiles();
     setCurrentFileId(null)
     sessionStorage.removeItem("fileId")
   }, []);
 
+  //store the fileTypes and owners' ids which will be displayed as options of the filters
   const fileTypes = [...new Set((files || []).map((file: IFileFrontend) => file.file_type))]
   const ownerNames = [...new Set((files || []).map((file: IFileFrontend) => file.created_by))]
-  //console.log(fileTypes)
-  //console.log(ownerNames)
-  //console.log(files.toLocaleString)
 
+  //This code snippet is a helper to display the email address of each user as a filter option, instead of showing their userid
   useEffect(() => {
   const loadOwners = async () => {
     const results = await Promise.all(
@@ -98,6 +103,7 @@ const Home = () => {
   loadOwners();
 }, [ownerNames]);
 
+  //filters state keeps track of all the filters
   const [filters, setFilters] = useState<Filters>({
     fileTypes: new Set(),
     owners: new Set(),
@@ -105,6 +111,7 @@ const Home = () => {
     status: statuses.ACTIVE.value
   })
 
+  //Declaring the filters with all the necessary information, handling their onChange events
   const fileTypeFilter: Filter<customOption> = {
     label: "filter-options.by-file-type",
     options: fileTypes.map(fileType => ({      // fileTypes = [...new Set(data.map(d => d.file_type))]
@@ -153,11 +160,8 @@ const Home = () => {
   }
   const filterConfigs = [fileTypeFilter, ownerFilter, dateFilter, statusFilter]
 
-  //console.log(selectedSorting)
   //apply sorting to the table data and set the sortedData's new state
   const sortTable = (files: IFileFrontend[], sorting?: string) => {
-    //console.log("sorting the data in progress..")
-
 
     let sortedArray: IFileFrontend[] = []
 
@@ -191,6 +195,7 @@ const Home = () => {
     return sortedArray
   }
 
+  //Filter based on search keywork
   const matchSearch = (data: IFileFrontend[], keyword?: string) => {
 
     //show all results if no keyword is given
@@ -202,9 +207,10 @@ const Home = () => {
       const creator = file.created_by.toLowerCase()
       const content = file.content?.toLowerCase()
 
+      //Compare values regardless of upper or lower case
       const matchesFilename = filename.includes(keyword.toLowerCase());
       const matchesCreator = creator.includes(keyword.toLowerCase());
-      const matchesContent = content?.includes(keyword.toLowerCase()) || false;
+      const matchesContent = content?.includes(keyword.toLowerCase()) || false; //Some files (like images) do not have a humanly readable content.
 
       console.log(
         `Checking user: filename="${filename}", creator="${creator}", content="${content}", keyword="${keyword}" => filenameMatch=${matchesFilename}, creatorMatch=${matchesCreator}, contentMatch=${matchesContent}`
@@ -215,6 +221,7 @@ const Home = () => {
 
   }
 
+  //Helper function generated by ChatGPT
   function isEditedToday(file: IFileFrontend) {
     const edited = new Date(file.last_edited_at)
     const today = new Date()
@@ -224,19 +231,21 @@ const Home = () => {
       edited.getFullYear() === today.getFullYear()
     )
   }
+  //Helper function generated by ChatGPT
   function isEditedWithin(file: IFileFrontend, days: number) {
     const edited = new Date(file.last_edited_at)
     const cutoff = new Date()
     cutoff.setDate(cutoff.getDate() - days)
     return edited >= cutoff
   }
+  //Helper function generated by ChatGPT
   function isOlderThan(file: IFileFrontend, days: number) {
     const edited = new Date(file.last_edited_at)
     const cutoff = new Date()
     cutoff.setDate(cutoff.getDate() - days)
     return edited < cutoff
   }
-
+  //Filter based on the selected filters
   const applyFilters = (files: IFileFrontend[], passedFilters: Filters = filters) => {
     // First, determine if we're showing archives
     setShowingArchives(passedFilters.status === statuses.ARCHIVED.value)
@@ -275,11 +284,13 @@ const Home = () => {
           dateMatch = true
       }
 
+      //Check for status match
       const statusMatch = passedFilters.status.toLowerCase() === file.status
 
       console.log(file.filename)
       console.log(file.status)
 
+      //Return only items that match all filters
       return fileTypeMatch && creatorMatch && dateMatch && statusMatch
     })
 
@@ -287,6 +298,7 @@ const Home = () => {
     return filteredFiles
   }
 
+  //useMemo helps prevent unneccessary DB fetches when the files, search, filters or sorting didn't change
   const sortedFilteredData = useMemo(() => {
     if (!files || files.length === 0) return [];
 
@@ -303,18 +315,21 @@ const Home = () => {
     return sorted;
   }, [files, filters, searchKeyword, selectedSorting]);
 
+  //Event handler for clicking on creating a new file
   const handleCreateNewClick = () => {
     console.log("Create new button clicked")
 
     //Redirect to editor page
-    navigate(`/${user?.username}/${DEFAULT_FILE_NAME}`)
+    navigate(`/${user?._id}/${DEFAULT_FILE_NAME}`)
 
   }
 
+  //Event handler for applying sorting
   const handleChangeSorting = (sorting: string) => {
     setSelectedSorting(sorting)
   }
 
+  //Event handler search keyword change
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setSearchKeyword(value)
@@ -332,10 +347,12 @@ const Home = () => {
     setDebounceTimeout(timeout);
   }
 
+  //Event handler that calls hook to restore all archives
   const handleRestoreAll = () => {
     restoreAllArchived()
   }
 
+  //Event handler that calls hook to permanently delete all archives
   const handleDeleteAll = () => {
     deleteAllArchived()
   }

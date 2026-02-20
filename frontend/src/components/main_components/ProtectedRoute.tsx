@@ -7,8 +7,7 @@ type ProtectedRouteProps = {
   isLoading?: boolean
 };
 
-//use this in the component where the routing is
-//wrap each route into this
+//wrap a route into this (e.g. Home) if that route should be shown only in a specific condition
 export function ProtectedRoute({ children, condition, isLoading }: ProtectedRouteProps) {
 
   if (isLoading) return <div>Loading...</div>;

@@ -10,17 +10,18 @@ import { THEME } from "../../theme"
 
 const Header = () => {
 
-
+    //import variables and functions from hooks
     const { t } = useTranslation()
     const { lightMode } = useAppContext()
     const navigate = useNavigate()
+
+
     const jwt = localStorage.getItem("token")
+
+    //Header states
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-    useEffect(() => {
-        console.log("jwt changed")
-    }, [jwt])
-
+    //Event handler for clicking on home button (which is actually the logo)
     const handleHomeClick = () => {
         console.log("Home button clicked")
         navigate("/home")

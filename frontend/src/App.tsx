@@ -15,6 +15,7 @@ import { useTheme } from "../src/components/context/ThemeContext"
 
 //tailwind css class hardcoded variables can come here
 
+//This tyoe was used in the initial testing of the frontend before it was connected with the DB
 export interface IFileTest {
   _id: string,
   created_at: Date,
@@ -44,14 +45,18 @@ export interface IUserTest {
   files: IFileTest[]
 }
 
+//Maybe one day this cursor will be implemented
 const cursorSrc = "/cursor.png"
 
 
 function App() {
 
+  //Import variable from hook
   const { lightMode } = useTheme()
 
   console.log("lightMode value:", lightMode)
+
+  //Pass the token to axios upon page load
   useEffect(() => {
     axios.interceptors.request.use(config => {
       const token = localStorage.getItem("token");

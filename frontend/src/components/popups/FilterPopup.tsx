@@ -34,7 +34,7 @@ enum dateOptions {
   OLDER_THAN_1_YEAR = "Older than a year"
 }
 
-
+//Filters are passed as props from the parent
 type FilterDialogProps = {
   filters: Filter<customOption>[],
   onChange: (newFilters: Filters) => void   // callback to update parent
@@ -44,9 +44,12 @@ export function ControlledFilterDialog({ filters, onChange }: FilterDialogProps)
 
   //Note: active filters could be stored in session storage
 
+  //import variables and functions from hooks
   const { t } = useTranslation()
   const { lightMode } = useAppContext()
 
+
+  //States
   const [open, setOpen] = useState<boolean>(false)
 
   return (

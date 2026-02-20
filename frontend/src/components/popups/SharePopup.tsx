@@ -30,11 +30,12 @@ export type customOption = {
 
 export function SharePopup() {
 
+  //import variables and functions from hooks
   const { t } = useTranslation()
   const { lightMode } = useAppContext()
   const { currentFileId, getFile, updateFile, getAllUsernames, user, filesLoading, filesError } = useAppContext()
 
-
+  //States
   const [file, setFile] = useState<fileType | null>(null)
   const [open, setOpen] = useState<boolean>(false)
   const [copied, setCopied] = useState(false);
@@ -44,6 +45,7 @@ export function SharePopup() {
   const [selectedEmails, setSelectedEmails] = useState<customOption[]>([])
 
 
+  //Map the emails of each user to the menu
   useEffect(() => {
     const fetchUsers = async () => {
       const usernames = await getAllUsernames();
@@ -57,10 +59,12 @@ export function SharePopup() {
     fetchUsers();
   }, []);
 
+  //Set the copyable link to the current URL correctly upon page load. This ofc assumes that only the file's creator has access to the share popup
   useEffect(() => {
     setShortUrl(`http://localhost:3000/${user?._id}/${currentFileId}`)
   }, [])
 
+  //Map the selected user ids to their usernames, upon first load
   useEffect(() => {
     if (!file) return
 
@@ -68,11 +72,12 @@ export function SharePopup() {
       const match = options.find(opt => opt.value === id);
       return match;
     })
-      .filter((match): match is customOption => !!match); // TypeScript now knows it's string[]
+      .filter((match): match is customOption => !!match);
 
     setSelectedEmails(filteredEmails)
   }, [])
 
+  //Whenever the currentFileId changes, load the file again
   useEffect(() => {
     if (!currentFileId) return;
 
@@ -87,6 +92,7 @@ export function SharePopup() {
   }, [currentFileId, getFile]);
 
 
+  //Just for development logging
   useEffect(() => {
     if (!file) return
     console.log("This file is " + (!file.file.private ? "not " : "") + "private.");

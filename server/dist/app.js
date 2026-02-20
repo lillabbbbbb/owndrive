@@ -45,7 +45,8 @@ app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
 app.use((0, morgan_1.default)("dev"));
 app.use((0, cors_1.default)());
-app.use(body_parser_1.default.json({ limit: "10mb" }));
+app.use(body_parser_1.default.json({ limit: "10mb" })); //Max request body size is 10MB
+//routers and other endpoints
 app.use('/images', express_1.default.static(path_1.default.join(__dirname, '../public/images')));
 app.use("/api/", index_1.default);
 app.use("/api/users/", user_1.default);

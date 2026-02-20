@@ -15,19 +15,21 @@ import { useTheme } from "../components/context/ThemeContext"
 
 
 const LanguageDropdown = () => {
-
+    //import variables and functions from hooks
     const { i18n } = useTranslation()
     const { lightMode } = useTheme()
     const { lang, setLang } = useAppContext()
+
+    //shorten the change language function call
     const changeLanguage = (lang: string) => {
         i18n.changeLanguage(lang)
     }
 
-    //Note: language choice should be stored in browser's local storage
-
+    //States
     const triggerRef = useRef<HTMLButtonElement>(null)
     const [contentWidth, setContentWidth] = useState<number | undefined>()
 
+    //Render the dropdown's width whenever another option gets chosen
     useLayoutEffect(() => {
         if (triggerRef.current) {
             setContentWidth(triggerRef.current.offsetWidth)

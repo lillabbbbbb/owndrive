@@ -37,6 +37,7 @@ export function useFiles() {
     toast.error(error)
   };
 
+  //Get all files of a user
   const getFiles = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -56,6 +57,7 @@ export function useFiles() {
     }
   }, []);
 
+  //Get a specific file of a user based on file ID
   const getFile = useCallback(async (id: string) => {
     setLoading(true);
     setError(null);
@@ -70,6 +72,7 @@ export function useFiles() {
     }
   }, []);
 
+  //POST request to create a new file with given data
   const createFile = useCallback(async (fileData: Partial<IFileFrontend>) => {
     setLoading(true);
     setError(null);
@@ -84,6 +87,7 @@ export function useFiles() {
     }
   }, []);
 
+  //POST request to upload a file 
   const uploadFile = useCallback(async (file: File) => {
     setLoading(true);
     setError(null);
@@ -109,7 +113,7 @@ export function useFiles() {
     }
   }, []);
 
-
+  //Update all files of a user that match a specific filter criteria (e.g. status == "archived")
   const batchUpdateFiles = useCallback(async (filters: Partial<IFileFrontend>, updates: Partial<IFileFrontend>) => {
     setLoading(true);
     setError(null);
@@ -125,6 +129,7 @@ export function useFiles() {
     }
   }, []);
 
+  //PUT request to update a file of a user based on fileId
   const updateFile = useCallback(async (id: string, updates: Partial<IFileFrontend>) => {
     setLoading(true);
     setError(null);
@@ -141,6 +146,7 @@ export function useFiles() {
     }
   }, []);
 
+  //Restore user's files, using previously defined hooks and constant string values
   const restoreAllArchived = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -159,6 +165,7 @@ export function useFiles() {
     }
   }, [])
 
+  //Delete user's files, using previously defined hooks and constant string values
   const deleteAllArchived = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -175,6 +182,7 @@ export function useFiles() {
     }
   }, [])
 
+  //Lock a file, based on fileId
   const lockFile = useCallback(async (id: string, lockedById: string) => {
     setLoading(true);
     setError(null);
@@ -189,6 +197,7 @@ export function useFiles() {
     }
   }, []);
 
+  //Unlock a file, based on fileId
   const unlockFile = useCallback(async (id: string) => {
     setLoading(true);
     setError(null);
@@ -203,6 +212,7 @@ export function useFiles() {
     }
   }, []);
 
+  //Get the locked status of a file (= is it being used or not)
   const getLockStatus = useCallback(async (id: string) => {
     setLoading(true);
     setError(null);
@@ -217,7 +227,7 @@ export function useFiles() {
     }
   }, []);
 
-
+  //Delete a file baed on fileID
   const deleteFile = useCallback(async (id: string) => {
     setLoading(true);
     setError(null);
@@ -232,6 +242,7 @@ export function useFiles() {
     }
   }, []);
 
+  //Download PDf using backend route
   const downloadPDF = useCallback(async (html: string) => {
     setLoading(true);
     setError(null);

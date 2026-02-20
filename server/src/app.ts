@@ -52,11 +52,10 @@ app.use(passport.initialize())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(morgan("dev"))
-
 app.use(cors());
-app.use(bodyParser.json({ limit: "10mb" }));
+app.use(bodyParser.json({ limit: "10mb" })); //Max request body size is 10MB
 
-
+//routers and other endpoints
 app.use('/images', express.static(path.join(__dirname, '../public/images')))
 app.use("/api/", router)
 app.use("/api/users/", userRouter)

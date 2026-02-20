@@ -2,7 +2,7 @@ import { Dialog as HeadlessDialog } from "@headlessui/react";
 import { useState } from "react";
 
 type DialogProps = {
-    heading?: string,
+  heading?: string,
   text: string;
 };
 import { useTranslation } from "react-i18next";
@@ -11,11 +11,13 @@ import { useAppContext } from "../context/globalContext";
 import clsx from "clsx";
 
 
-const CustomDialog = ({ heading, text}: DialogProps) => {
+const CustomDialog = ({ heading, text }: DialogProps) => {
 
-  const {t} = useTranslation()
-  
-const { lightMode } = useAppContext()
+  //import variables and functions from hooks
+  const { t } = useTranslation()
+  const { lightMode } = useAppContext()
+
+  //States
   const [open, setOpen] = useState(true)
 
   return (

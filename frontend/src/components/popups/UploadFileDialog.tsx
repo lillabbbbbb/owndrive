@@ -6,17 +6,18 @@ import { useAppContext } from "../context/globalContext";
 import { useNavigate } from 'react-router-dom';
 import { useDropzone } from "react-dropzone";
 import { useTranslation } from 'react-i18next';
-import { THEME } from "../../theme" 
+import { THEME } from "../../theme"
 import clsx from 'clsx';
 
 
 const UploadFileDialog = () => {
-
+  //import variables and functions from hooks
   const { t } = useTranslation()
   const navigate = useNavigate()
-const { lightMode } = useAppContext()
+  const { lightMode } = useAppContext()
   const { user, setCurrentFileId, createFile, uploadFile, filesLoading, filesError } = useAppContext()
 
+  //Event handler for uploading file
   const handleFileUpload = async (file: File) => {
 
     if (!user) return
@@ -50,6 +51,7 @@ const { lightMode } = useAppContext()
     }
   }
 
+  //Implement dropzone. This snippet was from ChatGPT and don't exactly know how it works
   const { getInputProps, open } = useDropzone({
     noClick: true,
     noKeyboard: true,

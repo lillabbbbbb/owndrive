@@ -1,3 +1,4 @@
+//Helper arrow function to determine whether a filename is valid to be saved
 export const isValidFilename = (filename: string) => {
     if (!filename || filename.trim() === "") return false;
 

@@ -2,6 +2,7 @@ import multer, {StorageEngine, Multer} from "multer"
 import path from 'path'
 import fs from 'fs'
 
+//Disk storage
 const diskStorage: StorageEngine = multer.diskStorage({
     destination: function (req, file, cb) {
       // What's the actual path here?
@@ -28,7 +29,7 @@ const diskStorage: StorageEngine = multer.diskStorage({
 })
 export const uploadToDisk: Multer = multer({ storage: diskStorage })
 
-
+//Memory storage
 const memoryStorage: StorageEngine = multer.memoryStorage()
 const uploadToMemory: Multer = multer({ storage: memoryStorage })
 

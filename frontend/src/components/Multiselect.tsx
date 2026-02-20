@@ -24,8 +24,11 @@ interface MultiSelectProps {
 
 export function MultiSelect({ options, value, onChange }: MultiSelectProps) {
 
+  //import variables and functions from hooks
   const { t } = useTranslation()
   const { lightMode } = useTheme()
+
+  
   const toggle = (val: string) => {
     const next = new Set(value) // copy the current Set from props
     if (next.has(val)) next.delete(val) // remove if already selected

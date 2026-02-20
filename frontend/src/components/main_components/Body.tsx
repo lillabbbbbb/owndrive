@@ -10,16 +10,17 @@ import {useTheme} from "../context/ThemeContext"
 
 
 const Body = () => {
+
+  //import variables and functions from hooks
   const { t } = useTranslation()
   const {lightMode} = useTheme()
-  const jwt = localStorage.getItem("token")
-
   const { currentFileId, getFile, currentFile, user, editorReady, userLoading, filesLoading } = useAppContext()
 
-  console.log(user)
-  console.log(currentFile)
+  //Token
+  const jwt = localStorage.getItem("token")
   
 
+  //This code snippet below was for a previous version of the app but I don't dare to delete it yet
   if (!editorReady) {
     return <div>Loading...</div>; // wait for user and file to load
   }

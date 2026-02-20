@@ -14,34 +14,32 @@ interface EditorButtonsProps {
 
 const EditorButtons = ({ htmlContent }: EditorButtonsProps) => {
 
+  //import variables and functions from hooks
   const { t } = useTranslation()
   const { lightMode } = useTheme()
   const { downloadPDF, currentFileId, currentFile, user, updateFile, filesLoading, filesError } = useAppContext()
+
+  //States
   const [PDFDialogOpen, setPDFDialogOpen] = useState<boolean>(false)
 
   console.log(currentFileId)
 
   const handlePDFButtonClick = () => {
-    //console.log("PDF button clicked, cool sonner banner should appear after successful download")
-
-    //setPDFDialogOpen(true)
-
-    //Handle PDF download logic
-    //console.log(htmlContent)
     downloadPDF(htmlContent)
 
-    //display sonner
+    //should display sonner toast, but that is yet to be implemented
 
   }
+
+  //Event handler for deleting a file
   const handleDeleteButtonClick = () => {
-    //console.log("Delete button clicked, reassuring window should pop up")
-    //set file's status to "archived"
+    //set file's status to "archived" by callign appropriate hook
     updateFile(currentFileId!, { status: "archived" })
   }
 
+  //Event handler for restoring a file
   const handleRestoreButtonClick = () => {
-    //console.log("Delete button clicked, reassuring window should pop up")
-    //set file's status to "archived"
+    //set file's status to "archived" by calling appropriate hook
     updateFile(currentFileId!, { status: "active" })
   }
 
@@ -82,38 +80,38 @@ const EditorButtons = ({ htmlContent }: EditorButtonsProps) => {
         </TooltipContent>
       </Tooltip>
 
-      {user ? currentFile?.file.status === "active" ? 
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <button
-            onClick={() => handleDeleteButtonClick()}
-            className={clsx(THEME.button.dangerous(lightMode),)}
-          >
-            Delete
-          </button>
-        </TooltipTrigger>
-        <TooltipContent className={clsx(THEME.tooltip.base(lightMode),)} side="top">
-          {t("archive.delete")}
-        </TooltipContent>
-      </Tooltip>
+      {user ? currentFile?.file.status === "active" ?
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => handleDeleteButtonClick()}
+              className={clsx(THEME.button.dangerous(lightMode),)}
+            >
+              Delete
+            </button>
+          </TooltipTrigger>
+          <TooltipContent className={clsx(THEME.tooltip.base(lightMode),)} side="top">
+            {t("archive.delete")}
+          </TooltipContent>
+        </Tooltip>
         :
         <Tooltip>
-      <TooltipTrigger asChild>
-          <button
-            onClick={() => handleRestoreButtonClick()}
-            className={clsx(THEME.button.secondary(lightMode),)}
-          >
-            Restore
-          </button>
-        </TooltipTrigger>
-        <TooltipContent className={clsx(THEME.tooltip.base(lightMode),)} side="top">
-          {t("archive.restore")}
-        </TooltipContent>
-      </Tooltip>
-      :
-      <div></div>
-}
-      
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => handleRestoreButtonClick()}
+              className={clsx(THEME.button.secondary(lightMode),)}
+            >
+              Restore
+            </button>
+          </TooltipTrigger>
+          <TooltipContent className={clsx(THEME.tooltip.base(lightMode),)} side="top">
+            {t("archive.restore")}
+          </TooltipContent>
+        </Tooltip>
+        :
+        <div></div>
+      }
+
 
     </div >
   )

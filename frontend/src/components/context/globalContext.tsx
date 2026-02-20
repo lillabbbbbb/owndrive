@@ -8,6 +8,7 @@ import { IImageFrontend } from "../../types/Image";
 import {  LANGUAGES } from "../../types/other"
 import { fileType } from "../../types/File";
 
+//Defining the AppContextType
 export interface AppContextType {
   user: IUserFrontend | null;
   userLoading: boolean;
@@ -58,6 +59,7 @@ export interface AppContextType {
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);
 
+//this will be called by the individual components to access the global states
 export const useAppContext = (): AppContextType => {
   const context = useContext(AppContext);
   if (!context) throw new Error("useAppContext must be used within AppProvider");
@@ -69,6 +71,8 @@ export const useAppContext = (): AppContextType => {
 interface AppProviderProps {
   children: ReactNode;
 }
+
+//App.tsx is wrapped in this AppProvider so that all its child components can access its states and methods
 export const AppProvider = ({ children }: AppProviderProps) => {
   const userHook = useUser();
   const filesHook = useFiles();
@@ -86,10 +90,12 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     setLang(localStorage.getItem("i18nextLng")?.toUpperCase() ?? LANGUAGES.en)
   }, [])
 
+  //modify the localStorage when mode changes
   useEffect(() => {
     localStorage.setItem("lightMode", String(lightMode))
   }, [lightMode])
 
+  //modify the localStorage when language changes
   useEffect(() => {
     localStorage.setItem("lang", lang)
   }, [lang])
@@ -105,8 +111,6 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         const token = localStorage.getItem("token");
         if (token) {
           const userRes = await userHook.getUser();
-          // validate backend response
-
           setUser(userRes)
         }
 
@@ -132,6 +136,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     initApp();
   }, []);
 
+  //load the current file when currentFileId changes
   useEffect(() => {
     const load = async () => {
       if (currentFileId) {
@@ -146,6 +151,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   }, [currentFileId])
 
 
+  //fetch the current file's data from the database
   const getCurrentFile = async () => {
     const fileId = sessionStorage.getItem("fileId")
     if (!fileId) return null;
@@ -173,19 +179,23 @@ export const AppProvider = ({ children }: AppProviderProps) => {
 
 
   const login = async (email: string, password: string) => {
+    //Use hook to get the user, 
     const userFromHook = await userHook.login(email, password);
     if (userFromHook) {
+      //Then store the logged in user's data in state
       setUser(userFromHook); // propagate state to provider
     }
     return userFromHook;
   };
 
+  //Logout
   const logout = async () => {
     console.log("Logout is called")
     await userHook.logout();
     setUser(null); // propagate state
   };
 
+  //Create file: backend call
   const createFile = async (fileData: Partial<IFileFrontend>) => {
     const createdFileFromHook = await filesHook.createFile(fileData)
     if (createdFileFromHook) {
@@ -197,6 +207,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     return createdFileFromHook;
   }
 
+  //Update Profile Picture
   const updateProfilePic = async (file: File) => {
 
     const res = await userHook.updateProfilePic(file)
@@ -204,11 +215,13 @@ export const AppProvider = ({ children }: AppProviderProps) => {
       console.log("Profile picture successfully updated")
       // Refresh user to get new profile_pic populated
       const updatedUser = await userHook.getUser();
+      //Update user state
       if (updatedUser) setUser(updatedUser)
     }
     return res
   }
 
+  //Helper method to check if filename is unique
   const isUniqueFilename = async (filename: string) => {
     const files: IFileFrontend[] | null = await filesHook.getFiles()
     const existingFilenames = files?.map((f) => f.filename)
@@ -216,6 +229,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     return !existingFilenames?.includes(filename)
   }
 
+  //Call the backend API endpoint that handles PDF download
   const downloadPDF = async (html: string) => {
     const response = await filesHook.downloadPDF(html)
     if (!response) {
@@ -232,6 +246,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
 
   }
 
+  //All of these below are served as a prop to the provider
   const value = {
     // User state
     user: user,

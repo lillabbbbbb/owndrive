@@ -3,7 +3,7 @@ import { useState, useRef, useLayoutEffect } from "react"
 import { useAppContext } from "./context/globalContext"
 import { THEME } from "../theme"
 import clsx from "clsx"
-import {useTheme} from "../components/context/ThemeContext"
+import { useTheme } from "../components/context/ThemeContext"
 
 type EditableTextProps = {
   value: string
@@ -19,16 +19,20 @@ export function EditableText(
     errorMessage = "Invalid file name"
   }: EditableTextProps) {
 
+  //import variables and functions from hooks
   const { currentFileId } = useAppContext()
-const { lightMode } = useTheme()
+  const { lightMode } = useTheme()
 
+
+  const spanRef = useRef<HTMLSpanElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+
+  //States
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(value)
   const [inputWidth, setInputWidth] = useState(0)
   const [isValid, setIsValid] = useState(true)
-
-  const spanRef = useRef<HTMLSpanElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
 
   // Update input width whenever text changes
   useLayoutEffect(() => {
@@ -38,6 +42,7 @@ const { lightMode } = useTheme()
     }
   }, [draft])
 
+  //Event handler for finishing editing
   const finishEditing = () => {
     const valid = validate(draft)
     setIsValid(valid)
@@ -75,7 +80,7 @@ const { lightMode } = useTheme()
         {draft || ""}
       </span>
 
-      <Input 
+      <Input
         ref={inputRef}
         autoFocus
         value={draft}
@@ -93,7 +98,7 @@ const { lightMode } = useTheme()
           }
         }}
         style={{ width: inputWidth }}
-        className={clsx(THEME.input.field(lightMode), "h-7 px-1 transition-colors duration-100",  isValid ? "" : "border border-red-500 outline-none", className)}
+        className={clsx(THEME.input.field(lightMode), "h-7 px-1 transition-colors duration-100", isValid ? "" : "border border-red-500 outline-none", className)}
       />
       {!isValid && (
         <div className="text-red-500 text-xs mt-1 absolute">

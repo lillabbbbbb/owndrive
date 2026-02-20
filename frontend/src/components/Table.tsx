@@ -27,22 +27,24 @@ type TableProps = {
 const COLUMN_NAMES = ["home.table-header.doc-name", "home.table-header.file-type", "home.table-header.created-by", "home.table-header.last-edited-at", "home.table-header.created-at"]
 
 export default function FilesTable({ sortedFilteredData }: TableProps) {
-
+  //import variables and functions from hooks
   const { t } = useTranslation()
   const { lightMode } = useTheme()
   const { getAllUsernames } = useAppContext()
+  const navigate = useNavigate()
+  const { setCurrentFileId, user } = useAppContext()
+  const lastClick = useRef(0);
 
   //console.log('📊 TABLE RECEIVED:', sortedFilteredData?.length, 'items');
   //console.log('Table data:', sortedFilteredData);
 
-  const navigate = useNavigate()
-  const { setCurrentFileId, user } = useAppContext()
-
+  //States
   const [usernamesMap, setUsernamesMap] = useState<Record<string, string>>({});
   const [columns, setColumns] = useState<string[]>(COLUMN_NAMES);
   const [currentPage, setCurrentPage] = useState(1);
   const ROWS_PER_PAGE = 12;
 
+  //Fetch all usernames in DB upon first page load
   useEffect(() => {
     const fetchAllUsernames = async () => {
       const allUsers = await getAllUsernames(); // fetch once
@@ -54,16 +56,19 @@ export default function FilesTable({ sortedFilteredData }: TableProps) {
     fetchAllUsernames();
   }, []);
 
+  //Event handler for double clicking on a table roq
   const handleRowDoubleClick = (file: IFileFrontend) => {
     console.log(`${file.filename} double-clicked, file should be opened in editor...`)
 
+    //Set the currentFileId based on what was clicked
     sessionStorage.setItem("fileId", file._id);
     setCurrentFileId(file._id)
+
+    //Open the editor
     navigate(`/${file.created_by}/${file._id}`)
   }
 
-  const lastClick = useRef(0);
-
+  //Event handler for detecting double tap on phones
   const handlePointerUp = (file: IFileFrontend) => {
     const now = Date.now();
     if (now - lastClick.current < 300) {
@@ -72,19 +77,23 @@ export default function FilesTable({ sortedFilteredData }: TableProps) {
     lastClick.current = now;
   };
 
+  //Event handler for single click
   const handleRowSingleClick = (file: IFileFrontend) => {
     console.log(`${file.filename} single-clicked, marked as currect file`)
 
+    //Set the currentFileId based on what was clicked
     sessionStorage.setItem("fileId", file._id);
     setCurrentFileId(file._id)
   }
 
+  //Only show the columns that are selected by the user
   const toggleColumn = (col: string) => {
     setColumns((prev) =>
       prev.includes(col) ? prev.filter((c) => c !== col) : [...prev, col]
     );
   };
 
+  //Pagination logic
   const totalPages = Math.ceil(sortedFilteredData.length / ROWS_PER_PAGE);
   const currentRows = sortedFilteredData.slice(
     (currentPage - 1) * ROWS_PER_PAGE,

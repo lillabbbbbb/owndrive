@@ -14,15 +14,18 @@ import { useTheme } from "../components/context/ThemeContext"
 
 function SettingsDropdownMenu() {
 
+  //import variables and functions from hooks
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { lightMode, toggle } = useTheme()
 
+  //States
   const { getProfilePic, logout, getUser, userLoading, userError } = useAppContext()
   const [user, setUser] = useState<IUserFrontend | null>(null)
   const [openProfilePicDialog, setOpenProfilePicDialog] = useState<boolean>(false)
   const [profilePic, setProfilePic] = useState<string | null>(null)
 
+  //Load the correct profile pic whenever the user changes or the profilepicdialog is closed
   useEffect(() => {
 
     if (openProfilePicDialog) return
@@ -37,6 +40,7 @@ function SettingsDropdownMenu() {
     loadProfilePic()
   }, [user, openProfilePicDialog])
 
+  //Load user upon first render
   useEffect(() => {
 
     console.log("User has changed")
@@ -50,11 +54,13 @@ function SettingsDropdownMenu() {
     loadUser()
   }, [])
 
+  //Event handler for logging out
   const handleLogout = () => {
     logout()
     navigate("/login")
   }
 
+  //Event handler for opening the profile pic change window
   const handleProfilePic = (event: Event) => {
     event.preventDefault()
     console.log("Change profile pic button clicked")
@@ -64,6 +70,7 @@ function SettingsDropdownMenu() {
 
   }
 
+  //Event handler for changing the mode (light and dark)
   const handleModeChange = () => {
     console.log("Mode button clicked")
 
@@ -77,6 +84,7 @@ function SettingsDropdownMenu() {
 
   }
 
+  //Just logging
   useEffect(() => {
     console.log(`Profile pic changed: ${profilePic}`)
   }, [user, profilePic])

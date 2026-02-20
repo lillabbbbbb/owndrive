@@ -16,6 +16,7 @@ import * as mammoth from "mammoth";
 import { THEME } from "../theme"
 import { useTheme } from "../components/context/ThemeContext"
 
+//This was an initial thing, but now I left these in here
 const BRIGHT_BUTTON_CLASS = ""
 const DISABLED_BUTTON = "opacity-50 cursor-not-allowed"
 
@@ -24,10 +25,14 @@ const extensions = [TextStyleKit, StarterKit]
 
 function EditorMenu({ editor }: { editor: Editor }) {
 
+  //import variables and functions from hooks
   const { t } = useTranslation()
   const { lightMode } = useTheme()
+
+
   const jwt = localStorage.getItem("token")
 
+  //State using Tiptap's built in useEditorState hook
   const editorState = useEditorState({
     editor,
     selector: ctx => {
@@ -233,12 +238,12 @@ function EditorMenu({ editor }: { editor: Editor }) {
         >
           Blockquote
         </button>
-        <button className={clsx(THEME.button.editor(lightMode),!editor?.isEditable && DISABLED_BUTTON,)} onClick={() => editor.chain().focus().setHorizontalRule().run()} disabled={!editor?.isEditable}>Horizontal rule</button>
-        <button className={clsx(THEME.button.editor(lightMode),!editor?.isEditable && DISABLED_BUTTON,)} onClick={() => editor.chain().focus().setHardBreak().run()} disabled={!editor?.isEditable}>Hard break</button>
-        <button className={clsx(THEME.button.editor(lightMode),!editor?.isEditable && DISABLED_BUTTON,)} onClick={() => editor.chain().focus().undo().run()} disabled={!editor?.isEditable}>
+        <button className={clsx(THEME.button.editor(lightMode), !editor?.isEditable && DISABLED_BUTTON,)} onClick={() => editor.chain().focus().setHorizontalRule().run()} disabled={!editor?.isEditable}>Horizontal rule</button>
+        <button className={clsx(THEME.button.editor(lightMode), !editor?.isEditable && DISABLED_BUTTON,)} onClick={() => editor.chain().focus().setHardBreak().run()} disabled={!editor?.isEditable}>Hard break</button>
+        <button className={clsx(THEME.button.editor(lightMode), !editor?.isEditable && DISABLED_BUTTON,)} onClick={() => editor.chain().focus().undo().run()} disabled={!editor?.isEditable}>
           Undo
         </button>
-        <button className={clsx(THEME.button.editor(lightMode),!editor?.isEditable && DISABLED_BUTTON,)} onClick={() => editor.chain().focus().redo().run()} disabled={!editor?.isEditable}>
+        <button className={clsx(THEME.button.editor(lightMode), !editor?.isEditable && DISABLED_BUTTON,)} onClick={() => editor.chain().focus().redo().run()} disabled={!editor?.isEditable}>
           Redo
         </button>
       </div>
@@ -252,14 +257,16 @@ type EditorFieldProps = {
   editable: boolean
 }
 const EditorField = forwardRef<HTMLDivElement, EditorFieldProps>(({ content, setContent, editable }, ref) => {
-
+  //import variables and functions from hooks
   const { currentFile } = useAppContext()
   const { lightMode } = useTheme()
   console.log(currentFile)
 
-
+  //States
   const [url, setUrl] = useState<string | null>(null)
+  const [numPages, setNumPages] = useState<number>(0);
 
+  //React's custom state for the editor
   const editor = useEditor({
     extensions,
     editable,
@@ -292,9 +299,8 @@ const EditorField = forwardRef<HTMLDivElement, EditorFieldProps>(({ content, set
     return null
   }
 
+  //This was part of an earlier version too. 
   pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
-
-  const [numPages, setNumPages] = useState<number>(0);
 
   useEffect(() => {
     if (!currentFile) {
@@ -360,7 +366,7 @@ const EditorField = forwardRef<HTMLDivElement, EditorFieldProps>(({ content, set
         <div className={clsx(THEME.editorField.base(lightMode), THEME.editorField.hover(lightMode))}>
           <EditorMenu editor={editor} />
           <div ref={ref}>
-            <EditorContent editor={editor} className="tiptap-editor prose prose-slate dark:prose-invert max-h-full"  />
+            <EditorContent editor={editor} className="tiptap-editor prose prose-slate dark:prose-invert max-h-full" />
           </div>
           <div>Word count: {content ? content.trim().split(/\s+/).filter(Boolean).length : 0}</div>
         </div>
