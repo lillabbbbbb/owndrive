@@ -12,9 +12,7 @@ import {useTheme} from "../context/ThemeContext"
 const Body = () => {
 
   //import variables and functions from hooks
-  const { t } = useTranslation()
-  const {lightMode} = useTheme()
-  const { currentFileId, getFile, currentFile, user, editorReady, userLoading, filesLoading } = useAppContext()
+  const { currentFile, user, editorReady } = useAppContext()
 
   //Token
   const jwt = localStorage.getItem("token")

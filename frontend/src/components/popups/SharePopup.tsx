@@ -16,7 +16,7 @@ import { Switch } from "../ui/switch"
 import { Button } from "../ui/button"
 import { HiShare } from "react-icons/hi2";
 import { useAppContext } from "../context/globalContext";
-import { fileType, IFileFrontend } from '../../types/File';
+import { fileType } from '../../types/File';
 import { useTranslation } from 'react-i18next';
 import { THEME } from "../../theme"
 import clsx from 'clsx';

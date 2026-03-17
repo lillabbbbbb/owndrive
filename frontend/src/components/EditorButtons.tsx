@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Tooltip, TooltipTrigger, TooltipContent } from "../components/ui/tooltip"
 import SharePopup from './popups/SharePopup';
 import { ClonePopup } from './popups/ClonePopup';

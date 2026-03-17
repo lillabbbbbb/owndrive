@@ -1,6 +1,5 @@
 
 import { useState } from 'react';
-import Select, { components } from 'react-select';
 //https://ui.shadcn.com/docs/components/radix/dialog
 import {
   Dialog,

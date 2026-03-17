@@ -15,7 +15,7 @@ const UploadFileDialog = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { lightMode } = useAppContext()
-  const { user, setCurrentFileId, createFile, uploadFile, filesLoading, filesError } = useAppContext()
+  const { user, setCurrentFileId, uploadFile} = useAppContext()
 
   //Event handler for uploading file
   const handleFileUpload = async (file: File) => {

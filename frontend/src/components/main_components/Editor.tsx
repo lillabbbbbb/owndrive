@@ -7,7 +7,6 @@ import { EditableText } from '../EditableText';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from "../context/globalContext";
 import { isValidFilename } from '../../utils/validateFilename';
-import Login from './Login';
 import { useTranslation } from 'react-i18next';
 import { THEME } from "../../theme"
 import clsx from 'clsx';
@@ -21,7 +20,6 @@ const Editor = () => {
     const { user, currentFileId, currentFile, setCurrentFileId, getFile, createFile, updateFile, lockFile } = useAppContext()
 
     //Editor's states
-    const [guestDialogOpen, setGuestDialogOpen] = useState<boolean>(true)
     const [jwt, setJwt] = useState<string | null>(null)
     const [filename, setFilename] = useState<string>("New file")
     const [beingUsed, setBeingUsed] = useState<boolean>(false)

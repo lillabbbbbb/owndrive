@@ -3,14 +3,10 @@ import { motion } from "framer-motion"
 import Header from "./components/main_components/Header"
 import Body from "./components/main_components/Body"
 import { BrowserRouter } from 'react-router-dom'
-import { AppProvider } from './components/context/globalContext'
 import { Toaster } from "sonner";
 import { useEffect } from 'react'
-import CustomCursor from './components/CustomCursor'
 import axios from 'axios'
-import { ThemeProvider } from "../src/components/context/ThemeContext"
 import clsx from 'clsx'
-import { THEME } from './theme'
 import { useTheme } from "../src/components/context/ThemeContext"
 
 //tailwind css class hardcoded variables can come here
