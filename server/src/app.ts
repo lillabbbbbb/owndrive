@@ -1,7 +1,6 @@
 
 import dotenv from "dotenv"
-import 'dotenv/config'; //if this line is not HERE, the google oauth passport runs into an error
-import passport from "./middleware/google-passport-config"
+import 'dotenv/config';
 import express, { Express } from "express"
 import { Request, Response } from "express";
 import path from "path"
@@ -48,7 +47,6 @@ db.on("error", console.error.bind(console, "MongoDB connection error"))
 //console.log("Database dropped")
 
 //Set up what the app should use
-app.use(passport.initialize())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(morgan("dev"))

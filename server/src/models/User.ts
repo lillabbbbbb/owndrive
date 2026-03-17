@@ -4,8 +4,7 @@ import mongoose, {Document, Schema, Types } from "mongoose";
 import { IFile } from "./File";
 
 export interface IUser extends Document {
-   username?: string, //only for Google users?
-   //googleId?: string, //google ID
+   username?: string,
    email: string,
    password_hash?: string,
    profile_pic?: Types.ObjectId, //!
@@ -17,7 +16,6 @@ export interface IUser extends Document {
 
 const userSchema = new Schema({
     username: {type: String, required: false, unique: true},
-    //googleId: {type: String, required: false},
     email: {type: String, required: true, unique: true},
     password_hash: {type: String, required: false},
     files: [{ type: Schema.Types.ObjectId, ref: 'File', unique: true}], // array of references

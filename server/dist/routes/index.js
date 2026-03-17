@@ -86,52 +86,7 @@ router.post("/auth/register",
         return res.status(500).json({ error: "Internal Server Error" });
     }
 });
-router.post("/auth/login/google", google_passport_config_1.default.authenticate("google", { scope: ['profile'] }));
-/*router.get("/auth/google/callback", passport.authenticate("google", {
-    session:false,
-    failureRedirect: "/login"
-    }), async(req: Request, res: Response) => {
 
-        try{
-            //const user : IUser | null = await User.findOne({googleId: (req.user as {id:string}).id})
-            const jwtPayload: JwtPayload = {}
-
-            //if user is not in the databse yet:
-            if(!user){
-
-                //create other values (default):
-                const language: string = "en"
-                const mode: string = "light"
-
-                const newUser : IUser = await User.create({
-                    username: (req.user as {displayName : string}).displayName,
-                    email: (req.user as {displayName : string}).displayName, //THIS NEEDS TO BE REPLACED
-                    //googleId: (req.user as {id: string}).id,
-                    language: language,
-                    mode: mode
-                })
-
-                jwtPayload.username = newUser.username
-                //jwtPayload.id = newUser.googleId
-            }
-            //if user already exists:
-            else{
-                jwtPayload.username = user.username
-                //jwtPayload.id = user.googleId
-            }
-
-            //tokenize and redirect
-            const token: string = jwt.sign(jwtPayload, process.env.SECRET as string, {expiresIn: "5m"})
-            res.redirect("index.html?token=" + token)
-
-        //catch all errors
-        }catch(error: any){
-            console.error(`Error during external login: ${error}`)
-            res.status(500).json({error: "Internal Server Error"})
-        }
-
-    
-})*/
 router.post("/pdf", async (req, res) => {
     try {
         const { html } = req.body;
