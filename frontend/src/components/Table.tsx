@@ -63,9 +63,11 @@ export default function FilesTable({ sortedFilteredData }: TableProps) {
     //Set the currentFileId based on what was clicked
     sessionStorage.setItem("fileId", file._id);
     setCurrentFileId(file._id)
+    console.log("SessionStorage current fileID set to " + file._id)
 
     //Open the editor
     navigate(`/${file.created_by}/${file._id}`)
+    console.log("Navigated to " + file.filename)
   }
 
   //Event handler for detecting double tap on phones
@@ -84,6 +86,7 @@ export default function FilesTable({ sortedFilteredData }: TableProps) {
     //Set the currentFileId based on what was clicked
     sessionStorage.setItem("fileId", file._id);
     setCurrentFileId(file._id)
+    console.log("SessionStorage current fileID set to " + file._id)
   }
 
   //Only show the columns that are selected by the user

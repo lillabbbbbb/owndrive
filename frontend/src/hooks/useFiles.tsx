@@ -39,8 +39,6 @@ export function useFiles() {
 
   //Get all files of a user
   const getFiles = useCallback(async () => {
-    setLoading(true);
-    setError(null);
     try {
       const res = await axios.get<IFileFrontend[]>("/api/files/");
       const data = res.data
@@ -52,45 +50,33 @@ export function useFiles() {
     } catch (err) {
       handleError(err);
       return null;
-    } finally {
-      setLoading(false);
     }
   }, []);
 
   //Get a specific file of a user based on file ID
   const getFile = useCallback(async (id: string) => {
-    setLoading(true);
-    setError(null);
     try {
       const res = await axios.get<Promise< fileType | null>>(`/api/files/${id}`);
       return res.data;
     } catch (err) {
       handleError(err);
       return null;
-    } finally {
-      setLoading(false);
     }
   }, []);
 
   //POST request to create a new file with given data
   const createFile = useCallback(async (fileData: Partial<IFileFrontend>) => {
-    setLoading(true);
-    setError(null);
     try {
       const res = await axios.post<IFileFrontend>("/api/files", fileData);
       return res.data;
     } catch (err) {
       handleError(err);
       return null;
-    } finally {
-      setLoading(false);
     }
   }, []);
 
   //POST request to upload a file 
   const uploadFile = useCallback(async (file: File) => {
-    setLoading(true);
-    setError(null);
     try {
       const formData = new FormData();
       formData.append("file", file);
@@ -108,15 +94,11 @@ export function useFiles() {
     } catch (err) {
       handleError(err);
       return null;
-    } finally {
-      setLoading(false);
     }
   }, []);
 
   //Update all files of a user that match a specific filter criteria (e.g. status == "archived")
   const batchUpdateFiles = useCallback(async (filters: Partial<IFileFrontend>, updates: Partial<IFileFrontend>) => {
-    setLoading(true);
-    setError(null);
     try {
       const res = await axios.patch<IFileFrontend>(`/api/files/`, { filters, updates });
       console.log("Files successfully updated")
@@ -124,15 +106,11 @@ export function useFiles() {
     } catch (err) {
       handleError(err);
       return null;
-    } finally {
-      setLoading(false);
     }
   }, []);
 
   //PUT request to update a file of a user based on fileId
   const updateFile = useCallback(async (id: string, updates: Partial<IFileFrontend>) => {
-    setLoading(true);
-    setError(null);
     try {
       const res = await axios.patch<IFileFrontend>(`/api/files/${id}`, updates);
       toast.success("File successfully updated")
@@ -141,111 +119,83 @@ export function useFiles() {
     } catch (err) {
       handleError(err);
       return null;
-    } finally {
-      setLoading(false);
     }
   }, []);
 
   //Restore user's files, using previously defined hooks and constant string values
   const restoreAllArchived = useCallback(async () => {
-    setLoading(true);
-    setError(null);
     try {
 
       const filters = { status: statuses.ARCHIVED.value };
       const updates = { status: statuses.ACTIVE.value }
 
-      const res = await batchUpdateFiles(filters, updates)
+      await batchUpdateFiles(filters, updates)
       console.log("Archives successfully restored")
       return;
     } catch (err) {
       handleError(err);
-    } finally {
-      setLoading(false);
     }
   }, [])
 
   //Delete user's files, using previously defined hooks and constant string values
   const deleteAllArchived = useCallback(async () => {
-    setLoading(true);
-    setError(null);
     try {
       const filters = { status: statuses.ARCHIVED.value };
 
-      const res = await axios.delete("api/files/", { data: filters })
+      await axios.delete("api/files/", { data: filters })
       console.log("Archives successfully deleted")
       return;
     } catch (err) {
       handleError(err);
-    } finally {
-      setLoading(false);
     }
   }, [])
 
   //Lock a file, based on fileId
   const lockFile = useCallback(async (id: string, lockedById: string) => {
-    setLoading(true);
-    setError(null);
     try {
       const res = await axios.patch<IFileFrontend>(`/api/files/${id}/lock`, lockedById);
       return res.data;
     } catch (err) {
       handleError(err);
       return null;
-    } finally {
-      setLoading(false);
-    }
+    } 
   }, []);
 
   //Unlock a file, based on fileId
   const unlockFile = useCallback(async (id: string) => {
-    setLoading(true);
-    setError(null);
     try {
       const res = await axios.patch<IFileFrontend>(`/api/files/${id}/unlock`);
       return res.data;
     } catch (err) {
       handleError(err);
       return null;
-    } finally {
-      setLoading(false);
     }
   }, []);
 
   //Get the locked status of a file (= is it being used or not)
   const getLockStatus = useCallback(async (id: string) => {
-    setLoading(true);
-    setError(null);
     try {
       const res = await axios.get<IFileFrontend>(`/api/files/${id}/lock_status`);
       return res.data;
     } catch (err) {
       handleError(err);
       return null;
-    } finally {
-      setLoading(false);
-    }
+    } 
   }, []);
 
   //Delete a file baed on fileID
   const deleteFile = useCallback(async (id: string) => {
-    setLoading(true);
-    setError(null);
     try {
       await axios.delete(`/api/files/${id}`);
       return true;
     } catch (err) {
       handleError(err);
       return false;
-    } finally {
-      setLoading(false);
     }
   }, []);
 
   //Download PDf using backend route
   const downloadPDF = useCallback(async (html: string) => {
-    setLoading(true);
-    setError(null);
     try {
       const res = await axios.post("/api/pdf",
         { html },
@@ -255,8 +205,6 @@ export function useFiles() {
       return res
     } catch (err) {
       console.error("PDF generation failed:", err);
-    } finally {
-      setLoading(false);
     }
   }, []);
 

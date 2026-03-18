@@ -8,8 +8,8 @@ type UseUserReturn = {
   error: string | null;
 
   getUser: () => Promise<IUserFrontend | null>;
-  getUsername: (userId : string) => Promise<string | null>;
-  getAllUsernames: () => Promise<{_id: string, email: string}[] | null>;
+  getUsername: (userId: string) => Promise<string | null>;
+  getAllUsernames: () => Promise<{ _id: string, email: string }[] | null>;
   getProfilePic: () => Promise<IImageFrontend | null>;
   updateUser: (changes: Partial<IUserFrontend>) => Promise<IUserFrontend | null>;
   updateProfilePic: (file: File, description?: string) => Promise<IImageFrontend | null>;
@@ -21,6 +21,7 @@ export function useUser(): UseUserReturn {
 
   //States
   const [token, setToken] = useState(localStorage.getItem("token"));
+  const [usernames, setUsernames] = useState<{ _id: string, email: string }[] | null>(null)
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -50,107 +51,84 @@ export function useUser(): UseUserReturn {
 
   // Fetch latest user data from server
   const getUser = useCallback(async () => {
-    setLoading(true);
-    setError(null);
     try {
       const res = await axios.get<IUserFrontend>(`/api/users/me`);
       return res.data
     } catch (err) {
       handleError(err);
       return null
-    } finally {
-      setLoading(false);
     }
   }, []);
 
 
   //Get all user's emails from DB (I know the function name is misleading)
   const getAllUsernames = useCallback(async () => {
-    setLoading(true);
-    setError(null);
     try {
-      const res = await axios.get<{_id: string, email: string}[]>(`/api/users`);
+      const res = await axios.get<{ _id: string, email: string }[]>(`/api/users`);
+      setUsernames(res.data)
       return res.data
     } catch (err) {
       handleError(err);
       return null
-    } finally {
-      setLoading(false);
     }
   }, []);
 
   //Get the email of a specific user
-  const getUsername = useCallback(async (userId : string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const usernames = await getAllUsernames()
-      if(!usernames) return null
-      const user = usernames.find((u) => u._id === userId)
-      return user!.email || null
-    } catch (err) {
-      handleError(err);
-      return null
-    } finally {
-      setLoading(false);
+  const getUsername = useCallback(async (userId: string) => {
+    let currentUsernames = usernames;
+
+    // fetch if not loaded
+    if (!currentUsernames || currentUsernames.length === 0) {
+      currentUsernames = await getAllUsernames();
     }
-  }, []);
+
+    const user = currentUsernames?.find(u => u._id === userId);
+    return user?.email ?? null;
+  }, [usernames, getAllUsernames]);
 
   // Fetch latest user data from server
   const getProfilePic = useCallback(async () => {
-    setLoading(true);
-    setError(null);
     try {
       const res = await axios.get<IImageFrontend>(`/api/images/`)
       return res.data
     } catch (err) {
       handleError(err);
       return null
-    } finally {
-      setLoading(false);
     }
   }, []);
 
   // Update user fields (name, email, etc.)
   const updateUser = useCallback(async (changes: Partial<IUserFrontend>) => {
-    setLoading(true);
-    setError(null);
     try {
       const res = await axios.patch<IUserFrontend>("/api/users/:userId", changes);
       return res.data;
     } catch (err) {
       handleError(err);
       return null;
-    } finally {
-      setLoading(false);
     }
   }, []);
 
   // Update user profile picture
   const updateProfilePic = useCallback(async (file: File, description?: string) => {
-  console.log("🚀 updateProfilePic called with file:", file?.name)
-  setLoading(true);
-  setError(null);
-  try {
-    console.log(file)
-    const formData = new FormData();
-    formData.append("image", file);
-    if (description) formData.append("description", description);
+    console.log("🚀 updateProfilePic called with file:", file?.name)
+    try {
+      console.log(file)
+      const formData = new FormData();
+      formData.append("image", file);
+      if (description) formData.append("description", description);
 
-    console.log("📤 Sending PATCH request to /api/users/me")
-    const res = await axios.patch<IImageFrontend>("/api/users/me", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-    console.log("✅ Response received:", res.data)
-    return res.data;
-  } catch (err) {
-    console.error("❌ Error in updateProfilePic:", err)
-    handleError(err);
-    return null;
-  } finally {
-    setLoading(false);
-  }
-}, [getUser]);
+      console.log("📤 Sending PATCH request to /api/users/me")
+      const res = await axios.patch<IImageFrontend>("/api/users/me", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      console.log("✅ Response received:", res.data)
+      return res.data;
+    } catch (err) {
+      console.error("❌ Error in updateProfilePic:", err)
+      handleError(err);
+      return null;
+    }
+  }, [getUser]);
 
   // Logout user
   const logout = useCallback(async () => {
@@ -171,8 +149,6 @@ export function useUser(): UseUserReturn {
 
   //Handle login
   const login = useCallback(async (email: string, password: string) => {
-    setLoading(true);
-    setError(null);
     try {
       const response = await axios.post<{ user: IUserFrontend, token: string }>("/api/auth/login", {
         email: email,
@@ -186,8 +162,6 @@ export function useUser(): UseUserReturn {
     } catch (err) {
       handleError(err);
       return null;
-    } finally {
-      setLoading(false);
     }
   }, []);
 

@@ -6,7 +6,8 @@ import Editor from './Editor'
 import { useTranslation } from 'react-i18next'
 import { ProtectedRoute } from './ProtectedRoute'
 import { useAppContext } from '../context/globalContext'
-import {useTheme} from "../context/ThemeContext"
+import { useTheme } from "../context/ThemeContext"
+import { useMemo, useRef } from "react"
 
 
 const Body = () => {
@@ -16,32 +17,42 @@ const Body = () => {
 
   //Token
   const jwt = localStorage.getItem("token")
-  
 
-  //This code snippet below was for a previous version of the app but I don't dare to delete it yet
+  const renderCount = useRef(0);
+  renderCount.current++;
+
+  console.log("RENDERS:", renderCount.current);
+
+
+  const editorAllowed = useMemo(() => {
+    if (!editorReady) return false;
+
+    if (!currentFile) {
+      console.log("currentfile not found");
+      return false;
+    }
+
+    if (!user) {
+      const allowed = currentFile.file.visibleToGuests ?? false;
+      console.log("user not found, whether file is visible for guest:", allowed);
+      return allowed;
+    }
+
+    const userId = user._id;
+
+    const allowed =
+      currentFile.file.canView?.includes(userId) ||
+      currentFile.file.canEdit?.includes(userId) ||
+      currentFile.file.created_by === userId;
+
+    console.log("user and file found, editorallowed =", allowed);
+
+    return allowed;
+  }, [editorReady, currentFile, user]);
+
+
   if (!editorReady) {
     return <div>Loading...</div>; // wait for user and file to load
-  }
-  let editorAllowed = false;
-
-  if (editorReady) {
-    if (!currentFile) {
-      editorAllowed = false
-      console.log("currentfile not found")
-    }
-
-    else if (!user) {
-      editorAllowed = currentFile.file.visibleToGuests ?? false
-      console.log("user not found, whether file is visible for guest: " + currentFile.file.visibleToGuests)
-    }
-    else {
-      const userId = user._id;
-      editorAllowed =
-        currentFile.file.canView?.includes(userId) ||
-        currentFile.file.canEdit?.includes(userId) ||
-        currentFile.file.created_by === userId;
-      console.log("user and file found, editorallowed = " + editorAllowed)
-    }
   }
 
   return (
@@ -63,7 +74,7 @@ const Body = () => {
         } >
         </Route>
 
-          <Route path="*" element={<Login />} />
+        <Route path="*" element={<Login />} />
 
       </Routes>
     </div>

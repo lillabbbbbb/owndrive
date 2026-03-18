@@ -81,8 +81,8 @@ const Home = () => {
   }, []);
 
   //store the fileTypes and owners' ids which will be displayed as options of the filters
-  const fileTypes = [...new Set((files || []).map((file: IFileFrontend) => file.file_type))]
-  const ownerNames = [...new Set((files || []).map((file: IFileFrontend) => file.created_by))]
+  const fileTypes = useMemo(() => [...new Set((files || []).map((file: IFileFrontend) => file.file_type))], [files])
+  const ownerNames = useMemo(() => [...new Set((files || []).map((file: IFileFrontend) => file.created_by))], [files])
 
   //This code snippet is a helper to display the email address of each user as a filter option, instead of showing their userid
   useEffect(() => {
@@ -245,14 +245,16 @@ const Home = () => {
     cutoff.setDate(cutoff.getDate() - days)
     return edited < cutoff
   }
+
+  useEffect(() => {
+    setShowingArchives(filters.status === statuses.ARCHIVED.value)
+  }, [filters.status])
+
+
   //Filter based on the selected filters
   const applyFilters = (files: IFileFrontend[], passedFilters: Filters = filters) => {
-    // First, determine if we're showing archives
-    setShowingArchives(passedFilters.status === statuses.ARCHIVED.value)
-    console.log(passedFilters.status)
-    console.log(statuses.ARCHIVED.value)
 
-    const filteredFiles = files.filter(file => {
+    return files.filter(file => {
       const fileTypeMatch =
         passedFilters.fileTypes.size === 0 || passedFilters.fileTypes.has(file.file_type)
 
@@ -293,9 +295,6 @@ const Home = () => {
       //Return only items that match all filters
       return fileTypeMatch && creatorMatch && dateMatch && statusMatch
     })
-
-    console.log(filteredFiles)
-    return filteredFiles
   }
 
   //useMemo helps prevent unneccessary DB fetches when the files, search, filters or sorting didn't change
