@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const google_passport_config_1 = __importDefault(require("../middleware/google-passport-config"));
 const express_1 = require("express");
 const express_validator_1 = require("express-validator");
 const bcrypt_1 = __importDefault(require("bcrypt"));
@@ -13,7 +12,6 @@ const User_1 = require("../models/User");
 const inputValidation_1 = require("../validators/inputValidation");
 const dotenv_1 = __importDefault(require("dotenv"));
 const puppeteer_1 = __importDefault(require("puppeteer"));
-//import { validateToken} from "../middleware/validateToken"
 const router = (0, express_1.Router)();
 dotenv_1.default.config();
 //route to anything else: handled in frontend
@@ -86,7 +84,6 @@ router.post("/auth/register",
         return res.status(500).json({ error: "Internal Server Error" });
     }
 });
-
 router.post("/pdf", async (req, res) => {
     try {
         const { html } = req.body;

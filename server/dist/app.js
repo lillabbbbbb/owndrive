@@ -6,8 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.mongoDB = void 0;
 exports.connectDB = connectDB;
 const dotenv_1 = __importDefault(require("dotenv"));
-require("dotenv/config"); //if this line is not HERE, the google oauth passport runs into an error
-const google_passport_config_1 = __importDefault(require("./middleware/google-passport-config"));
+require("dotenv/config");
 const express_1 = __importDefault(require("express"));
 const path_1 = __importDefault(require("path"));
 const index_1 = __importDefault(require("./routes/index"));
@@ -40,7 +39,6 @@ db.on("error", console.error.bind(console, "MongoDB connection error"));
 //db.dropDatabase()
 //console.log("Database dropped")
 //Set up what the app should use
-app.use(google_passport_config_1.default.initialize());
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
 app.use((0, morgan_1.default)("dev"));
