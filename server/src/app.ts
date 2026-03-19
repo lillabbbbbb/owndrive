@@ -30,7 +30,7 @@ const port: number = parseInt(process.env.PORT as string) || 8001
 
 
 //Connect server to DB
-export const mongoDB: string = "mongodb://127.0.0.1:27017/OwnDrive"
+export const mongoDB: string = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/OwnDrive';
 mongoose.connect(mongoDB)
 mongoose.Promise = Promise
 const db: Connection = mongoose.connection
