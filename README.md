@@ -263,9 +263,7 @@ npm install
 5. Set up environment variables
 Create `.env` file in the server directory:
 ```env
-PORT=8000
-MONGODB_URI=mongodb://localhost:27017/owndrive
-JWT_SECRET=your_jwt_secret_key
+cp .env.example .env
 ```
 
 5. Run frontend and backend concurrently in development mode
