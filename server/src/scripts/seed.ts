@@ -1,10 +1,11 @@
+/// <reference path="../types/express.d.ts" />
+
 import { faker } from '@faker-js/faker';
 import mongoose from "mongoose";
 import { connectDB } from '../app';
 import { User } from "../models/User";
 import { File } from "../models/File";
 import { Image } from "../models/Image";
-import env from "dotenv"
 
 const USER_COUNT = 1;
 const IMAGE_COUNT = 1;

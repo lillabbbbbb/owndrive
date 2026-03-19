@@ -34,4 +34,3 @@ exports.uploadToDisk = (0, multer_1.default)({ storage: diskStorage });
 const memoryStorage = multer_1.default.memoryStorage();
 const uploadToMemory = (0, multer_1.default)({ storage: memoryStorage });
 exports.default = uploadToMemory;
-//# sourceMappingURL=multer-config.js.map

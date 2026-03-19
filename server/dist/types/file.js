@@ -56,4 +56,3 @@ exports.SUPPORTED_IMAGE_TYPES = {
     'image/webp': '.webp',
     'image/svg+xml': '.svg',
 };
-//# sourceMappingURL=file.js.map

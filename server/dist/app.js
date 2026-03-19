@@ -25,7 +25,7 @@ dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = parseInt(process.env.PORT) || 8001;
 //Connect server to DB
-exports.mongoDB = "mongodb://127.0.0.1:27017/OwnDrive";
+exports.mongoDB = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/OwnDrive';
 mongoose_1.default.connect(exports.mongoDB);
 mongoose_1.default.Promise = Promise;
 const db = mongoose_1.default.connection;
@@ -75,4 +75,3 @@ else if (process.env.NODE_ENV === "production") {
         res.sendFile(path_1.default.resolve("../..", "client", "build", "index.html"));
     });
 }
-//# sourceMappingURL=app.js.map

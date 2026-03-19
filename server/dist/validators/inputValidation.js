@@ -11,4 +11,3 @@ exports.validatePassword = (0, express_validator_1.body)("password").trim().isSt
     minSymbols: 1
 }).escape();
 exports.validateUsername = (0, express_validator_1.body)("username").trim().isLength({ min: 3, max: 25 }).escape();
-//# sourceMappingURL=inputValidation.js.map

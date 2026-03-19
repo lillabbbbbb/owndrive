@@ -135,4 +135,3 @@ userRouter.get("/:userId/profile_picture", async (req, res) => {
     }
 });
 exports.default = userRouter;
-//# sourceMappingURL=user.js.map

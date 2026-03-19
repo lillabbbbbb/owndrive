@@ -502,4 +502,3 @@ fileRouter.patch("/:fileId/unlock", async (req, res) => {
     }
 });
 exports.default = fileRouter;
-//# sourceMappingURL=file.js.map

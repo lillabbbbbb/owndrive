@@ -43,4 +43,3 @@ const imageSchema = new mongoose_1.Schema({
 });
 const Image = mongoose_1.default.model("Image", imageSchema);
 exports.Image = Image;
-//# sourceMappingURL=Image.js.map

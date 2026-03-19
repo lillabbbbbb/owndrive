@@ -27,4 +27,3 @@ const validateUserToken = (req, res, next) => {
     }
 };
 exports.validateUserToken = validateUserToken;
-//# sourceMappingURL=userValidation.js.map

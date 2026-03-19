@@ -47,4 +47,3 @@ const userSchema = new mongoose_1.Schema({
     mode: { type: String, required: true, default: "light" },
 });
 exports.User = mongoose_1.default.model("User", userSchema);
-//# sourceMappingURL=User.js.map

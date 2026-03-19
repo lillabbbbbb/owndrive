@@ -32,4 +32,3 @@ imageRouter.get("/", async (req, res) => {
     }
 });
 exports.default = imageRouter;
-//# sourceMappingURL=image.js.map

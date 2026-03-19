@@ -61,4 +61,3 @@ const fileSchema = new mongoose_1.Schema({
 });
 const File = mongoose_1.default.model("File", fileSchema);
 exports.File = File;
-//# sourceMappingURL=File.js.map

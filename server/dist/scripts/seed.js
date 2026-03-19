@@ -1,4 +1,5 @@
 "use strict";
+/// <reference path="../types/express.d.ts" />
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -103,4 +104,3 @@ seed().catch(err => {
     console.error(err);
     mongoose_1.default.connection.close();
 });
-//# sourceMappingURL=seed.js.map
